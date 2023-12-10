@@ -17,3 +17,4 @@ out/
 
 # Per-user bazelrc files
 user.bazelrc
+.xmake
