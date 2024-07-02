@@ -250,3 +250,4 @@ Tools/clang-tools/clang-format-files.txt
 Tools/clang-tools/out-files.txt
 .vscode
 *.zip
+build

@@ -1,5 +1,5 @@
-set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../The-Forge/Common_3/ThirdParty/OpenSource)
-
+set(THIRD_PARTY_DIR ${ENGINE_RUNTIME_SOURCE_DIR}/ThirdParty)
+message(${THIRD_PARTY_DIR})
 add_library(WinPixEventRuntime SHARED IMPORTED)
 set_property(TARGET WinPixEventRuntime PROPERTY IMPORTED_LOCATION
     ${THIRD_PARTY_DIR}/winpixeventruntime/bin/WinPixEventRuntime.dll
