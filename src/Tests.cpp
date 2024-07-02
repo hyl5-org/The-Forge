@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2019-2022 Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2019-2024 Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -701,6 +701,71 @@ static void TestCommittedResourcesAndJson(const TestContext& ctx)
     ctx.allocator->FreeStatsString(jsonString);
 }
 
+static void TestSmallBuffers(const TestContext& ctx)
+{
+    wprintf(L"Test small buffers\n");
+
+    D3D12MA::POOL_DESC poolDesc = {};
+    poolDesc.HeapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
+    poolDesc.HeapFlags = D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS;
+    ComPtr<D3D12MA::Pool> pool;
+    CHECK_HR(ctx.allocator->CreatePool(&poolDesc, &pool));
+
+    D3D12MA::ALLOCATION_DESC allocDesc = {};
+    allocDesc.CustomPool = pool.Get();
+
+    D3D12_RESOURCE_DESC resDesc;
+    FillResourceDescForBuffer(resDesc, 8 * KILOBYTE);
+
+    D3D12_RESOURCE_DESC largeResDesc = resDesc;
+    largeResDesc.Width = 128 * KILOBYTE;
+
+    std::vector<ResourceWithAllocation> resources;
+
+    // A large buffer placed inside the heap to allocate first block.
+    {
+        resources.emplace_back();
+        ResourceWithAllocation& resWithAlloc = resources.back();
+        CHECK_HR(ctx.allocator->CreateResource(&allocDesc, &largeResDesc, D3D12_RESOURCE_STATE_COMMON,
+            nullptr, &resWithAlloc.allocation, IID_PPV_ARGS(&resWithAlloc.resource)));
+        CHECK_BOOL(resWithAlloc.allocation && resWithAlloc.allocation->GetResource());
+        CHECK_BOOL(resWithAlloc.allocation->GetHeap()); // Expected to be placed.
+    }
+
+    // Test 1: COMMITTED.
+    {
+        resources.emplace_back();
+        ResourceWithAllocation& resWithAlloc = resources.back();
+        allocDesc.Flags = D3D12MA::ALLOCATION_FLAG_COMMITTED;
+        CHECK_HR(ctx.allocator->CreateResource(&allocDesc, &resDesc, D3D12_RESOURCE_STATE_COMMON,
+            nullptr, &resWithAlloc.allocation, IID_PPV_ARGS(&resWithAlloc.resource)));
+        CHECK_BOOL(resWithAlloc.allocation && resWithAlloc.allocation->GetResource());
+        CHECK_BOOL(!resWithAlloc.allocation->GetHeap()); // Expected to be committed.
+    }
+
+    // Test 2: Default.
+    {
+        resources.emplace_back();
+        ResourceWithAllocation& resWithAlloc = resources.back();
+        allocDesc.Flags = D3D12MA::ALLOCATION_FLAG_NONE;
+        CHECK_HR(ctx.allocator->CreateResource(&allocDesc, &resDesc, D3D12_RESOURCE_STATE_COMMON,
+            nullptr, &resWithAlloc.allocation, IID_PPV_ARGS(&resWithAlloc.resource)));
+        CHECK_BOOL(resWithAlloc.allocation && resWithAlloc.allocation->GetResource());
+        CHECK_BOOL(!resWithAlloc.allocation->GetHeap()); // Expected to be committed.
+    }
+
+    // Test 3: NEVER_ALLOCATE.
+    {
+        resources.emplace_back();
+        ResourceWithAllocation& resWithAlloc = resources.back();
+        allocDesc.Flags = D3D12MA::ALLOCATION_FLAG_NEVER_ALLOCATE;
+        CHECK_HR(ctx.allocator->CreateResource(&allocDesc, &resDesc, D3D12_RESOURCE_STATE_COMMON,
+            nullptr, &resWithAlloc.allocation, IID_PPV_ARGS(&resWithAlloc.resource)));
+        CHECK_BOOL(resWithAlloc.allocation && resWithAlloc.allocation->GetResource());
+        CHECK_BOOL(resWithAlloc.allocation->GetHeap()); // Expected to be placed.
+    }
+}
+
 static void TestCustomHeapFlags(const TestContext& ctx)
 {
     wprintf(L"Test custom heap flags\n");
@@ -763,7 +828,7 @@ static void TestPlacedResources(const TestContext& ctx)
     const bool alwaysCommitted = (ctx.allocatorFlags & D3D12MA::ALLOCATOR_FLAG_ALWAYS_COMMITTED) != 0;
 
     const UINT count = 4;
-    const UINT64 bufSize = 32ull * 1024;
+    const UINT64 bufSize = 64ull * 1024;
     ResourceWithAllocation resources[count];
 
     D3D12MA::ALLOCATION_DESC allocDesc = {};
@@ -1769,145 +1834,6 @@ static void TestTransfer(const TestContext& ctx)
     }
 }
 
-static void TestZeroInitialized(const TestContext& ctx)
-{
-    wprintf(L"Test zero initialized\n");
-
-    const UINT64 bufSize = 128ull * 1024;
-
-    D3D12_RESOURCE_DESC resourceDesc;
-    FillResourceDescForBuffer(resourceDesc, bufSize);
-
-    // # Create upload buffer and fill it with data.
-
-    D3D12MA::ALLOCATION_DESC allocDescUpload = {};
-    allocDescUpload.HeapType = D3D12_HEAP_TYPE_UPLOAD;
-
-    ResourceWithAllocation bufUpload;
-    CHECK_HR( ctx.allocator->CreateResource(
-        &allocDescUpload,
-        &resourceDesc,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        NULL,
-        &bufUpload.allocation,
-        IID_PPV_ARGS(&bufUpload.resource)) );
-
-    {
-        void* mappedPtr = nullptr;
-        CHECK_HR( bufUpload.resource->Map(0, &EMPTY_RANGE, &mappedPtr) );
-        FillData(mappedPtr, bufSize, 5236245);
-        bufUpload.resource->Unmap(0, NULL);
-    }
-
-    // # Create readback buffer
-    
-    D3D12MA::ALLOCATION_DESC allocDescReadback = {};
-    allocDescReadback.HeapType = D3D12_HEAP_TYPE_READBACK;
-
-    ResourceWithAllocation bufReadback;
-    CHECK_HR( ctx.allocator->CreateResource(
-        &allocDescReadback,
-        &resourceDesc,
-        D3D12_RESOURCE_STATE_COPY_DEST,
-        NULL,
-        &bufReadback.allocation,
-        IID_PPV_ARGS(&bufReadback.resource)) );
-
-    auto CheckBufferData = [&](const ResourceWithAllocation& buf)
-    {
-        const bool shouldBeZero = buf.allocation->WasZeroInitialized() != FALSE;
-
-        {
-            ID3D12GraphicsCommandList* cmdList = BeginCommandList();
-            cmdList->CopyBufferRegion(bufReadback.resource.Get(), 0, buf.resource.Get(), 0, bufSize);
-            EndCommandList(cmdList);
-        }
-
-        bool isZero = false;
-        {
-            const D3D12_RANGE readRange{0, bufSize}; // I could pass pReadRange = NULL but it generates D3D Debug layer warning: EXECUTION WARNING #930: MAP_INVALID_NULLRANGE
-            void* mappedPtr = nullptr;
-            CHECK_HR( bufReadback.resource->Map(0, &readRange, &mappedPtr) );
-            isZero = ValidateDataZero(mappedPtr, bufSize);
-            bufReadback.resource->Unmap(0, &EMPTY_RANGE);
-        }
-
-        wprintf(L"Should be zero: %u, is zero: %u\n", shouldBeZero ? 1 : 0, isZero ? 1 : 0);
-
-        if(shouldBeZero)
-        {
-            CHECK_BOOL(isZero);
-        }
-    };
-
-    // # Test 1: Committed resource. Should always be zero initialized.
-
-    {
-        D3D12MA::ALLOCATION_DESC allocDescDefault = {};
-        allocDescDefault.HeapType = D3D12_HEAP_TYPE_DEFAULT;
-        allocDescDefault.Flags = D3D12MA::ALLOCATION_FLAG_COMMITTED;
-
-        ResourceWithAllocation bufDefault;
-        CHECK_HR( ctx.allocator->CreateResource(
-            &allocDescDefault,
-            &resourceDesc,
-            D3D12_RESOURCE_STATE_COPY_SOURCE,
-            NULL,
-            &bufDefault.allocation,
-            IID_PPV_ARGS(&bufDefault.resource)) );
-
-        wprintf(L"  Committed: ");
-        CheckBufferData(bufDefault);
-        CHECK_BOOL( bufDefault.allocation->WasZeroInitialized() );
-    }
-
-    // # Test 2: (Probably) placed resource.
-
-    ResourceWithAllocation bufDefault;
-    for(uint32_t i = 0; i < 2; ++i)
-    {
-        // 1. Create buffer
-
-        D3D12MA::ALLOCATION_DESC allocDescDefault = {};
-        allocDescDefault.HeapType = D3D12_HEAP_TYPE_DEFAULT;
-
-        CHECK_HR( ctx.allocator->CreateResource(
-            &allocDescDefault,
-            &resourceDesc,
-            D3D12_RESOURCE_STATE_COPY_SOURCE,
-            NULL,
-            &bufDefault.allocation,
-            IID_PPV_ARGS(&bufDefault.resource)) );
-
-        // 2. Check it
-
-        wprintf(L"  Normal #%u: ", i);
-        CheckBufferData(bufDefault);
-
-        // 3. Upload some data to it
-
-        {
-            ID3D12GraphicsCommandList* cmdList = BeginCommandList();
-
-            D3D12_RESOURCE_BARRIER barrier = {};
-            barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-            barrier.Transition.pResource = bufDefault.resource.Get();
-            barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_SOURCE;
-            barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
-            barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-            cmdList->ResourceBarrier(1, &barrier);
-
-            cmdList->CopyBufferRegion(bufDefault.resource.Get(), 0, bufUpload.resource.Get(), 0, bufSize);
-            
-            EndCommandList(cmdList);
-        }
-
-        // 4. Delete it
-
-        bufDefault.Reset();
-    }
-}
-
 static void TestMultithreading(const TestContext& ctx)
 {
     wprintf(L"Test multithreading\n");
@@ -2763,7 +2689,7 @@ static void TestDevice4(const TestContext& ctx)
     }
 
     D3D12_RESOURCE_DESC resourceDesc;
-    FillResourceDescForBuffer(resourceDesc, 1024);
+    FillResourceDescForBuffer(resourceDesc, 64 * KILOBYTE);
 
     for(UINT testIndex = 0; testIndex < 2; ++testIndex)
     {
@@ -2857,7 +2783,11 @@ static void TestDevice10(const TestContext& ctx)
     wprintf(L"Test ID3D12Device10\n");
 
     ComPtr<ID3D12Device10> dev10;
-    CHECK_HR(ctx.device->QueryInterface(IID_PPV_ARGS(&dev10)));
+    if(FAILED(ctx.device->QueryInterface(IID_PPV_ARGS(&dev10))))
+    {
+        wprintf(L"QueryInterface for ID3D12Device10 failed!\n");
+        return;
+    }
 
     D3D12_RESOURCE_DESC1 resourceDesc = {};
     resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
@@ -2913,6 +2843,152 @@ static void TestDevice10(const TestContext& ctx)
         IID_PPV_ARGS(&res3)));
 }
 #endif // #ifdef __ID3D12Device10_INTERFACE_DEFINED__
+
+static void TestGPUUploadHeap(const TestContext& ctx)
+{
+#if D3D12MA_OPTIONS16_SUPPORTED
+    using namespace D3D12MA;
+
+    wprintf(L"Test GPU Upload Heap\n");
+
+    if(!ctx.allocator->IsGPUUploadHeapSupported())
+    {
+        wprintf(L"    Skipped due to GPUUploadHeap not supported.\n");
+        return;
+    }
+
+    Budget begLocalBudget = {};
+    ctx.allocator->GetBudget(&begLocalBudget, NULL);
+    TotalStatistics begStats = {};
+    ctx.allocator->CalculateStatistics(&begStats);
+
+    // Create a buffer, likely placed.
+    ALLOCATION_DESC allocDesc = {};
+    allocDesc.HeapType = D3D12_HEAP_TYPE_GPU_UPLOAD;
+    D3D12_RESOURCE_DESC resDesc;
+    FillResourceDescForBuffer(resDesc, 64 * KILOBYTE);
+
+    ComPtr<Allocation> alloc;
+    CHECK_HR(ctx.allocator->CreateResource(&allocDesc, &resDesc,
+        D3D12_RESOURCE_STATE_COMMON, NULL, &alloc, IID_NULL, NULL));
+    CHECK_BOOL(alloc && alloc->GetResource());
+    CHECK_BOOL(alloc->GetResource()->GetGPUVirtualAddress() != 0);
+    
+    {
+        D3D12_HEAP_PROPERTIES heapProps = {};
+        D3D12_HEAP_FLAGS heapFlags = {};
+        CHECK_HR(alloc->GetResource()->GetHeapProperties(&heapProps, &heapFlags));
+        CHECK_BOOL(heapProps.Type == D3D12_HEAP_TYPE_GPU_UPLOAD);
+    }
+
+    // Create a committed one.
+    ALLOCATION_DESC committedAllocDesc = allocDesc;
+    committedAllocDesc.Flags |= ALLOCATION_FLAG_COMMITTED;
+    ComPtr<Allocation> committedAlloc;
+    CHECK_HR(ctx.allocator->CreateResource(&committedAllocDesc, &resDesc,
+        D3D12_RESOURCE_STATE_COMMON, NULL, &committedAlloc, IID_NULL, NULL));
+    CHECK_BOOL(committedAlloc && committedAlloc->GetResource());
+    CHECK_BOOL(committedAlloc->GetHeap() == NULL); // Committed, heap is implicit and inaccessible.
+
+    // Create a custom pool and a buffer inside of it.
+    POOL_DESC poolDesc = {};
+    poolDesc.HeapProperties.Type = D3D12_HEAP_TYPE_GPU_UPLOAD;
+    ComPtr<Pool> pool;
+    CHECK_HR(ctx.allocator->CreatePool(&poolDesc, &pool));
+    
+    ALLOCATION_DESC poolAllocDesc = {};
+    poolAllocDesc.CustomPool = pool.Get();
+    ComPtr<Allocation> poolAlloc;
+    CHECK_HR(ctx.allocator->CreateResource(&poolAllocDesc, &resDesc,
+        D3D12_RESOURCE_STATE_COMMON, NULL, &poolAlloc, IID_NULL, NULL));
+    CHECK_BOOL(poolAlloc && poolAlloc->GetResource());
+
+    // Map the original buffer, write, then read
+    {
+        const auto res = alloc->GetResource();
+
+        UINT* mappedData = NULL;
+        CHECK_HR(res->Map(0, &EMPTY_RANGE, (void**)&mappedData)); // {0, 0} - not reading anything.
+        for(UINT i = 0; i < resDesc.Width / sizeof(UINT); ++i)
+        {
+            mappedData[i] = i * 3;
+        }
+        res->Unmap(0, NULL); // NULL - written everything.
+
+        CHECK_HR(res->Map(0, NULL, (void**)&mappedData)); // NULL - reading everything.
+        CHECK_BOOL(mappedData[100] = 300);
+        res->Unmap(0, &EMPTY_RANGE); // {0, 0} - not written anything.
+
+    }
+
+    // Create two big buffers.
+    D3D12_RESOURCE_DESC bigResDesc = resDesc;
+    bigResDesc.Width = 128 * MEGABYTE;
+
+    ComPtr<Allocation> bigAllocs[2];
+    for(UINT i = 0; i < 2; ++i)
+    {
+        CHECK_HR(ctx.allocator->CreateResource(&allocDesc, &bigResDesc,
+            D3D12_RESOURCE_STATE_COMMON, NULL, &bigAllocs[i], IID_NULL, NULL));
+        CHECK_BOOL(bigAllocs[i] && bigAllocs[i]->GetResource());
+    }
+
+    // Create a texture.
+    constexpr UINT texSize = 256;
+    D3D12_RESOURCE_DESC texDesc = {};
+    texDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+    texDesc.Alignment = 0;
+    texDesc.Width = texSize;
+    texDesc.Height = texSize;
+    texDesc.DepthOrArraySize = 1;
+    texDesc.MipLevels = 1;
+    texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    texDesc.SampleDesc.Count = 1;
+    texDesc.SampleDesc.Quality = 0;
+    texDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+    texDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+    ComPtr<Allocation> texAlloc;
+    CHECK_HR(ctx.allocator->CreateResource(&allocDesc, &texDesc,
+        D3D12_RESOURCE_STATE_COMMON, NULL, &texAlloc, IID_NULL, NULL));
+    CHECK_BOOL(texAlloc && texAlloc->GetResource());
+
+    {
+        std::vector<UINT> texPixels(texSize * texSize);
+        // Contents of texPixels[i] doesn't matter.
+        const auto texRes = texAlloc->GetResource();
+        // Need to pass ppData == NULL for Map() to be used with a texture having D3D12_TEXTURE_LAYOUT_UNKNOWN.
+        CHECK_HR(texRes->Map(0, &EMPTY_RANGE, NULL)); // {0, 0} - not reading anything.
+        CHECK_HR(texRes->WriteToSubresource(
+            0, // DstSubresource
+            NULL, // pDstBox
+            texPixels.data(), // pSrcData
+            texSize * sizeof(DWORD), // SrcRowPitch
+            texSize * texSize * sizeof(DWORD))); // SrcDepthPitch
+        texRes->Unmap(0, NULL); // NULL - written everything.
+    }
+
+    // Check budget and stats
+    constexpr UINT totalAllocCount = 6;
+    Budget endLocalBudget = {};
+    ctx.allocator->GetBudget(&endLocalBudget, NULL);
+    TotalStatistics endStats = {};
+    ctx.allocator->CalculateStatistics(&endStats);
+    CHECK_BOOL(endLocalBudget.UsageBytes >= begLocalBudget.UsageBytes
+        + 2 * bigResDesc.Width
+        && "This can fail if GPU_UPLOAD falls back to system RAM e.g. when under PIX?");
+    auto validateStats = [totalAllocCount, &bigResDesc](const Statistics& begStats, const Statistics& endStats)
+    {
+        CHECK_BOOL(endStats.BlockCount >= begStats.BlockCount);
+        CHECK_BOOL(endStats.BlockBytes >= begStats.BlockBytes);
+        CHECK_BOOL(endStats.AllocationCount == begStats.AllocationCount + totalAllocCount);
+        CHECK_BOOL(endStats.AllocationBytes > begStats.AllocationBytes + 2 * bigResDesc.Width);
+    };
+    validateStats(begLocalBudget.Stats, endLocalBudget.Stats);
+    validateStats(begStats.Total.Stats, endStats.Total.Stats);
+    validateStats(begStats.MemorySegmentGroup[0].Stats, endStats.MemorySegmentGroup[0].Stats); // DXGI_MEMORY_SEGMENT_GROUP_LOCAL
+    validateStats(begStats.HeapType[4].Stats, endStats.HeapType[4].Stats); // D3D12_HEAP_TYPE_GPU_UPLOAD
+#endif
+}
 
 static void TestVirtualBlocks(const TestContext& ctx)
 {
@@ -4150,6 +4226,7 @@ static void TestGroupBasics(const TestContext& ctx)
 #else
     TestJson(ctx);
     TestCommittedResourcesAndJson(ctx);
+    TestSmallBuffers(ctx);
     TestCustomHeapFlags(ctx);
     TestPlacedResources(ctx);
     TestOtherComInterface(ctx);
@@ -4165,7 +4242,6 @@ static void TestGroupBasics(const TestContext& ctx)
     TestMapping(ctx);
     TestStats(ctx);
     TestTransfer(ctx);
-    TestZeroInitialized(ctx);
     TestMultithreading(ctx);
     TestLinearAllocator(ctx);
     TestLinearAllocatorMultiBlock(ctx);
@@ -4179,6 +4255,8 @@ static void TestGroupBasics(const TestContext& ctx)
 #ifdef __ID3D12Device10_INTERFACE_DEFINED__
     TestDevice10(ctx);
 #endif
+
+    TestGPUUploadHeap(ctx);
 
     FILE* file;
     fopen_s(&file, "Results.csv", "w");
