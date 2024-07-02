@@ -1,11 +1,11 @@
 # OS Files
-set(OS_ANDROID_FILES
-    ../The-Forge/Common_3/OS/Android/android_native_app_glue.c
-    ../The-Forge/Common_3/OS/Android/AndroidBase.cpp
-    ../The-Forge/Common_3/OS/Android/AndroidFileSystem.cpp
-    ../The-Forge/Common_3/OS/Android/AndroidLog.c
-    ../The-Forge/Common_3/OS/Android/AndroidThread.c
-    ../The-Forge/Common_3/OS/Android/AndroidTime.c
+
+set(PLATFORM_INCLUDE_DIR ${ENGINE_RUNTIME_SOURCE_DIR}/Platform/Public)
+set(PLATFORM_SOURCE_DIR ${ENGINE_RUNTIME_SOURCE_DIR}/Platform/Private)
+
+set(PLATFORM_ANDROID_FILES
+    ${PLATFORM_SOURCE_DIR}/Android/*.c
+    ${PLATFORM_SOURCE_DIR}/Android/*.cpp
 )
 
 set(OS_CAMERA_FILES

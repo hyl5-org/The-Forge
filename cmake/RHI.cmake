@@ -1,6 +1,7 @@
-# Renderers
+# RHI
 
-set(RHI_SOURCE_DIR ${ENGINE_SOURCE_DIR}/RHI)
+set(RHI_INCLUDE_DIR ${ENGINE_RUNTIME_SOURCE_DIR}/RHI/Public)
+set(RHI_SOURCE_DIR ${ENGINE_RUNTIME_SOURCE_DIR}/RHI/Private)
 
 set(RHI_SOURCE_FILES
     ${RHI_SOURCE_DIR}/*.cpp
@@ -43,50 +44,50 @@ if(${METAL} MATCHES ON)
     find_library(APPLE_METALKIT MetalKit)
     find_library(APPLE_METALPS MetalPerformanceShaders)
 
-    set(RENDER_LIBRARIES ${RENDER_LIBRARIES}
+    set(RHI_LIBRARIES ${RHI_LIBRARIES}
         ${APPLE_METAL}
         ${APPLE_METALKIT}
         ${APPLE_METALPS}
     )
 
-    set(RENDERER_FILES ${RENDERER_FILES} ${METAL_FILES})
+    set(RHI_FILES ${RHI_FILES} ${METAL_FILES})
 endif()
 
 if(${VULKAN} MATCHES ON)
     find_package(Vulkan REQUIRED)
     if (Vulkan_FOUND MATCHES TRUE)
         message("Vulkan SDK found.")
-        set(RENDER_LIBRARIES ${RENDER_LIBRARIES} Vulkan::Vulkan)
+        set(RHI_LIBRARIES ${RHI_LIBRARIES} Vulkan::Vulkan)
     else()
         message("Vulkan SDK not found.  Please make sure it is installed and added to your path.")
     endif()
     
-    set(RENDER_LIBRARIES ${RENDER_LIBRARIES}
+    set(RHI_LIBRARIES ${RHI_LIBRARIES}
         VulkanMemoryAllocator
         SpirvTools
     )
 
-    set(RENDERER_FILES ${RENDERER_FILES} ${VULKAN_FILES})
+    set(RHI_FILES ${RHI_FILES} ${VULKAN_FILES})
 endif()
 
 if(${DX11} MATCHES ON)
-    set(RENDER_LIBRARIES ${RENDER_LIBRARIES}
+    set(RHI_LIBRARIES ${RHI_LIBRARIES}
         DirectXShaderCompiler
         "d3d11.lib"
     )
-    set(RENDERER_FILES ${RENDERER_FILES} ${DX11_FILES})
+    set(RHI_FILES ${RHI_FILES} ${DX11_FILES})
 endif()
 
 if(${DX12} MATCHES ON)
-    set(RENDER_LIBRARIES ${RENDER_LIBRARIES}
+    set(RHI_LIBRARIES ${RHI_LIBRARIES}
         D3D12MemoryAllocator
     )
 
-    set(RENDER_LIBRARIES ${RENDER_LIBRARIES}
+    set(RHI_LIBRARIES ${RHI_LIBRARIES}
         "d3d12.lib"
     )
 
-    set(RENDERER_FILES ${RENDERER_FILES} ${DX12_FILES})
+    set(RHI_FILES ${RHI_FILES} ${DX12_FILES})
 endif()
 
 if(${APPLE_PLATFORM} MATCHES ON)
@@ -94,8 +95,8 @@ if(${APPLE_PLATFORM} MATCHES ON)
     find_library(APPLE_QUARTZCORE QuartzCore)
     find_library(APPLE_IOKIT IOKit)
 
-    set(RENDER_LIBRARIES
-        ${RENDER_LIBRARIES}
+    set(RHI_LIBRARIES
+        ${RHI_LIBRARIES}
         ${APPLE_QUARTZCORE}
         ${APPLE_APPKIT}
         ${APPLE_IOKIT}
@@ -103,13 +104,13 @@ if(${APPLE_PLATFORM} MATCHES ON)
 endif()
 
 if(${WINDOWS} MATCHES ON)
-    set(RENDER_LIBRARIES ${RENDER_LIBRARIES}
+    set(RHI_LIBRARIES ${RHI_LIBRARIES}
         WinPixEventRuntime
         AGS
         Nvapi
     )
 
-    set(RENDER_LIBRARIES ${RENDER_LIBRARIES}
+    set(RHI_LIBRARIES ${RHI_LIBRARIES}
         "Xinput9_1_0.lib"
         "ws2_32.lib"
     )
