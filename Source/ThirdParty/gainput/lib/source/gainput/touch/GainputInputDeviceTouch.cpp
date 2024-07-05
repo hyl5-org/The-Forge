@@ -1,21 +1,19 @@
 
-#include "../../../include/gainput/gainput.h"
-#include "../../../include/gainput/GainputDebugRenderer.h"
+#include <gainput/gainput.h>
+#include <gainput/GainputDebugRenderer.h>
 
 #include "GainputInputDeviceTouchImpl.h"
 #include "GainputTouchInfo.h"
-#include "../../../include/gainput/GainputInputDeltaState.h"
-#include "../../../include/gainput/GainputHelpers.h"
-#include "../../../include/gainput/GainputLog.h"
+#include <gainput/GainputInputDeltaState.h>
+#include <gainput/GainputHelpers.h>
+#include <gainput/GainputLog.h>
 
 #include "GainputInputDeviceTouchNull.h"
 
 #if defined(GAINPUT_PLATFORM_ANDROID)
-	#include "../android/GainputInputDeviceTouchAndroid.h"
+	#include "GainputInputDeviceTouchAndroid.h"
 #elif defined(GAINPUT_PLATFORM_IOS) || defined(GAINPUT_PLATFORM_TVOS)
-	#include "../apple/GainputInputDeviceTouchIos.h"
-#elif defined(GAINPUT_PLATFORM_NX64)
-	#include "../../../../../../../../../Switch/Common_3/Application/Input/GainputInputDeviceTouchNX.h"
+	#include "GainputInputDeviceTouchIos.h"
 #endif
 
 namespace gainput
@@ -25,7 +23,6 @@ InputDeviceTouch::InputDeviceTouch(InputManager& manager, DeviceId device, unsig
 	InputDevice(manager, device, index == InputDevice::AutoIndex ? manager.GetDeviceCountByType(DT_TOUCH) : 0),
 	impl_(0)
 {
-	UNREF_PARAM(variant); 
 	state_ = manager.GetAllocator().New<InputState>(manager.GetAllocator(), TouchPointCount*TouchDataElems);
 	GAINPUT_ASSERT(state_);
 	previousState_ = manager.GetAllocator().New<InputState>(manager.GetAllocator(), TouchPointCount*TouchDataElems);
@@ -41,11 +38,6 @@ InputDeviceTouch::InputDeviceTouch(InputManager& manager, DeviceId device, unsig
 	{
 		impl_ = manager.GetAllocator().New<InputDeviceTouchImplIos>(manager, *this, *state_, *previousState_);
 	}
-#elif defined(GAINPUT_PLATFORM_NX64)
-	if (variant != DV_NULL)
-	{
-		impl_ = manager.GetAllocator().New<InputDeviceTouchImplNx>(manager, *this, *state_, *previousState_);
-	}
 #endif
 
 	if (!impl_)
@@ -60,17 +52,6 @@ InputDeviceTouch::~InputDeviceTouch()
 	manager_.GetAllocator().Delete(state_);
 	manager_.GetAllocator().Delete(previousState_);
 	manager_.GetAllocator().Delete(impl_);
-}
-
-void InputDeviceTouch::AddGestureMapping(const unsigned gestureID, const gainput::GestureConfig &config)
-{
-    UNREF_PARAM(gestureID); 
-UNREF_PARAM(config); 
-#if !defined(ANDROID) || defined(QUEST_VR)
-	return;
-#else
-	((InputDeviceTouchImplAndroid*)impl_)->AddGestureMapping(gestureID, config);
-#endif
 }
 
 bool
@@ -139,15 +120,9 @@ InputDeviceTouch::GetButtonName(DeviceButtonId deviceButton, char* buffer, size_
 {
 	GAINPUT_ASSERT(IsValidButtonId(deviceButton));
 	GAINPUT_ASSERT(buffer);
-    if (bufferLength > 0)
-    {
-        strncpy(buffer, deviceButtonInfos[deviceButton].name, bufferLength-1);
-        buffer[bufferLength-1] = 0;
-    }
-    else
-    {
-        GAINPUT_ASSERT(!"bufferLength <= 0");
-    }
+	GAINPUT_ASSERT(bufferLength > 0);
+	strncpy(buffer, deviceButtonInfos[deviceButton].name, bufferLength);
+	buffer[bufferLength-1] = 0;
 	const size_t nameLen = strlen(deviceButtonInfos[deviceButton].name);
 	return nameLen >= bufferLength ? bufferLength : nameLen+1;
 }
@@ -157,10 +132,6 @@ InputDeviceTouch::GetButtonType(DeviceButtonId deviceButton) const
 {
 	GAINPUT_ASSERT(IsValidButtonId(deviceButton));
 	return deviceButtonInfos[deviceButton].type;
-}
-
-void InputDeviceTouch::GetVirtualKeyboardInput(char* buffer, uint32_t inBufferLength) const {
-	impl_->GetVirtualKeyboardInput(buffer, inBufferLength);
 }
 
 DeviceButtonId

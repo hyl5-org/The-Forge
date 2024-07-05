@@ -21,9 +21,9 @@
 // 	THE SOFTWARE.
 
 #pragma once
-#include "MTConfig.h"
-#include "MTTypes.h"
-#include "MTDebug.h"
+#include <MTConfig.h>
+#include <MTTypes.h>
+#include <MTDebug.h>
 
 typedef void (*TThreadEntryPoint)(void* userData);
 
@@ -43,22 +43,16 @@ namespace MT
 
 
 
-#if MT_PLATFORM_WINDOWS
-#include "Platform/Windows/MTCommon.h"
-#elif MT_PLATFORM_DURANGO
-#include "../../../../../../../Xbox/Common_3/Utilities/ThirdParty/OpenSource/TaskScheduler/Scheduler/Include/Platform/Windows/MTCommon.h"
-#elif MT_PLATFORM_ORBIS
-#include "../../../../../../../PS4/Common_3/Utilities/ThirdParty/OpenSource/TaskScheduler/Scheduler/Include/Platform/Orbis/MTCommon.h"
-#elif MT_PLATFORM_NX64
-#include "../../../../../../../Switch/Common_3/Utilities/ThirdParty/OpenSource/TaskScheduler/Scheduler/Include/Platform/NX64/MTCommon.h"
+#if MT_PLATFORM_WINDOWS 
+	#include <Platform/Windows/MTCommon.h>
 #elif MT_PLATFORM_POSIX || MT_PLATFORM_OSX
-	#include "Platform/Posix/MTCommon.h"
+	#include <Platform/Posix/MTCommon.h>
 #else
 	#error Platfrom is not supported
 #endif
 
-#include "Platform/Common/MTAtomic.h"
-#include "Platform/Common/MTSpinWait.h"
+#include <Platform/Common/MTAtomic.h>
+#include <Platform/Common/MTSpinWait.h>
 
 namespace MT
 {

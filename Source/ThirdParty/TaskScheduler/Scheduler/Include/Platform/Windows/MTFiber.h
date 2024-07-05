@@ -25,7 +25,7 @@
 #ifndef __MT_FIBER__
 #define __MT_FIBER__
 
-#include "MTConfig.h"
+#include <MTConfig.h>
 
 
 #if MT_PTR64
@@ -41,12 +41,7 @@
 #endif
 
 
-#if MT_PLATFORM_DURANGO
-	// Durango fibers don't waste virtual address space for stack as windows fibers
-	#include "MTFiberDefault.h"
-#else
 	#include "MTFiberOptimized.h"
-#endif
 
 
 #endif

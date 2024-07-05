@@ -2,22 +2,10 @@
 #ifndef GAINPUTINPUTMANAGER_H_
 #define GAINPUTINPUTMANAGER_H_
 
-#if defined(GAINPUT_PLATFORM_ANDROID)
-struct ANativeActivity;
-#endif
-
-#define DEV_MOUSE____ 0U
-#define DEV_RAW_MOUSE 1U
-#define DEV_KEYBOARD_ 2U
-#define DEV_TOUCH____ 3U
-#define DEV_PAD_START 4U
-#define DEV_PAD_END__ (DEV_PAD_START + MAX_INPUT_GAMEPADS)
 
 namespace gainput
 {
-
-	typedef void(*DeviceListener)(void * metadata, DeviceId deviceId, InputDevice* device, bool doAdd);
-
+    
 /// Manages all input devices and some other helpful stuff.
 /**
  * This manager takes care of all device-related things. Normally, you should only need one that contains
@@ -39,28 +27,23 @@ public:
 	/// Initializes the manager.
 	/**
 	 * Further initialization is typically necessary.
+	 * \param useSystemTime Specifies if the GetTime() function uses system time or the time
+	 * supplied to Update(uint64_t).
 	 * \param allocator The memory allocator to be used for all allocations.
 	 * \see SetDisplaySize
 	 * \see GetTime
 	 */
-	InputManager(Allocator& allocator = GetDefaultAllocator());
+	InputManager(bool useSystemTime = true, Allocator& allocator = GetDefaultAllocator());
 
-	/**
-	 * Initialize the input manager.
-	 */
-	void Init(void* windowInstance);
-
-	/**
-	 * Shutdown the input manager and free any memory it allocated.
-	 */
-	void Exit();
+	/// Destructs the manager.
+	~InputManager();
 
 	/// Sets the window resolution.
 	/**
 	 * Informs the InputManager and its devices of the size of the window that is used for
 	 * receiving inputs. For example, the size is used to to normalize mouse inputs.
 	 */
-	void SetDisplaySize(int width, int height) { mDisplayWidth = width; mDisplayHeight = height; }
+	void SetDisplaySize(int width, int height) { displayWidth_ = width; displayHeight_ = height; }
 
 #if defined(GAINPUT_PLATFORM_LINUX)
 	/// [LINUX ONLY] Lets the InputManager handle the given X event.
@@ -78,9 +61,9 @@ public:
 	 */
 	void HandleMessage(const MSG& msg);
 #endif
-#if defined(GAINPUT_PLATFORM_ANDROID)	
+#if defined(GAINPUT_PLATFORM_ANDROID)
 	/// [ANDROID ONLY] Lets the InputManager handle the given input event.
-	int32_t HandleInput(AInputEvent* event, ANativeActivity* activity);
+	int32_t HandleInput(AInputEvent* event);
 
 	struct DeviceInput
 	{
@@ -94,29 +77,33 @@ public:
 			bool b;
 		} value;
 	};
-	void HandleDeviceInput(DeviceInput const& input);
+    void HandleDeviceInput(DeviceInput const& input);
 #endif
 
 	/// Updates the input state, call this every frame.
-	void Update(float deltaTime);
-
 	/**
-	 * This is used to to clear all input states from all registered devices
+	 * If the InputManager was initialized with `useSystemTime` set to `false`, you have to
+	 * call Update(uint64_t) instead.
+	 * \see GetTime
 	 */
-	void ClearAllStates(gainput::DeviceId deviceId = gainput::InvalidDeviceId);
+	void Update();
+
+	/// Updates the input state and the manager's time, call this every frame.
+	/**
+	 * Updates the time returned by GetTime() and then calls the regular Update(). This function
+	 * should only be called if the InputManager was initialized with `useSystemTime`
+	 * set to `false`.
+	 * \param deltaTime The provided must be in milliseconds.
+	 * \see Update
+	 * \see GetTime
+	 */
+	void Update(uint64_t deltaTime);
 
 	/// Returns the allocator to be used for memory allocations.
-	Allocator& GetAllocator() const { return mAllocator; }
+	Allocator& GetAllocator() const { return allocator_; }
 
 	/// Returns a monotonic time in milliseconds.
 	uint64_t GetTime() const;
-
-	void SetDeviceListener(void* metadata, DeviceListener listener);
-	void NotifyDeviceListener(DeviceId deviceId, InputDevice* device, bool doAdd);
-
-	void CreateControllers(int cnt);
-
-	DeviceId GetNextId() { return mNextDeviceID++; }
 
 	/// Creates an input device and registers it with the manager.
 	/**
@@ -127,7 +114,6 @@ public:
 	 * \return The ID of the newly created input device.
 	 */
 	template<class T> DeviceId CreateDevice(unsigned index = InputDevice::AutoIndex, InputDevice::DeviceVariant variant = InputDevice::DV_STANDARD);
-	
 	/// Creates an input device, registers it with the manager and returns it.
 	/**
 	 * \tparam T The input device class, muste be derived from InputDevice.
@@ -137,14 +123,6 @@ public:
 	 * \return The newly created input device.
 	 */
 	template<class T> T* CreateAndGetDevice(unsigned index = InputDevice::AutoIndex, InputDevice::DeviceVariant variant = InputDevice::DV_STANDARD);
-
-	/// Remove the device from InputManager management
-	/// DOES NOT DESTROY DEVICE!
-	void RemoveDevice(DeviceId deviceId);
-
-	/// Add the device back with the given ID
-	void AddDevice(DeviceId deviceId, InputDevice* device);
-
 	/// Returns the input device with the given ID.
 	/**
 	 * \return The input device or 0 if it doesn't exist.
@@ -177,13 +155,13 @@ public:
 	typedef DeviceMap::const_iterator const_iterator;
 
 	/// Returns the begin iterator over all registered devices.
-	iterator begin() { return mDevices.begin(); }
+	iterator begin() { return devices_.begin(); }
 	/// Returns the end iterator over all registered devices.
-	iterator end() { return mDevices.end(); }
+	iterator end() { return devices_.end(); }
 	/// Returns the begin iterator over all registered devices.
-	const_iterator begin() const { return mDevices.begin(); }
+	const_iterator begin() const { return devices_.begin(); }
 	/// Returns the end iterator over all registered devices.
-	const_iterator end() const { return mDevices.end(); }
+	const_iterator end() const { return devices_.end(); }
 
 	/// Registers a listener to be notified when a button state changes.
 	/**
@@ -211,17 +189,17 @@ public:
 	/// Returns the number of devices with the given type.
 	unsigned GetDeviceCountByType(InputDevice::DeviceType type) const;
 	/// Returns the graphical display's width in pixels.
-	int GetDisplayWidth() const { return mDisplayWidth; }
+	int GetDisplayWidth() const { return displayWidth_; }
 	/// Returns the graphical display's height in pixels.
-	int GetDisplayHeight() const { return mDisplayHeight; }
+	int GetDisplayHeight() const { return displayHeight_; }
 
 	/// Registers a modifier that will be called after devices have been updated.
 	ModifierId AddDeviceStateModifier(DeviceStateModifier* modifier);
 	/// De-registers the given modifier.
 	void RemoveDeviceStateModifier(ModifierId modifierId);
 
-	void EnqueueConcurrentChange(InputDevice& device, InputState& state, InputDeltaState* delta, DeviceButtonId buttonId, bool value);
-	void EnqueueConcurrentChange(InputDevice& device, InputState& state, InputDeltaState* delta, DeviceButtonId buttonId, float value);
+    void EnqueueConcurrentChange(InputDevice& device, InputState& state, InputDeltaState* delta, DeviceButtonId buttonId, bool value);
+    void EnqueueConcurrentChange(InputDevice& device, InputState& state, InputDeltaState* delta, DeviceButtonId buttonId, float value);
 
 	/// [IN dev BUILDS ONLY] Connect to a remote host to send device state changes to.
 	void ConnectForStateSync(const char* ip, unsigned port);
@@ -231,73 +209,57 @@ public:
 	/// Enable/disable debug rendering of input devices.
 	void SetDebugRenderingEnabled(bool enabled);
 	/// Returns true if debug rendering is enabled, false otherwise.
-	bool IsDebugRenderingEnabled() const { return mDebugRendererEnabled; }
+	bool IsDebugRenderingEnabled() const { return debugRenderingEnabled_; }
 	/// Sets the debug renderer to be used if debug rendering is enabled.
 	void SetDebugRenderer(DebugRenderer* debugRenderer);
 	/// Returns the previously set debug renderer.
-	DebugRenderer* GetDebugRenderer() const { return pDebugRenderer; }
+	DebugRenderer* GetDebugRenderer() const { return debugRenderer_; }
 
-	//getter/setter for window Instance window instance 
-	void SetWindowsInstance(void* instance) { pWindowInstance = instance; }
-	void* GetWindowsInstance() { return pWindowInstance; }
-    
-    // Check whether HID is enabled.
-	bool IsHIDEnabled() { return mHIDDiscoveryEnabled; }
 private:
-	Allocator& mAllocator;
+	Allocator& allocator_;
 
-	DeviceMap mDevices;
-	unsigned mNextDeviceID;
+	DeviceMap devices_;
+	unsigned nextDeviceId_;
 
-	void* mDevListenerMetadata;
-	DeviceListener mDevListener;
-	int mPadCnt;
-	Array<InputDevicePad*> mPads;
-	Array<DeviceId> mToRemove;
+	HashMap<ListenerId, InputListener*> listeners_;
+	unsigned nextListenerId_;
+	Array<InputListener*> sortedListeners_;
 
-	HashMap<ListenerId, InputListener*> mListeners;
-	unsigned mNextListenerID;
-	Array<InputListener*> mSortedListeners;
+	HashMap<ModifierId, DeviceStateModifier*> modifiers_;
+	unsigned nextModifierId_;
 
-	HashMap<ModifierId, DeviceStateModifier*> mModifiers;
-	unsigned mNextModifierID;
+	InputDeltaState* deltaState_;
 
-	InputDeltaState* pDeltaState;
-
-	float mDeltaTimeRemainderMs;
-	uint64_t mCurrentTime;
-	struct Change
-	{
-		InputDevice* device;
-		InputState* state;
-		InputDeltaState* delta;
-		DeviceButtonId buttonId;
+	uint64_t currentTime_;
+    struct Change
+    {
+        InputDevice* device;
+        InputState* state;
+        InputDeltaState* delta;
+        DeviceButtonId buttonId;
 		ButtonType type;
 		union
 		{
 			bool b;
 			float f;
 		};
-	};
+    };
+    
+    GAINPUT_CONC_QUEUE(Change) concurrentInputs_;
 
-	GAINPUT_CONC_QUEUE(Change) mConcurrentInputs;
+	int displayWidth_;
+	int displayHeight_;
+	bool useSystemTime_;
 
-	int mDisplayWidth;
-	int mDisplayHeight;
-
-	bool mDebugRendererEnabled;
-	DebugRenderer* pDebugRenderer;
-	void* pWindowInstance;
-	bool mInitialized;
-
-	void ApplyPendingDeletes();
+	bool debugRenderingEnabled_;
+	DebugRenderer* debugRenderer_;
+    
+	void DeviceCreated(InputDevice* device);
 
 	// Do not copy.
 	InputManager(const InputManager &);
 	InputManager& operator=(const InputManager &);
-    
-	bool mHIDDiscoveryEnabled = true;
-public:
+
 };
 
 
@@ -306,11 +268,10 @@ inline
 DeviceId
 InputManager::CreateDevice(unsigned index, InputDevice::DeviceVariant variant)
 {
-	unsigned id = GetNextId();
-	T* device = mAllocator.New<T>(*this, id, index, variant);
-	mDevices[id] = device;
-	NotifyDeviceListener(id, device, true);
-	return id;
+	T* device = allocator_.New<T>(*this, nextDeviceId_, index, variant);
+	devices_[nextDeviceId_] = device;
+	DeviceCreated(device);
+	return nextDeviceId_++;
 }
 
 template<class T>
@@ -318,44 +279,19 @@ inline
 T*
 InputManager::CreateAndGetDevice(unsigned index, InputDevice::DeviceVariant variant)
 {
-	unsigned id = GetNextId();
-	T* device = mAllocator.New<T>(*this, id, index, variant);
-	mDevices[id] = device;
-	NotifyDeviceListener(id, device, true);
+	T* device = allocator_.New<T>(*this, nextDeviceId_, index, variant);
+	devices_[nextDeviceId_] = device;
+	++nextDeviceId_;
+	DeviceCreated(device);
 	return device;
-}
-
-inline
-void
-InputManager::RemoveDevice(DeviceId deviceId)
-{
-	if (deviceId == InvalidDeviceId ||
-		mDevices.find(deviceId) == mDevices.end())
-		return;
-
-	NotifyDeviceListener(deviceId, mDevices[deviceId], false);
-	// delay the removal so that update loops don't break
-	mToRemove.push_back(deviceId);
-}
-
-inline
-void
-InputManager::AddDevice(DeviceId deviceId, InputDevice* device)
-{
-	if (deviceId == InvalidDeviceId ||
-		device == NULL)
-		return;
-
-	NotifyDeviceListener(deviceId, device, true);
-	mDevices[deviceId] = device;
 }
 
 inline
 InputDevice*
 InputManager::GetDevice(DeviceId deviceId)
 {
-	DeviceMap::iterator it = mDevices.find(deviceId);
-	if (it == mDevices.end())
+	DeviceMap::iterator it = devices_.find(deviceId);
+	if (it == devices_.end())
 	{
 		return 0;
 	}
@@ -366,8 +302,8 @@ inline
 const InputDevice*
 InputManager::GetDevice(DeviceId deviceId) const
 {
-	DeviceMap::const_iterator it = mDevices.find(deviceId);
-	if (it == mDevices.end())
+	DeviceMap::const_iterator it = devices_.find(deviceId);
+	if (it == devices_.end())
 	{
 		return 0;
 	}

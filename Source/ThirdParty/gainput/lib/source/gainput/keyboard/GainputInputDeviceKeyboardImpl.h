@@ -16,8 +16,7 @@ public:
 
 	virtual bool IsTextInputEnabled() const = 0;
 	virtual void SetTextInputEnabled(bool enabled) = 0;
-	virtual wchar_t* GetTextInput(uint32_t* count) = 0;
-	virtual void ClearButtons() { return; }
+	virtual char GetNextCharacter() = 0;
 };
 
 }

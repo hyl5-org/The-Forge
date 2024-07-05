@@ -25,25 +25,13 @@
 
 // Target Platform
 ////////////////////////////////////////////////////////////////////////
-#if defined(_DURANGO) || defined(_GAMING_XBOX)
-
-#define MT_PLATFORM_DURANGO (1)
-
-#elif defined(__ORBIS__)
-
-#define MT_PLATFORM_ORBIS (1)
-
-#elif defined(_WIN32)
+#if   _WIN32
 
 #define MT_PLATFORM_WINDOWS (1)
 
-#elif defined(__APPLE__)
+#elif __APPLE_CC__
 
 #define MT_PLATFORM_OSX (1)
-
-#elif defined(NX64)
-
-#define MT_PLATFORM_NX64 (1)
 
 #else
 
@@ -54,7 +42,7 @@
 
 // Compiler support for SSE intrinsics
 ////////////////////////////////////////////////////////////////////////
-#if (defined(__SSE__) || defined(_M_IX86) || defined(_M_X64)) && !defined(__aarch64__)
+#if (defined(__SSE__) || defined(_M_IX86) || defined(_M_X64))
 
 #define MT_SSE_INTRINSICS_SUPPORTED (1)
 

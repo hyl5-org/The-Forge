@@ -1,10 +1,10 @@
 
-#include "../../../include/gainput/gainput.h"
-#include "../../../include/gainput/gestures/GainputRotateGesture.h"
+#include <gainput/gainput.h>
+#include <gainput/gestures/GainputRotateGesture.h>
 
 #ifdef GAINPUT_ENABLE_ROTATE_GESTURE
-#include "../../../include/gainput/GainputInputDeltaState.h"
-#include "../../../include/gainput/GainputHelpers.h"
+#include <gainput/GainputInputDeltaState.h>
+#include <gainput/GainputHelpers.h>
 
 #define _USE_MATH_DEFINES
 #include <math.h>

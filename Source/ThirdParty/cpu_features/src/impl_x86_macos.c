@@ -14,14 +14,15 @@
 
 #include "cpu_features_macros.h"
 
-#ifdef ARCH_X86_FAMILY
+#ifdef CPU_FEATURES_ARCH_X86
 #ifdef CPU_FEATURES_OS_MACOS
 
 #include "impl_x86__base_implementation.inl"
 
-#if defined(__APPLE__) && defined(ARCH_X86_FAMILY)
-#include <sys/sysctl.h>
+#if !defined(HAVE_SYSCTLBYNAME)
+#error "Darwin needs support for sysctlbyname"
 #endif
+#include <sys/sysctl.h>
 
 #if defined(CPU_FEATURES_MOCK_CPUID_X86)
 extern bool GetDarwinSysCtlByName(const char*);
@@ -41,16 +42,16 @@ static void OverrideOsPreserves(OsPreserves* os_preserves) {
   os_preserves->avx512_registers = GetDarwinSysCtlByName("hw.optional.avx512f");
 }
 
-//since we remove the fall back of reading files on other platforms, This is now unusable
-//static void DetectFeaturesFromOs(X86Features* features) {
-//  // Handling Darwin platform through sysctlbyname.
-//  features->sse = GetDarwinSysCtlByName("hw.optional.sse");
-//  features->sse2 = GetDarwinSysCtlByName("hw.optional.sse2");
-//  features->sse3 = GetDarwinSysCtlByName("hw.optional.sse3");
-//  features->ssse3 = GetDarwinSysCtlByName("hw.optional.supplementalsse3");
-//  features->sse4_1 = GetDarwinSysCtlByName("hw.optional.sse4_1");
-//  features->sse4_2 = GetDarwinSysCtlByName("hw.optional.sse4_2");
-//}
+static void DetectFeaturesFromOs(X86Info* info, X86Features* features) {
+  (void)info;
+  // Handling Darwin platform through sysctlbyname.
+  features->sse = GetDarwinSysCtlByName("hw.optional.sse");
+  features->sse2 = GetDarwinSysCtlByName("hw.optional.sse2");
+  features->sse3 = GetDarwinSysCtlByName("hw.optional.sse3");
+  features->ssse3 = GetDarwinSysCtlByName("hw.optional.supplementalsse3");
+  features->sse4_1 = GetDarwinSysCtlByName("hw.optional.sse4_1");
+  features->sse4_2 = GetDarwinSysCtlByName("hw.optional.sse4_2");
+}
 
 #endif  // CPU_FEATURES_OS_MACOS
-#endif  // ARCH_X86_FAMILY
+#endif  // CPU_FEATURES_ARCH_X86

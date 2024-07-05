@@ -1,77 +1,71 @@
-![flecs](https://user-images.githubusercontent.com/9919222/104115165-0a4e4700-52c1-11eb-85d6-9bdfa9a0265f.png)
+![flecs](docs/img/logo.png)
 
-[![CI build](https://github.com/SanderMertens/flecs/workflows/CI/badge.svg)](https://github.com/SanderMertens/flecs/actions)
-[![codecov](https://codecov.io/gh/SanderMertens/flecs/branch/master/graph/badge.svg)](https://codecov.io/gh/SanderMertens/flecs)
-[![Discord Chat](https://img.shields.io/discord/633826290415435777.svg)](https://discord.gg/BEzP5Rgrrp)
-[![Try online](https://img.shields.io/badge/try-online-brightgreen)](https://godbolt.org/z/bs11T3)
-[![Documentation](https://img.shields.io/badge/docs-docsforge-blue)](http://flecs.docsforge.com/)
+[![Version](https://img.shields.io/github/v/release/sandermertens/flecs?include_prereleases&style=for-the-badge)](https://github.com/SanderMertens/flecs/releases)
+[![MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](https://github.com/SanderMertens/flecs/blob/master/LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-flecs-blue?style=for-the-badge&color=blue)](https://www.flecs.dev/flecs/md_docs_2Docs.html)
+[![actions](https://img.shields.io/github/actions/workflow/status/SanderMertens/flecs/ci.yml?branch=master&style=for-the-badge)](https://github.com/SanderMertens/flecs/actions?query=workflow%3ACI)
+[![Discord Chat](https://img.shields.io/discord/633826290415435777.svg?style=for-the-badge&color=%235a64f6)](https://discord.gg/BEzP5Rgrrp)
 
-Flecs is a fast and lightweight Entity Component System with a focus on high performance game development and usability ([join the Discord!](https://discord.gg/MRSAZqb)). The highlights of the framework are:
+Flecs is a fast and lightweight Entity Component System that lets you build games and simulations with millions of entities ([join the Discord!](https://discord.gg/BEzP5Rgrrp)). Here are some of the framework's highlights:
 
-- Zero dependency C99 core, modern type safe C++11 API, no dependencies on STL types
-- Batched iteration with direct access to component arrays
-- SoA/Archetype storage for efficient CPU caching & vectorization
-- Automatic component registration across binaries
-- Runtime tags
-- Hierarchies
-- Prefabs
-- Relationships graphs & graph queries
-- Thread safe, lockless API
-- Systems that are ran manually, every frame or at a time/rate interval
-- Queries that can be iterated from free functions
-- Modules for organizing components & systems
-- Builtin statistics & introspection
-- Modular core with compile-time disabling of optional features
-- A dashboard module for visualizing statistics:
+- Fast and [portable](#language-bindings) zero dependency [C99 API](https://www.flecs.dev/flecs/group__c.html)
+- Modern type-safe [C++11 API](https://www.flecs.dev/flecs/group__cpp.html) that doesn't use STL containers
+- First open source ECS with full support for [Entity Relationships](https://www.flecs.dev/flecs/md_docs_2Relationships.html)!
+- Fast native support for [hierarchies](https://www.flecs.dev/flecs/md_docs_2Relationships.html#the-childof-relationship) and [prefabs](https://www.flecs.dev/flecs/md_docs_2Relationships.html#the-isa-relationship)
+- Code base that builds in less than 5 seconds
+- Runs [in the browser](https://flecs.dev/city) without modifications with emscripten
+- Cache friendly [archetype/SoA storage](https://ajmmertens.medium.com/building-an-ecs-2-archetypes-and-vectorization-fe21690805f9) that can process millions of entities every frame
+- Supports entities with hundreds of components and applications with tens of thousands of archetypes
+- Automatic component registration that works out of the box across shared libraries/DLLs
+- Write free functions with [queries](https://github.com/SanderMertens/flecs/tree/master/examples/cpp/queries/basics) or run code automatically in [systems](https://github.com/SanderMertens/flecs/tree/master/examples/cpp/systems/pipeline)
+- Run games on multiple CPU cores with a fast lockless scheduler
+- Verified on all major compilers and platforms with [CI](https://github.com/SanderMertens/flecs/actions) running more than 6000 tests
+- Integrated [reflection framework](https://www.flecs.dev/flecs/group__c__addons__meta.html) with [JSON serializer](https://github.com/SanderMertens/flecs/tree/master/examples/cpp/reflection/basics_json) and support for [runtime components](https://github.com/SanderMertens/flecs/tree/master/examples/cpp/reflection/runtime_component)
+- [Unit annotations](https://github.com/SanderMertens/flecs/tree/master/examples/cpp/reflection/units) for components
+- Powerful [query language](https://github.com/SanderMertens/flecs/tree/master/examples/cpp/rules) with support for [joins](https://github.com/SanderMertens/flecs/tree/master/examples/cpp/rules/setting_variables) and [inheritance](https://github.com/SanderMertens/flecs/tree/master/examples/cpp/rules/component_inheritance)
+- [Statistics addon](https://www.flecs.dev/flecs/group__c__addons__stats.html) for profiling ECS performance
+- A web-based UI for monitoring & controlling your apps ([demo](https://flecs.dev/explorer), [code](https://github.com/flecs-hub/explorer)):
 
-<img width="942" alt="Screen Shot 2020-12-02 at 1 28 04 AM" src="https://user-images.githubusercontent.com/9919222/100856510-5eebe000-3440-11eb-908e-f4844c335f37.png">
+[![Flecs Explorer](docs/img/explorer.png)](https://flecs.dev/explorer)
+
+To support the project, give it a star 🌟 !
 
 ## What is an Entity Component System?
-ECS (Entity Component System) is a design pattern used in games and simulations that produces fast and reusable code. Dynamic composition is a first-class citizen in ECS, and there is a strict separation between data and behavior. A framework is an Entity Component System if it:
+ECS is a way of organizing code and data that lets you build games that are larger, more complex and are easier to extend. Something is called an ECS when it:
+- Has _entities_ that uniquely identify objects in a game
+- Has _components_ which are datatypes that can be added to entities
+- Has _systems_ which are functions that run for all entities matching a component _query_
 
-- Has _entities_ that are unique identifiers
-- Has _components_ that are plain data types
-- Has _systems_ which are behavior matched with entities based on their components
+For more information, check the [ECS FAQ](https://github.com/SanderMertens/ecs-faq)!
+
+## Try it out!
+The [Flecs playground](https://www.flecs.dev/explorer/?local=true&wasm=https://www.flecs.dev/explorer/playground.js) lets you try Flecs without writing any C/C++ code!
+
+[![Flecs playground](docs/img/playground.png)](https://www.flecs.dev/explorer/?local=true&wasm=https://www.flecs.dev/explorer/playground.js)
+
+To learn how to use the playground, check the [Flecs Script Tutorial](https://www.flecs.dev/flecs/md_docs_2FlecsScriptTutorial.html).
 
 ## Documentation
-If you are still learning Flecs, these resources are a good start:
-- [Flecs not for dummies (presentation)](https://github.com/SanderMertens/flecs_not_for_dummies)
-- [Quickstart](docs/Quickstart.md) ([docsforge](https://flecs.docsforge.com/master/quickstart/))
-- [Designing with Flecs](docs/DesignWithFlecs.md) ([docsforge](https://flecs.docsforge.com/master/designing-with-flecs/))
+- [Quickstart](https://www.flecs.dev/flecs/md_docs_2Quickstart.html)
+- [FAQ](https://www.flecs.dev/flecs/md_docs_2FAQ.html)
+- [Examples](https://github.com/SanderMertens/flecs/tree/master/examples)
+- [All Documentation](https://www.flecs.dev/flecs/md_docs_2Docs.html)
 
-The FAQ is where some of the most asked questions are listed:
-- [FAQ](docs/FAQ.md) ([docsforge](https://flecs.docsforge.com/master/faq/))
+## Performance
+For a list of regularly tracked benchmarks, see the [ECS Benchmark](https://github.com/SanderMertens/ecs_benchmark) project.
 
-The manual and examples come in handy if you're looking for information on specific features:
-- [Manual](docs/Manual.md) ([docsforge](https://flecs.docsforge.com/master/manual/))
-- [C examples](examples/c)
-- [C++ examples](examples/cpp)
-
-If you are migrating from Flecs v1 to v2, check the migration guide:
-- [Migration guide](docs/MigrationGuide.md) ([docsforge](https://flecs.docsforge.com/master/migrationguide/))
-
-Here is some awesome content provided by the community (thanks everyone! :heart:):
-- [Bringing Flecs to UE4](https://bebylon.dev/blog/ecs-flecs-ue4/)
-- [Flecs + UE4 is magic](https://jtferson.github.io/blog/flecs_and_unreal/)
-- [Quickstart with Flecs in UE4](https://jtferson.github.io/blog/quickstart_with_flecs_in_unreal_part_1/) 
-- [Automatic component registration in UE4](https://jtferson.github.io/blog/automatic_flecs_component_registration_in_unreal/)
-- [Building a space battle with Flecs in UE4](https://twitter.com/ajmmertens/status/1361070033334456320) 
-- [Flecs + SDL + Web ASM example](https://github.com/HeatXD/flecs_web_demo) ([live demo](https://heatxd.github.io/flecs_web_demo/))
-- [Flecs + gunslinger example](https://github.com/MrFrenik/gs_examples/blob/main/18_flecs/source/main.c)
-
-## Examples
-This is a simple flecs example in the C99 API:
-
+## Show me the code!
+C99 example:
 ```c
 typedef struct {
   float x, y;
 } Position, Velocity;
 
 void Move(ecs_iter_t *it) {
-  Position *p = ecs_term(it, Position, 1);
-  Velocity *v = ecs_term(it, Velocity, 2);
-  
-  for (int i = 0; i < it->count; i ++) {
+  Position *p = ecs_field(it, Position, 1);
+  Velocity *v = ecs_field(it, Velocity, 2);
+
+  for (int i = 0; i < it->count; i++) {
     p[i].x += v[i].x;
     p[i].y += v[i].y;
   }
@@ -89,21 +83,13 @@ int main(int argc, char *argv[]) {
   ecs_set(ecs, e, Position, {10, 20});
   ecs_set(ecs, e, Velocity, {1, 2});
 
-  ecs_iter_t it = ecs_term_iter(world, &(ecs_term_t) { ecs_id(Position) });
-  while (ecs_term_next(&it)) {
-    Position *p = ecs_term(&it, Position, 1);
-    for (int i = 0; i < it.count; i ++) {
-      printf("{%f, %f}\n", p[i].x, p[i].y);
-    }
-  }
-
   while (ecs_progress(ecs, 0)) { }
 }
 ```
 
-This is the same example in the C++11 API:
+Same example in C++11:
 
-```c++
+```cpp
 struct Position {
   float x, y;
 };
@@ -127,117 +113,99 @@ int main(int argc, char *argv[]) {
       v = {1, 2};
     });
 
-  ecs.each([](flecs::entity e, Position& p) {
-    std::cout << "{" << p.x << ", " << p.y << "}" << std::endl;
-  });
-    
   while (ecs.progress()) { }
 }
 ```
 
-The first C example used macro's to emulate a type-safe layer on top of the
-underlying generic API. This example shows the C API without macro's:
+## Projects using Flecs
+If you have a project you'd like to share, let me know on [Discord](https://discord.gg/BEzP5Rgrrp)!
 
-```c
-// Register the Position component
-ecs_entity_t pos = ecs_component_init(ecs, &(ecs_component_desc_t){
-  .entity.name = "Position",
-  .size = sizeof(Position), .alignment = ECS_ALIGNOF(Position)
-});
+### [Hytale](https://hytale.com/)
+[![Hytale](docs/img/projects/hytale.png)](https://hytale.com/)
 
-// Register the Velocity component
-ecs_entity_t vel = ecs_component_init(ecs, &(ecs_component_desc_t){
-  .entity.name = "Velocity",
-  .size = sizeof(Velocity), .alignment = ECS_ALIGNOF(Velocity)
-});
+> We knew that we wanted to build Hytale around an Entity-Component-System (ECS). When we analyzed the options, FLECS rose to the top. FLECS provides the backbone of the Hytale Game Engine. Its flexibility has allowed us to build highly varied gameplay while supporting our vision for empowering Creators.
 
-// Create the Move system
-ecs_system_init(ecs, &(ecs_system_desc_t){
-  .entity = { .name = "Move", .add = {EcsOnUpdate} },
-  .query.filter.terms = {{pos}, {vel, .inout = EcsIn}},
-  .callback = Move,
-});
+-- Dann Webster, Hypixel studios
 
-// Create entity
-ecs_entity_t e = ecs_new_id(ecs);
+### [Tempest Rising](https://store.steampowered.com/app/1486920/Tempest_Rising/)
+[![Tempest Rising](docs/img/projects/tempest_rising.png)](https://store.steampowered.com/app/1486920/Tempest_Rising/)
 
-// Set components
-ecs_set_id(ecs, e, pos, sizeof(Position), &(Position){10, 20});
-ecs_set_id(ecs, e, vel, sizeof(Velocity), &(Velocity){1, 2});
-```
+### [Territory Control](https://store.steampowered.com/app/690290/Territory_Control_2/)
+[![image](docs/img/projects/territory_control.jpeg)](https://store.steampowered.com/app/690290/Territory_Control_2/)
 
-## Building
-The easiest way to add Flecs to a project is to add [flecs.c](https://raw.githubusercontent.com/SanderMertens/flecs/master/flecs.c) and [flecs.h](https://raw.githubusercontent.com/SanderMertens/flecs/master/flecs.h) to your source code. These files can be added to both C and C++ projects (the C++ API is embedded in flecs.h). Alternatively you can also build Flecs as a library by using the cmake, meson, bazel or bake buildfiles.
+### [The Forge](https://github.com/ConfettiFX/The-Forge)
+[![image](docs/img/projects/the_forge.jpg)](https://github.com/ConfettiFX/The-Forge)
 
-### Custom builds
-The Flecs source has a modular design which makes it easy to strip out code you don't need. At its core, Flecs is a minimalistic ECS library with a lot of optional features that you can choose to include or not. [This section of the manual](https://github.com/SanderMertens/flecs/blob/master/docs/Manual.md#custom-builds) describes how to customize which features to include. 
+### [Extermination Shock](https://store.steampowered.com/app/2510820/Extermination_Shock/)
+[![image](docs/img/projects/extermination_shock.jpeg)](https://store.steampowered.com/app/2510820/Extermination_Shock/)
 
-## Software Quality
-To ensure stability of Flecs, the code is thoroughly tested on every commit:
+### [Sol Survivor](https://nicok.itch.io/sol-survivor-demo)
+[![image](docs/img/projects/sol_survivor.png)](https://nicok.itch.io/sol-survivor-demo)
 
-- More than 2400 testcases and 60.000 lines of test code
-- Over 90% code coverage
-- All tests run without memory leaks & memory corruption
-- All examples are compiled warning free
+### [Equilibrium Engine](https://github.com/clibequilibrium/EquilibriumEngine)
+[![image](docs/img/projects/equilibrium_engine.png)](https://github.com/clibequilibrium/EquilibriumEngine)
 
-The code is validated on the following platforms/compilers:
+### [Gravitas](https://thepunkcollective.itch.io/gravitas)
+[![image](docs/img/projects/gravitas.png)](https://thepunkcollective.itch.io/gravitas)
 
-- **Windows**
-  - msvc
-- **Ubuntu**
-  - gcc 7, 8, 9, 10
-  - clang 8, 9
-- **MacOS**
-  - gcc 10
-  - clang 9
+### [After Sun](https://github.com/foxnne/aftersun)
+[![image](docs/img/projects/after_sun.png)](https://github.com/foxnne/aftersun)
 
-### API stability
-APIs are stable between minor and patch versions, but exceptions are made in these scenarios:
-- The design of an API prevents it from being used without introducing bugs
-- The design of an API is prone to misuse or confusing
+### Flecs Demo's
+https://www.flecs.dev/tower_defense/etc ([repository](https://github.com/SanderMertens/tower_defense))
+![image](docs/img/projects/tower_defense.png)
 
-The following parts of the API are not stable between patch/minor versions:
-- Anything in include/private
-- The ABI is not guaranteed to be stable, so a recompile of code is required after upgrading
+https://www.flecs.dev/city ([repository](https://github.com/flecs-hub/city))
+![image](docs/img/projects/city.png)
 
-Functions may become deprecated before a major release. To build flecs without deprecated functions, exclude the `FLECS_DEPRECATED` addon. (see [custom builds](https://github.com/SanderMertens/flecs/blob/master/docs/Manual.md#custom-builds)).
+## Resources
 
-## Modules
-The following modules are available in [flecs-hub](https://github.com/flecs-hub). Note that modules are mostly intended as example code, and their APIs may change at any point in time.
+### Resources provided by the community :heart:
+- [Unreal Minimum Viable Flecs Project](https://github.com/PreyK/Unreal-Minimum-Viable-Flecs)
+- [Bgfx/Imgui module](https://github.com/flecs-hub/flecs-systems-bgfx/tree/bgfx_imgui)
+- [Tower defense example](https://gist.github.com/oldmanauz/b4ced44737bf9d248233538fa06a989e)
+- [Unreal + Flecs example](https://github.com/PreyK/Unreal-Minimum-Viable-Flecs)
+- [Building a space battle with Flecs in UE4](https://twitter.com/ajmmertens/status/1361070033334456320)
+- [Flecs + SDL + Web ASM example](https://github.com/HeatXD/flecs_web_demo) ([live demo](https://heatxd.github.io/flecs_web_demo/))
+- [Flecs + Raylib example](https://github.com/Lexxicon/FlecsRaylib)
+- [Flecs + gunslinger example](https://github.com/MrFrenik/gs_examples/blob/main/ex_demos/flecs/source/main.c)
+- [Flecs based 3D game engine with editor](https://bit.ly/3T9cc1o)
 
-Module      | Description      
+### Flecs around the web
+- [Discord](https://discord.gg/BEzP5Rgrrp)
+- [Medium](https://ajmmertens.medium.com)
+- [Twitter](https://twitter.com/ajmmertens)
+- [Reddit](https://www.reddit.com/r/flecs)
+
+## Flecs Hub
+[Flecs Hub](https://github.com/flecs-hub) is a collection of repositories that show how Flecs can be used to build game systems like input handling, hierarchical transforms and rendering.
+
+Module      | Description
 ------------|------------------
-[flecs.meta](https://github.com/flecs-hub/flecs-meta) | Reflection for Flecs components
-[flecs.json](https://github.com/flecs-hub/flecs-json) | JSON serializer for Flecs components
-[flecs.rest](https://github.com/flecs-hub/flecs-rest) | A REST interface for introspecting & editing entities
-[flecs.player](https://github.com/flecs-hub/flecs-player) | Play, stop and pause simulations
-[flecs.monitor](https://github.com/flecs-hub/flecs-monitor) | Web-based monitoring of statistics
-[flecs.dash](https://github.com/flecs-hub/flecs-dash) | Web-based dashboard for remote monitoring and debugging of Flecs apps
+[flecs.components.cglm](https://github.com/flecs-hub/flecs-components-cglm) | Component registration for cglm (math) types
 [flecs.components.input](https://github.com/flecs-hub/flecs-components-input) | Components that describe keyboard and mouse input
 [flecs.components.transform](https://github.com/flecs-hub/flecs-components-transform) | Components that describe position, rotation and scale
 [flecs.components.physics](https://github.com/flecs-hub/flecs-components-physics) | Components that describe physics and movement
 [flecs.components.geometry](https://github.com/flecs-hub/flecs-components-geometry) | Components that describe geometry
 [flecs.components.graphics](https://github.com/flecs-hub/flecs-components-graphics) | Components used for computer graphics
 [flecs.components.gui](https://github.com/flecs-hub/flecs-components-gui) | Components used to describe GUI components
-[flecs.components.http](https://github.com/flecs-hub/flecs-components-http) | Components describing an HTTP server
 [flecs.systems.transform](https://github.com/flecs-hub/flecs-systems-transform) | Hierarchical transforms for scene graphs
-[flecs.systems.sdl2](https://github.com/flecs-hub/flecs-systems-sdl2) | SDL window creation & input management
+[flecs.systems.physics](https://github.com/flecs-hub/flecs-systems-physics) | Systems for moving objects and collision detection
 [flecs.systems.sokol](https://github.com/flecs-hub/flecs-systems-sokol) | Sokol-based renderer
-[flecs.systems.civetweb](https://github.com/flecs-hub/flecs-systems-civetweb) | A civetweb-based implementation of flecs.components.http
+[flecs.game](https://github.com/flecs-hub/flecs-game) | Generic game systems, like a camera controller
 
 ## Language bindings
-- [Lua](https://github.com/flecs-hub/flecs-lua)
-- [Zig](https://github.com/prime31/zig-flecs)
-
-## Useful Links
-- [ECS FAQ](https://github.com/SanderMertens/ecs-faq)
-- [Medium](https://ajmmertens.medium.com)
-- [Twitter](https://twitter.com/ajmmertens)
-- [Reddit](https://www.reddit.com/r/flecs)
-
-## Supporting Flecs
-Supporting Flecs goes a long way towards keeping the project going and the community alive! If you like the project, consider:
-- Giving it a star
-- Becoming a sponsor: https://github.com/sponsors/SanderMertens
-
-Thanks in advance!
+The following language bindings have been developed with Flecs! Note that these are projects built and maintained by helpful community members, and may not always be up to date with the latest commit from master!
+- C#:
+  - [flecs-hub/flecs-cs](https://github.com/flecs-hub/flecs-cs)
+  - [BeanCheeseBurrito/Flecs.NET](https://github.com/BeanCheeseBurrito/Flecs.NET)
+- Rust:
+  - [flecs-rs](https://github.com/jazzay/flecs-rs)
+  - [flecs-polyglot](https://github.com/flecs-hub/flecs-polyglot)
+- Zig:
+  - [michal-z/zig-gamedev](https://github.com/michal-z/zig-gamedev/tree/main/libs/zflecs)
+  - [foxnne/zig-flecs](https://github.com/foxnne/zig-flecs)
+  - [prime31/zig-flecs](https://github.com/prime31/zig-flecs)
+- Lua:
+  - [sro5h/flecs-luajit](https://github.com/sro5h/flecs-luajit)
+  - [flecs-hub/flecs-lua](https://github.com/flecs-hub/flecs-lua)

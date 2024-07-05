@@ -25,7 +25,7 @@
 #ifndef __MT_THREAD__
 #define __MT_THREAD__
 
-#include "MTConfig.h"
+#include <MTConfig.h>
 #include <pthread.h>
 #include <unistd.h>
 #include <time.h>
@@ -47,14 +47,8 @@
     #define MAP_STACK (0)
 #endif
 
-#include "Platform/Common/MTThread.h"
-#include "MTAppInterop.h"
-
-#ifdef ORBIS
-#include <unistd.h>
-//#include <sys/cdefs.h>
-#include <thread>
-#endif
+#include <Platform/Common/MTThread.h>
+#include <MTAppInterop.h>
 
 namespace MT
 {
@@ -160,11 +154,7 @@ namespace MT
 #if MT_PLATFORM_OSX
 		//TODO: support OSX priority and bind to processors
 #else
-#ifdef ORBIS
-		static void GetAffinityMask(cpuset_t & cpu_mask, uint32 cpuCore)
-#else
 		static void GetAffinityMask(cpu_set_t & cpu_mask, uint32 cpuCore)
-#endif
 		{
 			CPU_ZERO(&cpu_mask);
 
@@ -186,7 +176,7 @@ namespace MT
 		{
 			int min_prio = sched_get_priority_min (SCHED_FIFO);
 			int max_prio = sched_get_priority_max (SCHED_FIFO);
-			int default_prio = min_prio + (max_prio - min_prio) / 2;
+			int default_prio = (max_prio - min_prio) / 2;
 
 			switch(priority)
 			{
@@ -236,7 +226,7 @@ namespace MT
 			stackDesc = Memory::AllocStack(_stackSize);
 			stackSize = stackDesc.GetStackSize();
 
-			MT_ASSERT(stackSize >= (size_t)PTHREAD_STACK_MIN, "Thread stack to small");
+			MT_ASSERT(stackSize >= PTHREAD_STACK_MIN, "Thread stack to small");
 
 			int err = pthread_attr_init(&threadAttr);
 			MT_USED_IN_ASSERT(err);
@@ -260,17 +250,11 @@ namespace MT
 			MT_USED_IN_ASSERT(err);
 			MT_ASSERT(err == 0, "pthread_attr_setinheritsched - error");
 
-#ifdef ORBIS
-			cpuset_t cpu_mask;
-#else
 			cpu_set_t cpu_mask;
-#endif
 			GetAffinityMask(cpu_mask, cpuCore);
-#if !defined(NX64) && !defined(ORBIS)
 			err = pthread_attr_setaffinity_np(&threadAttr, sizeof(cpu_mask), &cpu_mask);
 			MT_USED_IN_ASSERT(err);
 			MT_ASSERT(err == 0, "pthread_attr_setaffinity_np - error");
-#endif
 
 			struct sched_param params;
 			params.sched_priority = GetPriority(priority);
@@ -284,13 +268,6 @@ namespace MT
 			err = pthread_create(&thread, &threadAttr, ThreadFuncInternal, this);
 			MT_USED_IN_ASSERT(err);
 			MT_ASSERT(err == 0, "pthread_create - error");
-
-#if defined(NX64)
-			err = pthread_setaffinity_np(thread, sizeof(cpu_mask), &cpu_mask);
-			MT_USED_IN_ASSERT(err);
-			MT_ASSERT(err == 0, "pthread_attr_setaffinity_np - error");
-#endif
-
 		}
 
 		void Join()
@@ -326,10 +303,8 @@ namespace MT
 
 		static int GetNumberOfHardwareThreads()
 		{
-#if MT_PLATFORM_OSX || ORBIS
+#if MT_PLATFORM_OSX
             return std::thread::hardware_concurrency();
-#elif MT_PLATFORM_NX64
-			return 3;
 #else
 			long numberOfProcessors = sysconf( _SC_NPROCESSORS_ONLN );
 			return (int)numberOfProcessors;
@@ -339,17 +314,14 @@ namespace MT
 #ifdef MT_INSTRUMENTED_BUILD
 		static void SetThreadName(const char* threadName)
 		{
-            #ifdef __APPLE__
-			pthread_setname_np(threadName);
-            #else
-            pthread_setname_np(pthread_self(), threadName);
-            #endif
+			pthread_t callThread = pthread_self();
+			pthread_setname_np(callThread, threadName);
 		}
 #endif
 
 		static void SetThreadSchedulingPolicy(uint32 cpuCore, ThreadPriority::Type priority = ThreadPriority::DEFAULT)
 		{
-#if MT_PLATFORM_OSX ||MT_PLATFORM_POSIX
+#if MT_PLATFORM_OSX
 			MT_UNUSED(cpuCore);
 			MT_UNUSED(priority);
 

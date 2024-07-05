@@ -25,19 +25,19 @@
 #ifndef __MT_ATOMIC__
 #define __MT_ATOMIC__
 
-#include "MTConfig.h"
+#include <MTConfig.h>
 #include <intrin.h>
 #include <cstdint>
 #include <type_traits>
 #include <xmmintrin.h>
 
 #define MT_ATOMIC_COMPILE_TIME_CHECK \
-	static_assert(std::is_trivially_copyable< Atomic32Base<T> >::value && std::is_standard_layout< Atomic32Base<T> >::value, "Atomic32Base must be a POD (plain old data type)"); \
+	static_assert(std::is_pod< Atomic32Base<T> >::value == true, "Atomic32Base must be a POD (plain old data type)"); \
 	static_assert(sizeof(T) == sizeof(int32), "Atomic32Base, type T must be equal size as int32"); \
 	static_assert(sizeof(int32) == sizeof(long), "Incompatible types, Interlocked* will fail.");
 
 #define MT_ATOMICPTR_COMPILE_TIME_CHECK \
-	static_assert(std::is_trivially_copyable< AtomicPtrBase<T> >::value && std::is_standard_layout< AtomicPtrBase<T> >::value, "AtomicPtrBase must be a POD (plain old data type)");
+	static_assert(std::is_pod< AtomicPtrBase<T> >::value == true, "AtomicPtrBase must be a POD (plain old data type)");
 
 #ifdef YieldProcessor
 	#undef YieldProcessor

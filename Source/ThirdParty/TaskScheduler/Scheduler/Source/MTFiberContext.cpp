@@ -20,8 +20,7 @@
 // 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // 	THE SOFTWARE.
 
-#define MINICORO_IMPL
-#include "../Include/MTScheduler.h"
+#include <MTScheduler.h>
 
 namespace MT
 {
@@ -31,6 +30,7 @@ namespace MT
 		, stackRequirements(StackRequirements::INVALID)
 		, childrenFibersCount(0)
 		, parentFiber(nullptr)
+		, fiberIndex(UINT_MAX)
 	{
 		
 	}

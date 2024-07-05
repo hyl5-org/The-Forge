@@ -72,26 +72,23 @@ public:
 	~InputDeviceMouse();
 
 	/// Returns DT_MOUSE.
-	DeviceType GetType() const override{ return DT_MOUSE; }
-	DeviceVariant GetVariant() const override;
-	const char* GetTypeName() const override { return "mouse"; }
-	bool IsValidButtonId(DeviceButtonId deviceButton) const override { return deviceButton < MouseButtonCount_; }
+	DeviceType GetType() const { return DT_MOUSE; }
+	DeviceVariant GetVariant() const;
+	const char* GetTypeName() const { return "mouse"; }
+	bool IsValidButtonId(DeviceButtonId deviceButton) const { return deviceButton < MouseButtonCount_; }
 
-	size_t GetAnyButtonDown(DeviceButtonSpec* outButtons, size_t maxButtonCount) const override;
+	size_t GetAnyButtonDown(DeviceButtonSpec* outButtons, size_t maxButtonCount) const;
 
-	size_t GetButtonName(DeviceButtonId deviceButton, char* buffer, size_t bufferLength) const override;
-	ButtonType GetButtonType(DeviceButtonId deviceButton) const override;
-	DeviceButtonId GetButtonByName(const char* name) const override;
+	size_t GetButtonName(DeviceButtonId deviceButton, char* buffer, size_t bufferLength) const;
+	ButtonType GetButtonType(DeviceButtonId deviceButton) const;
+	DeviceButtonId GetButtonByName(const char* name) const;
 
 	/// Returns the platform-specific implementation of this device (internal use only).
-	InputDeviceMouseImpl* GetPimpl() { return impl_; } 
-	InputState* GetNextInputState() override;
-	
-	void WarpMouse(const float&x, const float&y) override;
+	InputDeviceMouseImpl* GetPimpl() { return impl_; }
 
 protected:
-	void InternalUpdate(InputDeltaState* delta) override;
-	DeviceState InternalGetState() const override;
+	void InternalUpdate(InputDeltaState* delta);
+	DeviceState InternalGetState() const;
 
 private:
 	InputDeviceMouseImpl* impl_;

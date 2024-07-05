@@ -11,7 +11,6 @@ enum ButtonType
 {
 	BT_BOOL,	///< A boolean value button, either down (true) or up (false).
 	BT_FLOAT,	///< A floating-point value button, between -1.0f and 1.0f or 0.0f and 1.0f.
-	BT_GESTURE,
 	BT_COUNT	///< The number of different button types.
 };
 
@@ -94,8 +93,6 @@ public:
 	virtual const char* GetTypeName() const = 0;
 	/// Returns if this device should be updated after other devices.
 	virtual bool IsLateUpdate() const { return false; }
-	//clears all buttons to be unset (false), if implemented
-	virtual void ClearButtons() { return; }
 	/// Returns the device state.
 	DeviceState GetState() const;
 	/// Returns if this device is available.
@@ -112,8 +109,6 @@ public:
 	float GetFloat(DeviceButtonId deviceButton) const;
 	/// Returns the previous state of the given button.
 	float GetFloatPrevious(DeviceButtonId deviceButton) const;
-	
-	virtual void WarpMouse(const float&x, const float& y) { UNREF_PARAM(x); UNREF_PARAM(y); }
 
 	/// Checks if any button on this device is down.
 	/**
@@ -155,13 +150,11 @@ public:
 	/// Sets the dead zone for the given button.
 	void SetDeadZone(DeviceButtonId buttonId, float value);
 
-	void OverrideDeviceId(DeviceId newId) { deviceId_ = newId; }
-
 	/// Enable/disable debug rendering of this device.
 	void SetDebugRenderingEnabled(bool enabled);
 	/// Returns true if debug rendering is enabled, false otherwise.
 	bool IsDebugRenderingEnabled() const { return debugRenderingEnabled_; }
-		
+
 #if defined(GAINPUT_DEV) || defined(GAINPUT_ENABLE_RECORDER)
 	/// Returns true if this device is being controlled by a remote device 
 	/// or a recorded input sequence, false otherwise.
@@ -187,7 +180,7 @@ protected:
 	InputState* state_;
 	/// The previous state of this device.
 	InputState* previousState_;
-	
+
 	float* deadZones_;
 
 	/// Specifies if this device is currently rendering debug information.

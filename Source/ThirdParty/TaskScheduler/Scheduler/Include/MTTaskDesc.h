@@ -22,11 +22,11 @@
 
 #pragma once
 
-#include "MTTools.h"
-#include "MTPlatform.h"
-#include "MTArrayView.h"
-#include "MTColorTable.h"
-#include "MTStackRequirements.h"
+#include <MTTools.h>
+#include <MTPlatform.h>
+#include <MTArrayView.h>
+#include <MTColorTable.h>
+#include <MTStackRequirements.h>
 
 
 namespace MT
@@ -68,6 +68,7 @@ namespace MT
 				, poolDestroyFunc(nullptr)
 				, userData(nullptr)
 				, stackRequirements(MT::StackRequirements::INVALID)
+				, priority(MT::TaskPriority::INVALID)
 			{
 #ifdef MT_INSTRUMENTED_BUILD
 				debugID = nullptr;
@@ -93,6 +94,7 @@ namespace MT
 				, poolDestroyFunc(_poolDestroyFunc)
 				, userData(_userData)
 				, stackRequirements(_stackRequirements)
+				, priority(MT::TaskPriority::INVALID)
 			{
 #ifdef MT_INSTRUMENTED_BUILD
 				debugID = nullptr;

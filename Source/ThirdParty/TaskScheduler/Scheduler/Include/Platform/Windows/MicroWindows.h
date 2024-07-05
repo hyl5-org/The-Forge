@@ -21,8 +21,8 @@
 // 	THE SOFTWARE.
 #pragma once
 
-#include "MTConfig.h"
-#include "MTTypes.h"
+#include <MTConfig.h>
+#include <MTTypes.h>
 
 
 //
@@ -228,11 +228,6 @@ struct MW_CONTEXT
 
 #define MW_CREATE_SUSPENDED (0x00000004)
 
-#if MT_PLATFORM_DURANGO
-
-#define MW_MAXIMUM_PROCESSORS (8)
-#define MW_FIBER_FLAG_FLOAT_SWITCH (0)
-#else
 
 #if MT_PTR64
 #define MW_MAXIMUM_PROCESSORS (64)
@@ -242,7 +237,6 @@ struct MW_CONTEXT
 #define MW_FIBER_FLAG_FLOAT_SWITCH (0x1)
 #endif
 
-#endif
 
 #endif
 
@@ -303,6 +297,7 @@ MW_WINBASEAPI MW_BOOL MW_WINAPI VirtualFree( void* lpAddress, size_t dwSize, MW_
 
 MW_WINBASEAPI void MW_WINAPI DeleteFiber( void* lpFiber );
 MW_WINBASEAPI void* MW_WINAPI ConvertThreadToFiberEx( void* lpParameter, MW_DWORD dwFlags );
+MW_WINBASEAPI MW_BOOL MW_WINAPI ConvertFiberToThread();
 MW_WINBASEAPI void* MW_WINAPI CreateFiber( size_t dwStackSize, TFiberStartFunc lpStartAddress, void* lpParameter );
 MW_WINBASEAPI void MW_WINAPI SwitchToFiber( void* lpFiber );
 MW_WINBASEAPI MW_BOOL MW_WINAPI IsThreadAFiber();

@@ -1,85 +1,56 @@
 
 
-#include "../../include/gainput/gainput.h"
-#include "../../include/gainput/GainputInputDeltaState.h"
+#include <gainput/gainput.h>
+#include <gainput/GainputInputDeltaState.h>
 
 #if defined(GAINPUT_PLATFORM_LINUX)
 #include <time.h>
 #include <X11/Xlib.h>
-#include "linux/GainputInputDeviceKeyboardLinux.h"
-#include "linux/GainputInputDeviceMouseLinux.h"
-#include "linux/GainputInputDeviceMouseLinuxRaw.h"
+#include "keyboard/GainputInputDeviceKeyboardLinux.h"
+#include "mouse/GainputInputDeviceMouseLinux.h"
 #elif defined(GAINPUT_PLATFORM_WIN)
-#include "windows/GainputInputDeviceKeyboardWin.h"
-#include "windows/GainputInputDeviceKeyboardWinRaw.h"
-#include "windows/GainputInputDeviceMouseWin.h"
-#include "windows/GainputInputDeviceMouseWinRaw.h"
-#include "windows/GainputInputDevicePadWin.h"
-#include "windows/GainputInputDevicePadWinMsgHandler.h"
+#include "keyboard/GainputInputDeviceKeyboardWin.h"
+#include "keyboard/GainputInputDeviceKeyboardWinRaw.h"
+#include "mouse/GainputInputDeviceMouseWin.h"
+#include "mouse/GainputInputDeviceMouseWinRaw.h"
 #elif defined(GAINPUT_PLATFORM_ANDROID)
 #include <time.h>
 #include <jni.h>
-#include "android/GainputInputDeviceKeyboardAndroid.h"
-#include "android/GainputInputDevicePadAndroid.h"
-#include "android/GainputInputDeviceTouchAndroid.h"
+#include "keyboard/GainputInputDeviceKeyboardAndroid.h"
+#include "pad/GainputInputDevicePadAndroid.h"
+#include "touch/GainputInputDeviceTouchAndroid.h"
 static gainput::InputManager* gGainputInputManager;
-#elif defined(GAINPUT_PLATFORM_QUEST)
-#include <time.h>
 #elif defined(GAINPUT_PLATFORM_IOS) || defined(GAINPUT_PLATFORM_MAC) || defined(GAINPUT_PLATFORM_TVOS)
 #include <mach/mach.h>
 #include <mach/clock.h>
-#elif defined(GAINPUT_PLATFORM_GGP) || defined(GAINPUT_PLATFORM_NX64)
-#include <time.h>
-#elif defined(GAINPUT_PLATFORM_ORBIS)
-#include <time.h>
-#elif defined(GAINPUT_PLATFORM_PROSPERO)
-#include <time.h>
 #endif
 
 #include <stdlib.h>
-#include <math.h>
 
 #include "dev/GainputDev.h"
-#if defined(GAINPUT_PLATFORM_WIN) || defined(GAINPUT_PLATFORM_MAC) || defined(GAINPUT_PLATFORM_LINUX)
-#include "hid/GainputHID.h"
-#endif
-#include "../../include/gainput/GainputHelpers.h"
+#include <gainput/GainputHelpers.h>
 
 
 namespace gainput
 {
-#if defined(GAINPUT_PLATFORM_WIN)
-static WinMsgHandler dInputHandler;
-#endif
 
-static float checkConnectionElapsedTime = 0.0f;
-static float checkConnectionTimeOut = 0.2f;
-
-InputManager::InputManager(Allocator& allocator) :
-    mAllocator(allocator),
-	mDevices(mAllocator),
-	mNextDeviceID(0),
-	mDevListenerMetadata(NULL),
-	mDevListener(NULL),
-	mPadCnt(0),
-	mPads(mAllocator, 4),
-	mToRemove(mAllocator),
-	mListeners(mAllocator),
-    mNextListenerID(0),
-    mSortedListeners(mAllocator),
-    mModifiers(mAllocator),
-    mNextModifierID(0),
-    pDeltaState(NULL),
-	mDeltaTimeRemainderMs(0),
-    mCurrentTime(0),
-    GAINPUT_CONC_CONSTRUCT(mConcurrentInputs),
-    mDisplayWidth(-1),
-    mDisplayHeight(-1),
-    mDebugRendererEnabled(false),
-    pDebugRenderer(NULL),
-    pWindowInstance(NULL),
-    mInitialized(false),
-	mHIDDiscoveryEnabled(true)
+InputManager::InputManager(bool useSystemTime, Allocator& allocator) :
+		allocator_(allocator),
+		devices_(allocator_),
+		nextDeviceId_(0),
+		listeners_(allocator_),
+		nextListenerId_(0),
+		sortedListeners_(allocator_),
+		modifiers_(allocator_),
+		nextModifierId_(0),
+		deltaState_(allocator_.New<InputDeltaState>(allocator_)),
+		currentTime_(0),
+        GAINPUT_CONC_CONSTRUCT(concurrentInputs_),
+		displayWidth_(-1),
+		displayHeight_(-1),
+		useSystemTime_(useSystemTime),
+		debugRenderingEnabled_(false),
+		debugRenderer_(0)
 {
 	GAINPUT_DEV_INIT(this);
 #ifdef GAINPUT_PLATFORM_ANDROID
@@ -87,134 +58,25 @@ InputManager::InputManager(Allocator& allocator) :
 #endif
 }
 
-void InputManager::Init(void* windowInstance)
+InputManager::~InputManager()
 {
-    GAINPUT_ASSERT(!mInitialized);
+	allocator_.Delete(deltaState_);
 
-    pWindowInstance = windowInstance;
-    pDeltaState = mAllocator.New<InputDeltaState>(mAllocator);
-#if defined(GAINPUT_PLATFORM_MAC)
-	// disable hid discovery on newer OS as it's all taken care of by GCKit
-	if(IOS14_RUNTIME)
+	for (DeviceMap::iterator it = devices_.begin();
+			it != devices_.end();
+			++it)
 	{
-		mHIDDiscoveryEnabled = false;
+		allocator_.Delete(it->second);
 	}
-#endif
-	
-#if defined(GAINPUT_PLATFORM_WIN) || defined(GAINPUT_PLATFORM_MAC) || defined(GAINPUT_PLATFORM_LINUX)
-    HIDInit(windowInstance, this);
-#endif
 
-    mInitialized = true;
+	GAINPUT_DEV_SHUTDOWN(this);
 }
 
-void InputManager::Exit()
+void
+InputManager::Update()
 {
-    GAINPUT_ASSERT(mInitialized);
-
-#if defined(GAINPUT_PLATFORM_WIN)
-	dInputHandler.Exit();
-#endif
-
-#if defined(GAINPUT_PLATFORM_WIN) || defined(GAINPUT_PLATFORM_MAC) || defined(GAINPUT_PLATFORM_LINUX)
-    HIDExit();
-#endif
-    mAllocator.Delete(pDeltaState);
-
-	ApplyPendingDeletes();
-
-	// clear pads that haven't been handed to the device manager
-	for (int i = 0; i < mPadCnt; ++i)
-		if (mPads[i]->GetDeviceId() == InvalidDeviceId)
-			mDevices.insert(mPads[i]->GetDeviceId(), mPads[i]);
-
-    for (DeviceMap::iterator it = mDevices.begin(); it != mDevices.end(); ++it)
-    {
-		NotifyDeviceListener(it->first, it->second, false);
-        mAllocator.Delete(it->second);
-    }
-    mDevices.clear();
-
-    GAINPUT_DEV_SHUTDOWN(this);
-}
-
-void InputManager::ClearAllStates(gainput::DeviceId deviceId)
-{
-	if (deviceId == gainput::InvalidDeviceId)
-		return;
-
-	DeviceButtonSpec buttonsDown[256];
-
-	size_t activeButtons = GetAnyButtonDown(buttonsDown, 256);
-	InputDeltaState* ds = mListeners.empty() ? 0 : pDeltaState;
-
-
-	for (size_t i = 0; i < activeButtons; i++)
-	{
-		if (buttonsDown[i].deviceId != deviceId)
-			continue;
-
-		InputDevice * inDevice = GetDevice(buttonsDown[i].deviceId);
-		if (!inDevice)
-			continue;
-		//get next input state
-		InputState * nextDeviceState = inDevice->GetNextInputState();
-		InputState * currentDeviceState = inDevice->GetInputState();
-		if (!nextDeviceState || !nextDeviceState)
-		{
-			continue;
-		}
-		
-		if (inDevice->GetButtonType(buttonsDown[i].buttonId) == BT_BOOL)
-		{
-			if(nextDeviceState)
-				HandleButton(*inDevice, *nextDeviceState, ds, buttonsDown[i].buttonId, false);
-
-			if (currentDeviceState)
-				HandleButton(*inDevice, *currentDeviceState, NULL, buttonsDown[i].buttonId, false);
-		}
-		else
-		{
-			if (nextDeviceState)
-				HandleAxis(*inDevice, *nextDeviceState, ds, buttonsDown[i].buttonId, 0.0f);
-
-			if (currentDeviceState)
-				HandleAxis(*inDevice, *currentDeviceState, NULL, buttonsDown[i].buttonId, 0.0f);
-		}
-	}
-
-}
-
-
-void InputManager::Update(float deltaTime)
-{
-    GAINPUT_ASSERT(mInitialized);
-
-	// Nudge controllers to update their connection status as relevant
-	// The-Forge's modification add elapsed time before checking for new/removed devices
-	checkConnectionElapsedTime += deltaTime;
-	if (checkConnectionElapsedTime > checkConnectionTimeOut)
-	{
-		for (int i = 0; i < mPadCnt; ++i)
-		{
-			mPads[i]->CheckConnection();
-		}
-		checkConnectionElapsedTime = 0.0f;
-	}
-
-	// Update mCurrentTime without running slower due to rounding errors
-	{
-		float integerTimeMs;
-		mDeltaTimeRemainderMs = modff(mDeltaTimeRemainderMs + deltaTime * 1000.0f, &integerTimeMs);
-		mCurrentTime += (uint64_t)integerTimeMs;
-	}
-
-#if defined(GAINPUT_PLATFORM_WIN) || defined(GAINPUT_PLATFORM_MAC) || defined(GAINPUT_PLATFORM_LINUX)
-    HIDPromptForDeviceStateReports(pDeltaState);
-#endif
-
-	Change change{};
-    while (GAINPUT_CONC_DEQUEUE(mConcurrentInputs, change))
+    Change change;
+    while (GAINPUT_CONC_DEQUEUE(concurrentInputs_, change))
     {
         if (change.type == BT_BOOL)
         {
@@ -226,15 +88,12 @@ void InputManager::Update(float deltaTime)
         }
     }
     
-	InputDeltaState* ds = mListeners.empty() ? 0 : pDeltaState;
+	InputDeltaState* ds = listeners_.empty() ? 0 : deltaState_;
 
-	for (DeviceMap::iterator it = mDevices.begin();
-			it != mDevices.end();
+	for (DeviceMap::iterator it = devices_.begin();
+			it != devices_.end();
 			++it)
 	{
-		if (mToRemove.find(it->first) != mToRemove.end())
-			continue;
-
 		if (!it->second->IsLateUpdate())
 		{
 			it->second->Update(ds);
@@ -243,20 +102,17 @@ void InputManager::Update(float deltaTime)
 
 	GAINPUT_DEV_UPDATE(ds);
 
-	for (HashMap<ModifierId, DeviceStateModifier*>::iterator it = mModifiers.begin();
-			it != mModifiers.end();
+	for (HashMap<ModifierId, DeviceStateModifier*>::iterator it = modifiers_.begin();
+			it != modifiers_.end();
 			++it)
 	{
 		it->second->Update(ds);
 	}
 
-	for (DeviceMap::iterator it = mDevices.begin();
-			it != mDevices.end();
+	for (DeviceMap::iterator it = devices_.begin();
+			it != devices_.end();
 			++it)
 	{
-		if (mToRemove.find(it->first) != mToRemove.end())
-			continue;
-
 		if (it->second->IsLateUpdate())
 		{
 			it->second->Update(ds);
@@ -265,72 +121,67 @@ void InputManager::Update(float deltaTime)
 
 	if (ds)
 	{
-		ds->NotifyListeners(deltaTime, mSortedListeners);
+		ds->NotifyListeners(sortedListeners_);
 		ds->Clear();
 	}
-	
+}
 
-#ifdef GAINPUT_PLATFORM_IOS
-	//clear buttons
-	//only Does something for KeyboardIOS
-	for (DeviceMap::iterator it = mDevices.begin();
-		 it != mDevices.end();
-		 ++it)
+void
+InputManager::Update(uint64_t deltaTime)
+{
+	GAINPUT_ASSERT(useSystemTime_ == false);
+	currentTime_ += deltaTime;
+	Update();
+}
+
+uint64_t
+InputManager::GetTime() const
+{
+	if (useSystemTime_)
 	{
-		if (it->second->GetType() == InputDevice::DT_KEYBOARD)
-		{
-			it->second->ClearButtons();
-		}
-	}
-#endif
-
-	ApplyPendingDeletes();
-}
-
-uint64_t InputManager::GetTime() const
-{
-	return mCurrentTime;
-}
-
-void
-InputManager::SetDeviceListener(void* metadata, DeviceListener listener)
-{
-    mDevListenerMetadata = metadata;
-    mDevListener = listener;
-}
-
-void
-InputManager::NotifyDeviceListener(DeviceId deviceId, InputDevice* device, bool doAdd)
-{
-    if (mDevListener)
-    {
-        mDevListener(mDevListenerMetadata, deviceId, device, doAdd);
-    }
-}
-
-void
-InputManager::CreateControllers(int cnt)
-{
-	mPadCnt = cnt;
-	mPads.reserve(mPadCnt);
-
-	for (int i = 0; i < mPadCnt; ++i)
+#if defined(GAINPUT_PLATFORM_LINUX) || defined(GAINPUT_PLATFORM_ANDROID)
+	struct timespec ts;
+	if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1)
 	{
-		gainput::InputDevicePad* newPad = tf_new(gainput::InputDevicePad, *this, InvalidDeviceId, i, InputDevice::DV_STANDARD);
-		GAINPUT_ASSERT(newPad);
-		mPads.push_back(newPad);
+		return -1;
 	}
 
-#if defined(GAINPUT_PLATFORM_WIN)
-	dInputHandler.Init(this, cnt);
+	uint64_t t = ts.tv_sec*1000ul + ts.tv_nsec/1000000ul;
+	return t;
+#elif defined(GAINPUT_PLATFORM_WIN)
+	static LARGE_INTEGER perfFreq = { 0 };
+	if (perfFreq.QuadPart == 0)
+	{
+		QueryPerformanceFrequency(&perfFreq);
+		GAINPUT_ASSERT(perfFreq.QuadPart != 0);
+	}
+	LARGE_INTEGER count;
+	QueryPerformanceCounter(&count);
+	double t = 1000.0 * double(count.QuadPart) / double(perfFreq.QuadPart);
+	return static_cast<uint64_t>(t);
+#elif defined(GAINPUT_PLATFORM_IOS) || defined(GAINPUT_PLATFORM_MAC) || defined(GAINPUT_PLATFORM_TVOS)
+	clock_serv_t cclock;
+	mach_timespec_t mts;
+		host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cclock);
+	clock_get_time(cclock, &mts);
+	mach_port_deallocate(mach_task_self(), cclock);
+	uint64_t t = mts.tv_sec*1000ul + mts.tv_nsec/1000000ul;
+	return t;
+#else
+#error Gainput: No time support
 #endif
+}
+	else
+	{
+		return currentTime_;
+	}
 }
 
 DeviceId
 InputManager::FindDeviceId(const char* typeName, unsigned index) const
 {
-	for (DeviceMap::const_iterator it = mDevices.begin();
-			it != mDevices.end();
+	for (DeviceMap::const_iterator it = devices_.begin();
+			it != devices_.end();
 			++it)
 	{
 		if (strcmp(typeName, it->second->GetTypeName()) == 0
@@ -345,8 +196,8 @@ InputManager::FindDeviceId(const char* typeName, unsigned index) const
 DeviceId
 InputManager::FindDeviceId(InputDevice::DeviceType type, unsigned index) const
 {
-	for (DeviceMap::const_iterator it = mDevices.begin();
-			it != mDevices.end();
+	for (DeviceMap::const_iterator it = devices_.begin();
+			it != devices_.end();
 			++it)
 	{
 		if (it->second->GetType() == type
@@ -361,15 +212,15 @@ InputManager::FindDeviceId(InputDevice::DeviceType type, unsigned index) const
 ListenerId
 InputManager::AddListener(InputListener* listener)
 {
-	mListeners[mNextListenerID] = listener;
+	listeners_[nextListenerId_] = listener;
 	ReorderListeners();
-	return mNextListenerID++;
+	return nextListenerId_++;
 }
 
 void
 InputManager::RemoveListener(ListenerId listenerId)
 {
-	mListeners.erase(listenerId);
+	listeners_.erase(listenerId);
 	ReorderListeners();
 }
 
@@ -385,44 +236,44 @@ static int CompareListeners(const void* a, const void* b)
 void
 InputManager::ReorderListeners()
 {
-	mSortedListeners.clear();
-	for (HashMap<ListenerId, InputListener*>::iterator it = mListeners.begin();
-		it != mListeners.end();
+	sortedListeners_.clear();
+	for (HashMap<ListenerId, InputListener*>::iterator it = listeners_.begin();
+		it != listeners_.end();
 		++it)
 	{
-		mSortedListeners.push_back(it->second);
+		sortedListeners_.push_back(it->second);
 	}
 
-	if (mSortedListeners.empty())
+	if (sortedListeners_.empty())
 	{
 		return;
 	}
 
-	qsort(&mSortedListeners[0],
-		mSortedListeners.size(),
-		sizeof(InputListener*),
+	qsort(&sortedListeners_[0], 
+		sortedListeners_.size(), 
+		sizeof(InputListener*), 
 		&CompareListeners);
 }
 
 ModifierId
 InputManager::AddDeviceStateModifier(DeviceStateModifier* modifier)
 {
-	mModifiers[mNextModifierID] = modifier;
-	return mNextModifierID++;
+	modifiers_[nextModifierId_] = modifier;
+	return nextModifierId_++;
 }
 
 void
 InputManager::RemoveDeviceStateModifier(ModifierId modifierId)
 {
-	mModifiers.erase(modifierId);
+	modifiers_.erase(modifierId);
 }
 
 size_t
 InputManager::GetAnyButtonDown(DeviceButtonSpec* outButtons, size_t maxButtonCount) const
 {
 	size_t buttonsFound = 0;
-	for (DeviceMap::const_iterator it = mDevices.begin();
-			it != mDevices.end() && maxButtonCount > buttonsFound;
+	for (DeviceMap::const_iterator it = devices_.begin();
+			it != devices_.end() && maxButtonCount > buttonsFound;
 			++it)
 	{
 		buttonsFound += it->second->GetAnyButtonDown(outButtons+buttonsFound, maxButtonCount-buttonsFound);
@@ -434,8 +285,8 @@ unsigned
 InputManager::GetDeviceCountByType(InputDevice::DeviceType type) const
 {
 	unsigned count = 0;
-	for (DeviceMap::const_iterator it = mDevices.begin();
-			it != mDevices.end();
+	for (DeviceMap::const_iterator it = devices_.begin();
+			it != devices_.end();
 			++it)
 	{
 		if (it->second->GetType() == type)
@@ -446,12 +297,19 @@ InputManager::GetDeviceCountByType(InputDevice::DeviceType type) const
 	return count;
 }
 
+void
+InputManager::DeviceCreated(InputDevice* device)
+{
+	GAINPUT_UNUSED(device);
+	GAINPUT_DEV_NEW_DEVICE(device);
+}
+
 #if defined(GAINPUT_PLATFORM_LINUX)
 void
 InputManager::HandleEvent(XEvent& event)
 {
-	for (DeviceMap::const_iterator it = mDevices.begin();
-			it != mDevices.end();
+	for (DeviceMap::const_iterator it = devices_.begin();
+			it != devices_.end();
 			++it)
 	{
 #if defined(GAINPUT_DEV)
@@ -468,22 +326,13 @@ InputManager::HandleEvent(XEvent& event)
 			GAINPUT_ASSERT(keyboardImpl);
 			keyboardImpl->HandleEvent(event);
 		}
-		else if (it->second->GetType() == InputDevice::DT_MOUSE)
+		else if (it->second->GetType() == InputDevice::DT_MOUSE
+			&& it->second->GetVariant() == InputDevice::DV_STANDARD)
 		{
-			if(it->second->GetVariant() == InputDevice::DV_STANDARD)
-			{
-				InputDeviceMouse* mouse = static_cast<InputDeviceMouse*>(it->second);
-				InputDeviceMouseImplLinux* mouseImpl = static_cast<InputDeviceMouseImplLinux*>(mouse->GetPimpl());
-				GAINPUT_ASSERT(mouseImpl);
-				mouseImpl->HandleEvent(event);
-			}
-			else
-			{
-				InputDeviceMouse* mouse = static_cast<InputDeviceMouse*>(it->second);
-				InputDeviceMouseImplLinuxRaw* mouseImpl = static_cast<InputDeviceMouseImplLinuxRaw*>(mouse->GetPimpl());
-				GAINPUT_ASSERT(mouseImpl);
-				mouseImpl->HandleEvent(event);
-			}
+			InputDeviceMouse* mouse = static_cast<InputDeviceMouse*>(it->second);
+			InputDeviceMouseImplLinux* mouseImpl = static_cast<InputDeviceMouseImplLinux*>(mouse->GetPimpl());
+			GAINPUT_ASSERT(mouseImpl);
+			mouseImpl->HandleEvent(event);
 		}
 	}
 }
@@ -493,16 +342,8 @@ InputManager::HandleEvent(XEvent& event)
 void
 InputManager::HandleMessage(const MSG& msg)
 {
-    if (HIDHandleSystemMessage(&msg))
-        return;
-
-	if (msg.message == WM_DEVICECHANGE || msg.message == WM_INPUT)
-	{
-		dInputHandler.HandleMessage(msg);
-	}
-
-	for (DeviceMap::const_iterator it = mDevices.begin();
-			it != mDevices.end();
+	for (DeviceMap::const_iterator it = devices_.begin();
+			it != devices_.end();
 			++it)
 	{
 #if defined(GAINPUT_DEV)
@@ -549,11 +390,11 @@ InputManager::HandleMessage(const MSG& msg)
 
 #if defined(GAINPUT_PLATFORM_ANDROID)
 int32_t
-InputManager::HandleInput(AInputEvent* event, ANativeActivity* activity)
+InputManager::HandleInput(AInputEvent* event)
 {
 	int handled = 0;
-	for (DeviceMap::const_iterator it = mDevices.begin();
-			it != mDevices.end();
+	for (DeviceMap::const_iterator it = devices_.begin();
+			it != devices_.end();
 			++it)
 	{
 #if defined(GAINPUT_DEV)
@@ -574,14 +415,7 @@ InputManager::HandleInput(AInputEvent* event, ANativeActivity* activity)
 			InputDeviceKeyboard* keyboard = static_cast<InputDeviceKeyboard*>(it->second);
 			InputDeviceKeyboardImplAndroid* keyboardImpl = static_cast<InputDeviceKeyboardImplAndroid*>(keyboard->GetPimpl());
 			GAINPUT_ASSERT(keyboardImpl);
-			handled |= keyboardImpl->HandleInput(event, activity);
-		}
-		else if (it->second->GetType() == InputDevice::DT_PAD)
-		{
-			InputDevicePad* pad = static_cast<InputDevicePad*>(it->second);
-			InputDevicePadImplAndroid* padImpl = static_cast<InputDevicePadImplAndroid*>(pad->GetPimpl());
-			GAINPUT_ASSERT(padImpl);
-			handled |= padImpl->HandleInput(event);
+			handled |= keyboardImpl->HandleInput(event);
 		}
 	}
 	return handled;
@@ -621,11 +455,11 @@ InputManager::HandleDeviceInput(DeviceInput const& input)
 
 	if (input.buttonType == BT_BOOL)
 	{
-		EnqueueConcurrentChange(*device, *state, pDeltaState, input.buttonId, input.value.b);
+		EnqueueConcurrentChange(*device, *state, deltaState_, input.buttonId, input.value.b);
 	}
 	else if (input.buttonType == BT_FLOAT)
 	{
-		EnqueueConcurrentChange(*device, *state, pDeltaState, input.buttonId, input.value.f);
+		EnqueueConcurrentChange(*device, *state, deltaState_, input.buttonId, input.value.f);
 	}
 	else if (input.buttonType == BT_COUNT && input.deviceType == InputDevice::DT_PAD)
 	{
@@ -663,17 +497,17 @@ InputManager::StartDeviceStateSync(DeviceId deviceId)
 void
 InputManager::SetDebugRenderingEnabled(bool enabled)
 {
-	mDebugRendererEnabled = enabled;
+	debugRenderingEnabled_ = enabled;
 	if (enabled)
 	{
-		GAINPUT_ASSERT(pDebugRenderer);
+		GAINPUT_ASSERT(debugRenderer_);
 	}
 }
 
 void
 InputManager::SetDebugRenderer(DebugRenderer* debugRenderer)
 {
-	pDebugRenderer = debugRenderer;
+	debugRenderer_ = debugRenderer;
 }
 
 void
@@ -686,7 +520,7 @@ InputManager::EnqueueConcurrentChange(InputDevice& device, InputState& state, In
     change.buttonId = buttonId;
     change.type = BT_BOOL;
     change.b = value;
-    GAINPUT_CONC_ENQUEUE(mConcurrentInputs, change);
+    GAINPUT_CONC_ENQUEUE(concurrentInputs_, change);
 }
 
 void
@@ -699,19 +533,7 @@ InputManager::EnqueueConcurrentChange(InputDevice& device, InputState& state, In
     change.buttonId = buttonId;
     change.type = BT_FLOAT;
     change.f = value;
-    GAINPUT_CONC_ENQUEUE(mConcurrentInputs, change);
-}
-
-void
-InputManager::ApplyPendingDeletes()
-{
-	// remove old devices
-	for (uint32_t i = 0; i < mToRemove.size(); ++i)
-	{
-		DeviceId deviceId = mToRemove[i];
-		mDevices.erase(deviceId);
-	}
-	mToRemove.clear();
+    GAINPUT_CONC_ENQUEUE(concurrentInputs_, change);
 }
 
 }

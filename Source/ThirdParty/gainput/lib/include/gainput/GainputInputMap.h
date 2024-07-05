@@ -33,7 +33,6 @@ public:
 	 * \param allocator The allocator to be used for all memory allocations.
 	 */
 	InputMap(InputManager& manager, const char* name = 0, Allocator& allocator = GetDefaultAllocator());
-	InputMap(InputManager* manager, const char* name = 0, Allocator& allocator = GetDefaultAllocator());
 	/// Unitializes the map.
 	~InputMap();
 
