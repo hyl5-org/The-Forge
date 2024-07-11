@@ -38,10 +38,10 @@ target_include_directories(D3D12MemoryAllocator INTERFACE
     ${THIRD_PARTY_DIR}/D3D12MemoryAllocator
 )
 
-set(BASISU_FILES
-    ${THIRD_PARTY_DIR}/basis_universal/transcoder/basisu_transcoder.cpp
-)
-add_library(Basisu STATIC ${BASISU_FILES})
+# set(BASISU_FILES
+#     ${THIRD_PARTY_DIR}/basis_universal/transcoder/basisu_transcoder.cpp
+# )
+# add_library(Basisu STATIC ${BASISU_FILES})
 
 set(EASTL_FILES
      ${THIRD_PARTY_DIR}/EASTL/assert.cpp
@@ -70,39 +70,39 @@ set(IMGUI_FILES
 add_library(Imgui STATIC ${IMGUI_FILES})
 
 set(LUA_FILES
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lapi.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lauxlib.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lbaselib.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lbitlib.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lcode.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lcorolib.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lctype.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/ldblib.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/ldebug.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/ldo.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/ldump.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lfunc.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lgc.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/linit.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/liolib.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/llex.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lmathlib.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lmem.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/loadlib.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lobject.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lopcodes.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/loslib.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lparser.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lstate.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lstring.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lstrlib.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/ltable.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/ltablib.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/ltm.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lundump.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lutf8lib.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lvm.c
-     ${THIRD_PARTY_DIR}/lua-5.3.5/src/lzio.c
+     ${THIRD_PARTY_DIR}/lua/lapi.c
+     ${THIRD_PARTY_DIR}/lua/lauxlib.c
+     ${THIRD_PARTY_DIR}/lua/lbaselib.c
+     ${THIRD_PARTY_DIR}/lua/lbitlib.c
+     ${THIRD_PARTY_DIR}/lua/lcode.c
+     ${THIRD_PARTY_DIR}/lua/lcorolib.c
+     ${THIRD_PARTY_DIR}/lua/lctype.c
+     ${THIRD_PARTY_DIR}/lua/ldblib.c
+     ${THIRD_PARTY_DIR}/lua/ldebug.c
+     ${THIRD_PARTY_DIR}/lua/ldo.c
+     ${THIRD_PARTY_DIR}/lua/ldump.c
+     ${THIRD_PARTY_DIR}/lua/lfunc.c
+     ${THIRD_PARTY_DIR}/lua/lgc.c
+     ${THIRD_PARTY_DIR}/lua/linit.c
+     ${THIRD_PARTY_DIR}/lua/liolib.c
+     ${THIRD_PARTY_DIR}/lua/llex.c
+     ${THIRD_PARTY_DIR}/lua/lmathlib.c
+     ${THIRD_PARTY_DIR}/lua/lmem.c
+     ${THIRD_PARTY_DIR}/lua/loadlib.c
+     ${THIRD_PARTY_DIR}/lua/lobject.c
+     ${THIRD_PARTY_DIR}/lua/lopcodes.c
+     ${THIRD_PARTY_DIR}/lua/loslib.c
+     ${THIRD_PARTY_DIR}/lua/lparser.c
+     ${THIRD_PARTY_DIR}/lua/lstate.c
+     ${THIRD_PARTY_DIR}/lua/lstring.c
+     ${THIRD_PARTY_DIR}/lua/lstrlib.c
+     ${THIRD_PARTY_DIR}/lua/ltable.c
+     ${THIRD_PARTY_DIR}/lua/ltablib.c
+     ${THIRD_PARTY_DIR}/lua/ltm.c
+     ${THIRD_PARTY_DIR}/lua/lundump.c
+     ${THIRD_PARTY_DIR}/lua/lutf8lib.c
+     ${THIRD_PARTY_DIR}/lua/lvm.c
+     ${THIRD_PARTY_DIR}/lua/lzio.c
 )
 add_library(Lua STATIC ${LUA_FILES})
 
