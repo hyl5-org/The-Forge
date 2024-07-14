@@ -3,13 +3,16 @@
 set(RHI_INCLUDE_DIR ${ENGINE_RUNTIME_SOURCE_DIR}/RHI/Public)
 set(RHI_SOURCE_DIR ${ENGINE_RUNTIME_SOURCE_DIR}/RHI/Private)
 
-set(RHI_SOURCE_FILES
-    ${RHI_SOURCE_DIR}/*.cpp
-)
 
-set(RHI_INCLUDE_FILES
-    ${RHI_SOURCE_DIR}/Interfaces/*.h
-)
+file(GLOB RHI_SOURCE_FILES ${RHI_SOURCE_DIR}/*.cpp)
+
+# set(RHI_SOURCE_FILES
+# ${RHI_SOURCE_DIR}/*.cpp
+# )
+file(GLOB RHI_INCLUDE_FILES ${RHI_SOURCE_DIR}/Interfaces/*.h)
+# set(RHI_INCLUDE_FILES
+#     ${RHI_SOURCE_DIR}/Interfaces/*.h
+# )
 
 set(METAL_FILES
     ${RHI_SOURCE_DIR}/Metal/MetalAvailabilityMacros.h
@@ -27,17 +30,18 @@ set(RENDER_QUEST_FILES
     ${RHI_SOURCE_DIR}/Quest/VrApiHooks.h
 )
 
-set(DX11_FILES
-    ${RHI_SOURCE_DIR}/Direct3D11/*.cpp
-)
-
-set(DX12_FILES
-    ${RHI_SOURCE_DIR}/Direct3D12/*.cpp
-)
-
-set(VULKAN_FILES
-    ${RHI_SOURCE_DIR}/Vulkan/*.cpp
-)
+file(GLOB DX11_FILES ${RHI_SOURCE_DIR}/Direct3D11/*.cpp)
+# set(DX11_FILES
+#     ${RHI_SOURCE_DIR}/Direct3D11/*.cpp
+# )
+file(GLOB DX12_FILES ${RHI_SOURCE_DIR}/Direct3D12/*.cpp)
+# set(DX12_FILES
+#     ${RHI_SOURCE_DIR}/Direct3D12/*.cpp
+# )
+file(GLOB VULKAN_FILES ${RHI_SOURCE_DIR}/Vulkan/*.cpp)
+# set(VULKAN_FILES
+#     ${RHI_SOURCE_DIR}/Vulkan/*.cpp
+# )
 
 if(${METAL} MATCHES ON)
     find_library(APPLE_METAL Metal)

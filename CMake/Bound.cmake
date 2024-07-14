@@ -124,7 +124,7 @@ endif()
 message("\n")
 
 set(ENGINE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Source)
-set(ENGINE_RUNTIME_SOURCE_DIR ${ENGINE_SOURCE_DIR}/Runtime)
+
 # TODO(hyl5): packaging specific rhi files/libs
-# include(Runtime)
-include(ThirdParty)
+
+include(Runtime)
