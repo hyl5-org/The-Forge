@@ -1,4 +1,4 @@
-set(THIRD_PARTY_DIR ${ENGINE_RUNTIME_SOURCE_DIR}/ThirdParty)
+set(THIRD_PARTY_DIR ${ENGINE_SOURCE_DIR}/ThirdParty)
 message(${THIRD_PARTY_DIR})
 add_library(WinPixEventRuntime SHARED IMPORTED)
 set_property(TARGET WinPixEventRuntime PROPERTY IMPORTED_LOCATION
@@ -39,24 +39,20 @@ target_include_directories(D3D12MemoryAllocator INTERFACE
 )
 
 # set(BASISU_FILES
-#     ${THIRD_PARTY_DIR}/basis_universal/transcoder/basisu_transcoder.cpp
+# ${THIRD_PARTY_DIR}/basis_universal/transcoder/basisu_transcoder.cpp
 # )
 # add_library(Basisu STATIC ${BASISU_FILES})
+# add_subdirectory(${THIRD_PARTY_DIR}/EASTL)
+file(GLOB EASTL_SOURCES ${THIRD_PARTY_DIR}/EASTL/source/*.cpp)
 
-set(EASTL_FILES
-     ${THIRD_PARTY_DIR}/EASTL/assert.cpp
-     ${THIRD_PARTY_DIR}/EASTL/allocator_forge.cpp
-     ${THIRD_PARTY_DIR}/EASTL/fixed_pool.cpp
-     ${THIRD_PARTY_DIR}/EASTL/hashtable.cpp
-     ${THIRD_PARTY_DIR}/EASTL/intrusive_list.cpp
-     ${THIRD_PARTY_DIR}/EASTL/numeric_limits.cpp
-     ${THIRD_PARTY_DIR}/EASTL/red_black_tree.cpp
-     ${THIRD_PARTY_DIR}/EASTL/string.cpp
-     ${THIRD_PARTY_DIR}/EASTL/thread_support.cpp
-     ${THIRD_PARTY_DIR}/EASTL/EAStdC/EAMemory.cpp
-     ${THIRD_PARTY_DIR}/EASTL/EAStdC/EASprintf.cpp
-)
-add_library(Eastl STATIC ${EASTL_FILES})
+add_library(Eastl STATIC ${EASTL_SOURCES})
+target_include_directories(Eastl PRIVATE ${THIRD_PARTY_DIR}/EASTL/include)
+
+if(NOT TARGET EABase)
+    add_subdirectory(${THIRD_PARTY_DIR}/EASTL/test/packages/EABase)
+endif()
+
+target_link_libraries(Eastl EABase)
 
 set(IMGUI_FILES
      ${THIRD_PARTY_DIR}/imgui/imconfig.h
@@ -69,75 +65,81 @@ set(IMGUI_FILES
 )
 add_library(Imgui STATIC ${IMGUI_FILES})
 
-set(LUA_FILES
-     ${THIRD_PARTY_DIR}/lua/lapi.c
-     ${THIRD_PARTY_DIR}/lua/lauxlib.c
-     ${THIRD_PARTY_DIR}/lua/lbaselib.c
-     ${THIRD_PARTY_DIR}/lua/lbitlib.c
-     ${THIRD_PARTY_DIR}/lua/lcode.c
-     ${THIRD_PARTY_DIR}/lua/lcorolib.c
-     ${THIRD_PARTY_DIR}/lua/lctype.c
-     ${THIRD_PARTY_DIR}/lua/ldblib.c
-     ${THIRD_PARTY_DIR}/lua/ldebug.c
-     ${THIRD_PARTY_DIR}/lua/ldo.c
-     ${THIRD_PARTY_DIR}/lua/ldump.c
-     ${THIRD_PARTY_DIR}/lua/lfunc.c
-     ${THIRD_PARTY_DIR}/lua/lgc.c
-     ${THIRD_PARTY_DIR}/lua/linit.c
-     ${THIRD_PARTY_DIR}/lua/liolib.c
-     ${THIRD_PARTY_DIR}/lua/llex.c
-     ${THIRD_PARTY_DIR}/lua/lmathlib.c
-     ${THIRD_PARTY_DIR}/lua/lmem.c
-     ${THIRD_PARTY_DIR}/lua/loadlib.c
-     ${THIRD_PARTY_DIR}/lua/lobject.c
-     ${THIRD_PARTY_DIR}/lua/lopcodes.c
-     ${THIRD_PARTY_DIR}/lua/loslib.c
-     ${THIRD_PARTY_DIR}/lua/lparser.c
-     ${THIRD_PARTY_DIR}/lua/lstate.c
-     ${THIRD_PARTY_DIR}/lua/lstring.c
-     ${THIRD_PARTY_DIR}/lua/lstrlib.c
-     ${THIRD_PARTY_DIR}/lua/ltable.c
-     ${THIRD_PARTY_DIR}/lua/ltablib.c
-     ${THIRD_PARTY_DIR}/lua/ltm.c
-     ${THIRD_PARTY_DIR}/lua/lundump.c
-     ${THIRD_PARTY_DIR}/lua/lutf8lib.c
-     ${THIRD_PARTY_DIR}/lua/lvm.c
-     ${THIRD_PARTY_DIR}/lua/lzio.c
-)
-add_library(Lua STATIC ${LUA_FILES})
+# file(GLOB LUA_FILES "${THIRD_PARTY_DIR}/lua/*.c")
 
-set(MINIZIP_FILES
-     ${THIRD_PARTY_DIR}/minizip/lib/brg/aes.h
-     ${THIRD_PARTY_DIR}/minizip/lib/brg/aescrypt.c
-     ${THIRD_PARTY_DIR}/minizip/lib/brg/aeskey.c
-     ${THIRD_PARTY_DIR}/minizip/lib/brg/aesopt.h
-     ${THIRD_PARTY_DIR}/minizip/lib/brg/aestab.c
-     ${THIRD_PARTY_DIR}/minizip/lib/brg/aestab.h
-     ${THIRD_PARTY_DIR}/minizip/lib/brg/brg_endian.h
-     ${THIRD_PARTY_DIR}/minizip/lib/brg/brg_types.h
-     ${THIRD_PARTY_DIR}/minizip/lib/brg/hmac.c
-     ${THIRD_PARTY_DIR}/minizip/lib/brg/hmac.h
-     ${THIRD_PARTY_DIR}/minizip/lib/brg/sha1.c
-     ${THIRD_PARTY_DIR}/minizip/lib/brg/sha1.h
-     ${THIRD_PARTY_DIR}/minizip/lib/brg/sha2.c
-     ${THIRD_PARTY_DIR}/minizip/lib/brg/sha2.h
-     ${THIRD_PARTY_DIR}/zip/miniz.h
-     ${THIRD_PARTY_DIR}/minizip/mz.h
-     ${THIRD_PARTY_DIR}/minizip/mz_crypt.c
-     ${THIRD_PARTY_DIR}/minizip/mz_crypt.h
-     ${THIRD_PARTY_DIR}/minizip/mz_crypt_brg.c
-     ${THIRD_PARTY_DIR}/minizip/mz_os.cpp
-     ${THIRD_PARTY_DIR}/minizip/mz_os.h
-     ${THIRD_PARTY_DIR}/minizip/mz_strm.h
-     ${THIRD_PARTY_DIR}/minizip/mz_strm_raw.c
-     ${THIRD_PARTY_DIR}/minizip/mz_strm_wzaes.c
-     ${THIRD_PARTY_DIR}/minizip/mz_strm_wzaes.h
-     ${THIRD_PARTY_DIR}/minizip/mz_strm_zlib.c
-     ${THIRD_PARTY_DIR}/minizip/mz_strm_zlib.h
-     ${THIRD_PARTY_DIR}/minizip/mz_zip.c
-     ${THIRD_PARTY_DIR}/minizip/mz_zip.h
-)
-add_library(MiniZip STATIC ${MINIZIP_FILES})
+# set(LUA_FILES
+#      ${THIRD_PARTY_DIR}/lua/lapi.c
+#      ${THIRD_PARTY_DIR}/lua/lauxlib.c
+#      ${THIRD_PARTY_DIR}/lua/lbaselib.c
+#      ${THIRD_PARTY_DIR}/lua/lbitlib.c
+#      ${THIRD_PARTY_DIR}/lua/lcode.c
+#      ${THIRD_PARTY_DIR}/lua/lcorolib.c
+#      ${THIRD_PARTY_DIR}/lua/lctype.c
+#      ${THIRD_PARTY_DIR}/lua/ldblib.c
+#      ${THIRD_PARTY_DIR}/lua/ldebug.c
+#      ${THIRD_PARTY_DIR}/lua/ldo.c
+#      ${THIRD_PARTY_DIR}/lua/ldump.c
+#      ${THIRD_PARTY_DIR}/lua/lfunc.c
+#      ${THIRD_PARTY_DIR}/lua/lgc.c
+#      ${THIRD_PARTY_DIR}/lua/linit.c
+#      ${THIRD_PARTY_DIR}/lua/liolib.c
+#      ${THIRD_PARTY_DIR}/lua/llex.c
+#      ${THIRD_PARTY_DIR}/lua/lmathlib.c
+#      ${THIRD_PARTY_DIR}/lua/lmem.c
+#      ${THIRD_PARTY_DIR}/lua/loadlib.c
+#      ${THIRD_PARTY_DIR}/lua/lobject.c
+#      ${THIRD_PARTY_DIR}/lua/lopcodes.c
+#      ${THIRD_PARTY_DIR}/lua/loslib.c
+#      ${THIRD_PARTY_DIR}/lua/lparser.c
+#      ${THIRD_PARTY_DIR}/lua/lstate.c
+#      ${THIRD_PARTY_DIR}/lua/lstring.c
+#      ${THIRD_PARTY_DIR}/lua/lstrlib.c
+#      ${THIRD_PARTY_DIR}/lua/ltable.c
+#      ${THIRD_PARTY_DIR}/lua/ltablib.c
+#      ${THIRD_PARTY_DIR}/lua/ltm.c
+#      ${THIRD_PARTY_DIR}/lua/lundump.c
+#      ${THIRD_PARTY_DIR}/lua/lutf8lib.c
+#      ${THIRD_PARTY_DIR}/lua/lvm.c
+#      ${THIRD_PARTY_DIR}/lua/lzio.c
+# )
+# set(LUA_FILES
+#     ${THIRD_PARTY_DIR}/lua/*.c
+# )
+
+# add_library(Lua STATIC ${LUA_FILES})
+
+# set(MINIZIP_FILES
+#      ${THIRD_PARTY_DIR}/minizip/lib/brg/aes.h
+#      ${THIRD_PARTY_DIR}/minizip/lib/brg/aescrypt.c
+#      ${THIRD_PARTY_DIR}/minizip/lib/brg/aeskey.c
+#      ${THIRD_PARTY_DIR}/minizip/lib/brg/aesopt.h
+#      ${THIRD_PARTY_DIR}/minizip/lib/brg/aestab.c
+#      ${THIRD_PARTY_DIR}/minizip/lib/brg/aestab.h
+#      ${THIRD_PARTY_DIR}/minizip/lib/brg/brg_endian.h
+#      ${THIRD_PARTY_DIR}/minizip/lib/brg/brg_types.h
+#      ${THIRD_PARTY_DIR}/minizip/lib/brg/hmac.c
+#      ${THIRD_PARTY_DIR}/minizip/lib/brg/hmac.h
+#      ${THIRD_PARTY_DIR}/minizip/lib/brg/sha1.c
+#      ${THIRD_PARTY_DIR}/minizip/lib/brg/sha1.h
+#      ${THIRD_PARTY_DIR}/minizip/lib/brg/sha2.c
+#      ${THIRD_PARTY_DIR}/minizip/lib/brg/sha2.h
+#      ${THIRD_PARTY_DIR}/zip/miniz.h
+#      ${THIRD_PARTY_DIR}/minizip/mz.h
+#      ${THIRD_PARTY_DIR}/minizip/mz_crypt.c
+#      ${THIRD_PARTY_DIR}/minizip/mz_crypt.h
+#      ${THIRD_PARTY_DIR}/minizip/mz_crypt_brg.c
+#      ${THIRD_PARTY_DIR}/minizip/mz_os.cpp
+#      ${THIRD_PARTY_DIR}/minizip/mz_os.h
+#      ${THIRD_PARTY_DIR}/minizip/mz_strm.h
+#      ${THIRD_PARTY_DIR}/minizip/mz_strm_raw.c
+#      ${THIRD_PARTY_DIR}/minizip/mz_strm_wzaes.c
+#      ${THIRD_PARTY_DIR}/minizip/mz_strm_wzaes.h
+#      ${THIRD_PARTY_DIR}/minizip/mz_strm_zlib.c
+#      ${THIRD_PARTY_DIR}/minizip/mz_strm_zlib.h
+#      ${THIRD_PARTY_DIR}/minizip/mz_zip.c
+#      ${THIRD_PARTY_DIR}/minizip/mz_zip.h
+# )
+# add_library(MiniZip STATIC ${MINIZIP_FILES})
 
 set(RMEM_FILES
      ${THIRD_PARTY_DIR}/rmem/src/rmem_get_module_info.cpp
@@ -166,46 +168,12 @@ set(MESHOPTIMIZER_FILES
 )
 add_library(MeshOptimizer STATIC ${MESHOPTIMIZER_FILES})
 
-set(THIRDPARTY_OSS_TINYEXR_FILES
-     ${THIRD_PARTY_DIR}/TinyEXR/tinyexr.cpp
-     ${THIRD_PARTY_DIR}/TinyEXR/tinyexr.h
-)
-add_library(TinyEXR STATIC ${THIRDPARTY_OSS_TINYEXR_FILES})
-
-set(GAINPUT_STATIC_FILES
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/gainput.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/GainputAllocator.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/gestures/GainputButtonStickGesture.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/dev/GainputDev.cpp
-    ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/dev/GainputMemoryStream.cpp
-    ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/dev/GainputNetAddress.cpp
-    ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/dev/GainputNetConnection.cpp
-    ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/dev/GainputNetListener.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/gestures/GainputDoubleClickGesture.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/gestures/GainputHoldGesture.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/GainputInputDeltaState.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/GainputInputDevice.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/builtin/GainputInputDeviceBuiltIn.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/keyboard/GainputInputDeviceKeyboard.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/mouse/GainputInputDeviceMouse.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/pad/GainputInputDevicePad.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/touch/GainputInputDeviceTouch.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/GainputInputManager.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/GainputInputMap.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/recorder/GainputInputPlayer.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/recorder/GainputInputRecorder.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/recorder/GainputInputRecording.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/GainputInputState.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/GainputMapFilters.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/gestures/GainputPinchGesture.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/gestures/GainputRotateGesture.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/gestures/GainputSimultaneouslyDownGesture.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/gestures/GainputTapGesture.cpp
-     ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/hid/GainputHID.cpp
-    ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/hid/GainputHIDWhitelist.cpp
-    ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/hid/hidparsers/HIDParserPS4Controller.cpp
-    ${THIRD_PARTY_DIR}/gainput/lib/source/gainput/hid/hidparsers/HIDParserPS5Controller.cpp
-)
+# set(THIRDPARTY_OSS_TINYEXR_FILES
+# ${THIRD_PARTY_DIR}/TinyEXR/tinyexr.cpp
+# ${THIRD_PARTY_DIR}/TinyEXR/tinyexr.h
+# )
+# add_library(TinyEXR STATIC ${THIRDPARTY_OSS_TINYEXR_FILES})
+file(GLOB_RECURSE GAINPUT_STATIC_FILES ${THIRD_PARTY_DIR}/gainput/lib/source/*.cpp ${THIRD_PARTY_DIR}/gainput/lib/source/*.h ${THIRD_PARTY_DIR}/gainput/lib/include/*.h)
 
 set(GAINPUT_WINDOWS_FILES
     ${THIRD_PARTY_DIR}/gainput/lib/source/hidapi/windows/hid.c
@@ -243,114 +211,114 @@ if (${APPLE_PLATFORM} MATCHES ON)
     target_compile_options(GaInput PRIVATE "-fno-objc-arc")
 endif()
 
-set(CPU_FEATURES_FILES
-    ${THIRD_PARTY_DIR}/cpu_features/src/impl_x86_macos.c
-    ${THIRD_PARTY_DIR}/cpu_features/src/impl_aarch64_iOS.c
-)
+# set(CPU_FEATURES_FILES
+#     ${THIRD_PARTY_DIR}/cpu_features/src/impl_x86_macos.c
+#     ${THIRD_PARTY_DIR}/cpu_features/src/impl_aarch64_iOS.c
+# )
 
-add_library(cpu_features STATIC ${CPU_FEATURES_FILES})
-
-set(OZZ_INCLUDES
-    ${THIRD_PARTY_DIR}/ozz-animation/include
-)
-set(OZZ_BASE_FILES
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/containers/map.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/containers/set.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/containers/string.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/containers/string_archive.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/containers/vector.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/containers/vector_archive.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/endianness.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/gtest_helper.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/io/archive.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/io/archive_traits.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/maths/gtest_math_helper.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/maths/math_archive.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/maths/math_constant.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/maths/math_ex.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/maths/simd_math_archive.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/maths/soa_math_archive.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/memory/allocator.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/platform.h
-    ${THIRD_PARTY_DIR}/ozz-animation/src/base/containers/string_archive.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/base/io/archive.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/base/maths/math_archive.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/base/maths/simd_math_archive.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/base/maths/soa_math_archive.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/base/memory/allocator.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/base/platform.cc
-)
-source_group(Base FILES ${OZZ_BASE_FILES})
-set(OZZ_ANIMATION_FILES
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/ik_aim_job.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/ik_two_bone_job.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/animation.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/blending_job.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/local_to_model_job.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/sampling_job.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/skeleton.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/skeleton_utils.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/track.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/track_sampling_job.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/track_triggering_job.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/track_triggering_job_stl.h
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/animation_keyframe.h
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/animation.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/blending_job.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/ik_aim_job.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/ik_two_bone_job.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/local_to_model_job.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/sampling_job.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/skeleton_utils.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/skeleton.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/track_sampling_job.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/track_triggering_job.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/track.cc
-)
-source_group(Animation/runtime FILES ${OZZ_ANIMATION_FILES})
-set(OZZ_ANIMATION_OFFLINE_FILES
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/additive_animation_builder.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/animation_builder.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/animation_optimizer.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/raw_animation_utils.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/raw_animation.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/raw_skeleton.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/raw_track.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/skeleton_builder.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/track_builder.h
-    ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/track_optimizer.h
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/additive_animation_builder.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/animation_builder.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/animation_optimizer.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/raw_animation_archive.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/raw_animation_utils.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/raw_animation.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/raw_skeleton_archive.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/raw_skeleton.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/raw_track.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/skeleton_builder.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/track_builder.cc
-    ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/track_optimizer.cc
-)
-source_group(Animation/Offline FILES ${OZZ_ANIMATION_OFFLINE_FILES})
-set(OZZ_FILES
-    ${OZZ_BASE_FILES}
-    ${OZZ_ANIMATION_FILES}
-    ${OZZ_ANIMATION_OFFLINE_FILES}
-)
-add_library(Ozz STATIC ${OZZ_FILES})
-target_include_directories(Ozz PUBLIC ${OZZ_INCLUDES})
+# add_library(cpu_features STATIC ${CPU_FEATURES_FILES})
+add_subdirectory(${THIRD_PARTY_DIR}/cpu_features/)
+# set(OZZ_INCLUDES
+# ${THIRD_PARTY_DIR}/ozz-animation/include
+# )
+# set(OZZ_BASE_FILES
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/containers/map.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/containers/set.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/containers/string.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/containers/string_archive.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/containers/vector.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/containers/vector_archive.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/endianness.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/gtest_helper.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/io/archive.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/io/archive_traits.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/maths/gtest_math_helper.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/maths/math_archive.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/maths/math_constant.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/maths/math_ex.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/maths/simd_math_archive.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/maths/soa_math_archive.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/memory/allocator.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/base/platform.h
+# ${THIRD_PARTY_DIR}/ozz-animation/src/base/containers/string_archive.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/base/io/archive.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/base/maths/math_archive.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/base/maths/simd_math_archive.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/base/maths/soa_math_archive.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/base/memory/allocator.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/base/platform.cc
+# )
+# source_group(Base FILES ${OZZ_BASE_FILES})
+# set(OZZ_ANIMATION_FILES
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/ik_aim_job.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/ik_two_bone_job.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/animation.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/blending_job.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/local_to_model_job.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/sampling_job.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/skeleton.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/skeleton_utils.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/track.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/track_sampling_job.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/track_triggering_job.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/runtime/track_triggering_job_stl.h
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/animation_keyframe.h
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/animation.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/blending_job.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/ik_aim_job.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/ik_two_bone_job.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/local_to_model_job.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/sampling_job.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/skeleton_utils.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/skeleton.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/track_sampling_job.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/track_triggering_job.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/runtime/track.cc
+# )
+# source_group(Animation/runtime FILES ${OZZ_ANIMATION_FILES})
+# set(OZZ_ANIMATION_OFFLINE_FILES
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/additive_animation_builder.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/animation_builder.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/animation_optimizer.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/raw_animation_utils.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/raw_animation.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/raw_skeleton.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/raw_track.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/skeleton_builder.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/track_builder.h
+# ${THIRD_PARTY_DIR}/ozz-animation/include/ozz/animation/offline/track_optimizer.h
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/additive_animation_builder.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/animation_builder.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/animation_optimizer.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/raw_animation_archive.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/raw_animation_utils.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/raw_animation.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/raw_skeleton_archive.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/raw_skeleton.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/raw_track.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/skeleton_builder.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/track_builder.cc
+# ${THIRD_PARTY_DIR}/ozz-animation/src/animation/offline/track_optimizer.cc
+# )
+# source_group(Animation/Offline FILES ${OZZ_ANIMATION_OFFLINE_FILES})
+# set(OZZ_FILES
+# ${OZZ_BASE_FILES}
+# ${OZZ_ANIMATION_FILES}
+# ${OZZ_ANIMATION_OFFLINE_FILES}
+# )
+# add_library(Ozz STATIC ${OZZ_FILES})
+# target_include_directories(Ozz PUBLIC ${OZZ_INCLUDES})
 
 set(THIRD_PARTY_DEPS
-    Basisu
+    #Basisu
     Eastl
     Imgui
-    Lua
-    MiniZip
+    #Lua
+    #MiniZip
     RMem
     MeshOptimizer
-    TinyEXR
+    #TinyEXR
     GaInput
-    Ozz
+    #Ozz
     cpu_features
 )
