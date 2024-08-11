@@ -26,7 +26,7 @@
 
 #define _GNU_SOURCE // sched_setaffinity
 
-#include "../../Application/Config.h"
+#include <Core/IConfig.h>
 
 #include "../../Utilities/Interfaces/ILog.h"
 #include "../../Utilities/Interfaces/IThread.h"

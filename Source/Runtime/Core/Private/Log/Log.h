@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "../../Application/Config.h"
+#include <Core/IConfig.h>
 
 #include "../../Utilities/Interfaces/IFileSystem.h"
 

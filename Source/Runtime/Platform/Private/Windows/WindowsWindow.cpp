@@ -22,7 +22,7 @@
  * under the License.
  */
 
-#include "../../Application/Config.h"
+#include <Core/IConfig.h>
 
 #include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
 #include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"

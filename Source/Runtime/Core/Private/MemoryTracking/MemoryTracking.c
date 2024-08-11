@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-#include "../../Application/Config.h"
+#include <Core/IConfig.h>
 
 #include "wchar.h"
 

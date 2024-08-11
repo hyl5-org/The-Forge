@@ -30,6 +30,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 //////////////////////////////////////////////
 //// Compiler setup
@@ -49,6 +50,7 @@
 #define FORGE_CONSTEXPR
 #define FORGE_EXTERN_C
 #endif
+
 
 #if defined(__cplusplus) && (defined(__clang__) || _MSC_VER >= 1900)
 // Taken from https://randomascii.wordpress.com/2011/09/13/analyze-for-visual-studio-the-ugly-part-5/
@@ -148,15 +150,17 @@ char(*array_counter(const T(&)[N]))[N];
 #error Unknown language dialect
 #endif
 
+#if !defined(_WIN32)
 #ifndef SSIZE_MAX
 #if PTR_SIZE == 4
 #define SSIZE_MAX INT32_MAX
-COMPILE_ASSERT(sizeof(ssize_t) == sizeof(int32_t));
+	COMPILE_ASSERT(sizeof(ssize_t) == sizeof(int32_t));
 #elif PTR_SIZE == 8
 #define SSIZE_MAX INT64_MAX
-COMPILE_ASSERT(sizeof(ssize_t) == sizeof(int64_t));
+	COMPILE_ASSERT(sizeof(ssize_t) == sizeof(int64_t));
 #endif
 #endif // !SSIZE_MAX
+#endif
 
 #if defined(_MSC_VER)
 #define FORGE_EXPORT __declspec(dllexport)

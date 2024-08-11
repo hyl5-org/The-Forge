@@ -24,7 +24,7 @@
 
 #include "Log.h"
 
-#include "../../Application/Config.h"
+#include <Core/IConfig.h>
 
 #include <stdarg.h>
 

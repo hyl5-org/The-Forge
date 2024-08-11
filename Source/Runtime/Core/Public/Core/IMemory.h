@@ -32,7 +32,7 @@
 #ifndef IMEMORY_H
 #define IMEMORY_H
 
-#include "../../Application/Config.h"
+#include <Core/IConfig.h>
 
 #ifdef __cplusplus
 #include <new>

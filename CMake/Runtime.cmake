@@ -40,8 +40,8 @@ else()
 endif()
 
 target_include_directories(BoundRuntime PUBLIC
-    ${RUNTIME_SOURCE_FILES}/Core/Public
-    ${RUNTIME_SOURCE_FILES}/RHI/Public
+    ${ENGINE_RUNTIME_SOURCE_DIR}/Core/Public
+    ${ENGINE_RUNTIME_SOURCE_DIR}/RHI/Public
     ${RENDER_INCLUDES}
 )
 

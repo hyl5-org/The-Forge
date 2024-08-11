@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "../../Application/Config.h"
+#include <Core/IConfig.h>
 
 #include "../ThirdParty/OpenSource/Nothings/stb_ds.h"
 #include "../ThirdParty/OpenSource/bstrlib/bstrlib.h"

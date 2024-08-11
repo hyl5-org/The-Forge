@@ -24,7 +24,7 @@
 
 #ifdef __APPLE__
 
-#include "../../Application/Config.h"
+#include <Core/IConfig.h>
 
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>

@@ -25,7 +25,7 @@
 #ifndef IUI_H
 #define IUI_H
 
-#include "../../Application/Config.h"
+#include <Core/IConfig.h>
 
 // SCRIPTED TESTING :
 // For now, if a script file with the name "Test.lua", exist in the script directory, will run once an execution.

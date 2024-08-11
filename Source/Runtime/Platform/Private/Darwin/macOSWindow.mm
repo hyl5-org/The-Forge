@@ -24,7 +24,7 @@
 
 #ifdef __APPLE__
 
-#include "../../Application/Config.h"
+#include <Core/IConfig.h>
 
 #import <Cocoa/Cocoa.h>
 #include <Foundation/Foundation.h> // Needed to check for debugger

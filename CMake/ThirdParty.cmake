@@ -309,16 +309,23 @@ ${OZZ_ANIMATION_OFFLINE_FILES}
 add_library(Ozz STATIC ${OZZ_FILES})
 target_include_directories(Ozz PUBLIC ${OZZ_INCLUDES})
 
+add_subdirectory(${ENGINE_THIRD_PARTY_SOURCE_DIR}/DirectX-Headers)
+
 set(THIRD_PARTY_DEPS
-    #Basisu
+
+    # Basisu
     Eastl
     Imgui
-    #Lua
-    #MiniZip
+
+    # Lua
+    # MiniZip
     RMem
     MeshOptimizer
-    #TinyEXR
+
+    # TinyEXR
     GaInput
     Ozz
     cpu_features
+    DirectX-Headers
+    stb
 )

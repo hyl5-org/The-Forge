@@ -22,7 +22,7 @@
  * under the License.
  */
 
-#include "../../Application/Config.h"
+#include <Core/IConfig.h>
 
 #include "../../Application/Interfaces/IApp.h"
 #include "../../Application/Interfaces/IInput.h"

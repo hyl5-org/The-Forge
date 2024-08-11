@@ -22,7 +22,7 @@
  * under the License.
  */
 
-#include "../../Application/Config.h"
+#include <Core/IConfig.h>
 
 /// start file generated from microprofile.html
 #ifdef PROFILE_EMBED_HTML
