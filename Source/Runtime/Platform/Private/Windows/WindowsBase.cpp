@@ -35,21 +35,21 @@
 #pragma comment(lib, "shlwapi.lib")
 #endif
 
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
-#include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
-#include "../../Utilities/ThirdParty/OpenSource/rmem/inc/rmem.h"
+#include <ThirdParty/stb/stb_ds.h>
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
+#include <ThirdParty/rmem/inc/rmem.h>
 
-#include "../../Application/Interfaces/IApp.h"
-#include "../../Application/Interfaces/IFont.h"
-#include "../../Application/Interfaces/IProfiler.h"
-#include "../../Application/Interfaces/IUI.h"
-#include "../../Game/Interfaces/IScripting.h"
-#include "../../Graphics/Interfaces/IGraphics.h"
-#include "../../OS/Interfaces/IOperatingSystem.h"
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IThread.h"
-#include "../../Utilities/Interfaces/ITime.h"
+#include <Application/IApp.h>
+#include <Application/IFont.h>
+#include <Application/IProfiler.h>
+#include <Application/IUI.h>
+#include <Scripting/IScripting.h>
+#include <RHI/IGraphics.h>
+#include <Platform/IOperatingSystem.h>
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
+#include <Core/IThread.h>
+#include <Core/ITime.h>
 
 #if defined(ENABLE_FORGE_REMOTE_UI)
 #include "../../Tools/Network/Network.h"
@@ -57,9 +57,9 @@
 #if defined(ENABLE_FORGE_RELOAD_SHADER)
 #include "../../Tools/ReloadServer/ReloadClient.h"
 #endif
-#include "../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #ifdef ENABLE_FORGE_STACKTRACE_DUMP
 #include "WindowsStackTraceDump.h"

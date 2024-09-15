@@ -26,9 +26,9 @@
 
 #include <Core/IConfig.h>
 
-#include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 
 #define MAX_FUNCTION_NAME_LENGTH 128
 

@@ -30,7 +30,7 @@
 #include "../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_query.h"
 
 #include "../Utilities/Interfaces/IFileSystem.h"
-#include "../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 #include "Interfaces/IUI.h"
 
 #include "../Utilities/Math/MathTypes.h"

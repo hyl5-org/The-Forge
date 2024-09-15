@@ -26,7 +26,8 @@
 
 #include <Core/IConfig.h>
 
-#include "../../Utilities/Interfaces/IFileSystem.h"
+#include <Core/IFileSystem.h>
+
 
 #include "stdbool.h"
 

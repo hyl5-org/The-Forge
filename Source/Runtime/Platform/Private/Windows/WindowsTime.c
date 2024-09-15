@@ -31,9 +31,9 @@
 #include <timeapi.h>
 // clang-format on
 
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IThread.h"
-#include "../../Utilities/Interfaces/ITime.h"
+#include <Core/ILog.h>
+#include <Core/IThread.h>
+#include <Core/ITime.h>
 
 /************************************************************************/
 // Time Related Functions

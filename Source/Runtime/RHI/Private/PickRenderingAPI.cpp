@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-#include "../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 #include "Interfaces/IGraphics.h"
 #include "Interfaces/IRay.h"
 

@@ -33,11 +33,11 @@ extern "C"
 #include "../ThirdParty/OpenSource/lua-5.3.5/src/lualib.h"
 }
 
-#include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IThread.h"
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
+#include <Core/IThread.h>
 
 #include "LuaManagerCommon.h"
 #include "LunaV.hpp"

@@ -37,9 +37,9 @@
 #import "../../Graphics/Interfaces/IGraphics.h"
 #import "../../Graphics/Interfaces/IRay.h"
 #import "../../Resources/ResourceLoader/Interfaces/IResourceLoader.h"
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #if defined(MTL_RAYTRACING_AVAILABLE)
 

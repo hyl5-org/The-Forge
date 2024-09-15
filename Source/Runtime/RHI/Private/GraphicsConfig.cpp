@@ -24,8 +24,8 @@
 
 #include "GraphicsConfig.h"
 
-#include "../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
-#include "../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/stb/stb_ds.h>
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 
 #include "../Utilities/Interfaces/IFileSystem.h"
 #include "Interfaces/IGraphics.h"

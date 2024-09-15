@@ -27,7 +27,13 @@
 
 #include <stdbool.h>
 
-#include "ThirdParty/OpenSource/cpu_features/src/cpu_features_types.h"
+#if defined(_x86_64) || defined( __x86_64__ ) || defined( _M_X64 ) || defined(__x86_64) || defined(__SSE2__) || defined(STBIR_SSE) || defined( _M_IX86_FP ) || defined(__i386) || defined( __i386__ ) || defined( _M_IX86 ) || defined( _X86_ )
+#include <ThirdParty/cpu_features/include/cpuinfo_x86.h>
+#endif
+#if defined(_M_ARM64) || defined(__aarch64__) || defined(__arm64__)
+#include <ThirdParty/cpu_features/include/cpuinfo_aarch64.h>
+#endif
+//#include <ThirdParty/cpu_features/include/cpuinfo_arm.h>
 
 typedef enum
 {
@@ -43,11 +49,13 @@ typedef struct
 {
     char          mName[512];
     SimdIntrinsic mSimd;
-
+#if defined(_x86_64) || defined( __x86_64__ ) || defined( _M_X64 ) || defined(__x86_64) || defined(__SSE2__) || defined(STBIR_SSE) || defined( _M_IX86_FP ) || defined(__i386) || defined( __i386__ ) || defined( _M_IX86 ) || defined( _X86_ )
     X86Features          mFeaturesX86;
     X86Microarchitecture mArchitectureX86;
-
-    Aarch64Features mFeaturesAarch64;
+#endif
+#if defined(_M_ARM64) || defined(__aarch64__) || defined(__arm64__)
+    cpu_features::Aarch64Features mFeaturesAarch64;
+#endif
 } CpuInfo;
 
 #if defined(ANDROID)

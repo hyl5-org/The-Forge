@@ -95,7 +95,7 @@
  * under the License.
  */
 
-#include "../../Application/Interfaces/IProfiler.h"
+#include <Application/IProfiler.h>
 
 #ifndef ENABLE_PROFILER
 
@@ -251,7 +251,7 @@
 
 #else
 
-#include "../../Utilities/Interfaces/IThread.h"
+#include <Core/IThread.h>
 
 #include "../../Utilities/Threading/Atomics.h"
 #ifndef PROFILE_API

@@ -31,13 +31,13 @@
 #include <sys/prctl.h>
 #include <sys/time.h>
 
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IThread.h"
+#include <Core/ILog.h>
+#include <Core/IThread.h>
 #include "../Interfaces/IOperatingSystem.h"
 
 #include "../../Utilities/Threading/UnixThreadID.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #define NSEC_PER_USEC 1000ull
 #define USEC_PER_SEC  1000000ull

@@ -34,10 +34,10 @@
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_apis.h"
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_base.h"
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_query.h"
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
-#include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/stb/stb_ds.h>
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 #include "../Interfaces/IGraphics.h"
 #include "../Interfaces/IRay.h"
 
@@ -51,7 +51,7 @@
 #include "../ThirdParty/OpenSource/OpenGL/GLES2/gl2.h"
 #include "../ThirdParty/OpenSource/OpenGL/GLES2/gl2ext.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 extern void gles_createShaderReflection(Shader* pProgram, ShaderReflection* pOutReflection, const BinaryShaderDesc* pDesc);
 

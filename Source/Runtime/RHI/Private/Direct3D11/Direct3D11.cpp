@@ -36,11 +36,11 @@
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_apis.h"
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_base.h"
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_query.h"
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
-#include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/stb/stb_ds.h>
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
 #include "../Interfaces/IGraphics.h"
 
 #include "../../Utilities/RingBuffer.h"
@@ -66,10 +66,10 @@ extern "C"
     __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #if defined(AUTOMATED_TESTING)
-#include "../../Application/Interfaces/IScreenshot.h"
+#include <Application/IScreenshot.h>
 #endif
 
 #define D3D11_REQ_CONSTANT_BUFFER_SIZE (D3D11_REQ_CONSTANT_BUFFER_ELEMENT_COUNT * 16u)

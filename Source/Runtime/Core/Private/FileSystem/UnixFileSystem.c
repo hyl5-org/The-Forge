@@ -21,6 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+#if defined(__linux__) || defined(__unix__)
 
 #include <errno.h>
 #include <fcntl.h>
@@ -28,8 +29,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
 
 bool fsMergeDirAndFileName(const char* dir, const char* path, char separator, size_t dstSize, char* dst);
 void fsGetParentPath(const char* path, char* output);
@@ -402,4 +403,6 @@ IFileSystem gUnixSystemFileIO = {
 
 #if !defined(ANDROID)
 IFileSystem* pSystemFileIO = &gUnixSystemFileIO;
+#endif
+
 #endif

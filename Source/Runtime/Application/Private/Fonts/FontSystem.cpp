@@ -22,17 +22,17 @@
  * under the License.
  */
 
-#include "../../Application/Interfaces/IFont.h"
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Application/IFont.h>
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
 
 #include "../../Graphics/GraphicsConfig.h"
 
 // include Fontstash (should be after MemoryTracking so that it also detects memory free/remove in fontstash)
 #define FONTSTASH_IMPLEMENTATION
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_query.h"
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
-#include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/stb/stb_ds.h>
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 #include "../ThirdParty/OpenSource/Fontstash/src/fontstash.h"
 
 #include "../../Graphics/Interfaces/IGraphics.h"
@@ -40,7 +40,7 @@
 
 #include "../../Utilities/RingBuffer.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #ifdef ENABLE_FORGE_FONTS
 

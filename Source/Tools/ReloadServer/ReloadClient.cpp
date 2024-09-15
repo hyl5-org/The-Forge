@@ -50,12 +50,12 @@ If an error occurs on the host:
 
 #include <string.h>
 
-#include "../../Application/Interfaces/IInput.h"
-#include "../../Application/Interfaces/IUI.h"
+#include <Platform/IInput.h>"
+#include <Application/IUI.h>
 #include "../../Game/Interfaces/IScripting.h"
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IThread.h"
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
+#include <Core/IThread.h>
 
 #include "../../Utilities/Threading/Atomics.h"
 #include "../Network/Network.h"

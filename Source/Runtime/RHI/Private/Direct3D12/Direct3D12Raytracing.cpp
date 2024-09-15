@@ -36,11 +36,11 @@
 #endif
 
 // OS
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
+#include <ThirdParty/stb/stb_ds.h>
 
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 
-#include "../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
 // Renderer
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_apis.h"
@@ -50,7 +50,7 @@
 
 #include "Direct3D12Hooks.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 // check if WindowsSDK is used which supports raytracing
 #ifdef D3D12_RAYTRACING_AVAILABLE

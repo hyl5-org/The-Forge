@@ -29,11 +29,11 @@
 #include "../../OS/ThirdParty/PrivateOculus/ovr_sdk_mobile/VrApi/Include/VrApi_Vulkan.h"
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_apis.h"
 
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 
 #include "../../OS/Quest/VrApi.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 Queue*        pSynchronisationQueue = NULL;
 RenderTarget* pFragmentDensityMask = NULL;

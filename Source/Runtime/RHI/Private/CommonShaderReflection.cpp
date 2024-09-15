@@ -22,12 +22,12 @@
  * under the License.
  */
 
-#include "../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
+#include <ThirdParty/stb/stb_ds.h>
 
-#include "../Utilities/Interfaces/ILog.h"
-#include "Interfaces/IGraphics.h"
+#include <Core/ILog.h>
+#include <RHI/IGraphics.h>
 
-#include "../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 // This file contains shader reflection code that is the same for all platforms.
 // We know it's the same for all platforms since it only interacts with the

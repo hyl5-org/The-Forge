@@ -28,7 +28,7 @@
 
 #include "../../Graphics/Interfaces/IGraphics.h"
 
-#include "../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
 typedef struct FilterContainer
 {

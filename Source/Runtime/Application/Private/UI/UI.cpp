@@ -26,16 +26,16 @@
 #include "../ThirdParty/OpenSource/imgui/imgui.h"
 #include "../ThirdParty/OpenSource/imgui/imgui_internal.h"
 
-#include "../../Application/Interfaces/IFont.h"
-#include "../../Application/Interfaces/IInput.h"
-#include "../../Application/Interfaces/IUI.h"
+#include <Application/IFont.h>
+#include <Platform/IInput.h>"
+#include <Application/IUI.h>
 #include "../../Resources/ResourceLoader/Interfaces/IResourceLoader.h"
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
 
 #include "../../Utilities/Math/Algorithms.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #if defined(TARGET_IOS) || defined(__ANDROID__) || defined(NX64)
 #define TOUCH_INPUT 1

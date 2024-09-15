@@ -295,17 +295,17 @@ extern "C" {
  *------------------------------------------------------------------------*/
 
 #define CONCAT2(_x, _y) _x ## _y
-#define CONCAT(_x, _y) CONCAT2(_x, _y)
+#define CONCAT_RMEM(_x, _y) CONCAT2(_x, _y)
 
 #define RMEM_MARKER(_name, _color)							\
-	static RMemMarker	CONCAT(Marker,__LINE__) = 			\
+	static RMemMarker	CONCAT_RMEM(Marker,__LINE__) = 			\
 	rmemCreateMarker(_name, _color);						\
-	rmemSetMarker(&CONCAT(Marker,__LINE__));
+	rmemSetMarker(&CONCAT_RMEM(Marker,__LINE__));
 
 #define RMEM_MARKER_RGB(_name, _r, _g, _b)					\
-	static RMemMarker	CONCAT(Marker,__LINE__) =			\
+	static RMemMarker	CONCAT_RMEM(Marker,__LINE__) =			\
 	rmemCreateMarkerRGB(_name, _r, _g, _b);					\
-	rmemSetMarker(&CONCAT(Marker,__LINE__));
+	rmemSetMarker(&CONCAT_RMEM(Marker,__LINE__));
 
 #ifdef __cplusplus
 
@@ -336,17 +336,17 @@ struct RMemTagRegistration
  *		RMEM_REGISTER_TAG_CHILD("Update", "Main loop")
  *------------------------------------------------------------------------*/
 #define RMEM_REGISTER_TAG(_name)									\
-	RMemTagRegistration CONCAT(tag,__LINE__)(_name);				\
+	RMemTagRegistration CONCAT_RMEM(tag,__LINE__)(_name);				\
 
 #define RMEM_REGISTER_TAG_CHILD(_name, _parentName)					\
-	RMemTagRegistration CONCAT(tag,__LINE__)(_name, _parentName);	\
+	RMemTagRegistration CONCAT_RMEM(tag,__LINE__)(_name, _parentName);	\
 
 /*--------------------------------------------------------------------------
  * Macro used to activate memory tag on a scope basis
  *------------------------------------------------------------------------*/
 #define RMEM_TAG(_name)												\
-	static RMemTag CONCAT(tag,__LINE__) = rmemCreateTag(_name);		\
-	RMemTagScope CONCAT(tagScope,__LINE__)(&CONCAT(tag,__LINE__));
+	static RMemTag CONCAT_RMEM(tag,__LINE__) = rmemCreateTag(_name);		\
+	RMemTagScope CONCAT_RMEM(tagScope,__LINE__)(&CONCAT_RMEM(tag,__LINE__));
 
 #endif /* __cplusplus */
 

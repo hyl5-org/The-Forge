@@ -36,10 +36,10 @@
 //											e.g., "X" variable will have "SetX" and "GetX" pair of functions
 // To add global Lua functions, independent of Unit Tests, add definition in UIApp::Init (Check LOGINFO there for example).
 
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
-#include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/stb/stb_ds.h>
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-#include "../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
 struct UserInterfaceDrawData;
 

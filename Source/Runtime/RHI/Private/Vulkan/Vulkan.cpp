@@ -40,13 +40,13 @@
 #define strncpy_s     strncpy
 #endif
 
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
-#include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/stb/stb_ds.h>
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 #include "../Interfaces/IGraphics.h"
 
-#include "../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
 #if defined(__clang__)
 #pragma clang diagnostic push
@@ -91,10 +91,10 @@ extern RenderTarget* pFragmentDensityMask;
 #include "swappy/swappyVk.h"
 #endif
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #if defined(AUTOMATED_TESTING)
-#include "../../Application/Interfaces/IScreenshot.h"
+#include <Application/IScreenshot.h>
 #endif
 #include "../ThirdParty/OpenSource/ags/AgsHelper.h"
 

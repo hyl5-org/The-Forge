@@ -23,9 +23,9 @@
  */
 
 // INTERFACES
-#include "../../Application/Interfaces/IUI.h"
+#include <Application/IUI.h>
 #include "../../Game/Interfaces/IScripting.h"
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 
 #ifdef ENABLE_FORGE_SCRIPTING
 

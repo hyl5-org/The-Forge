@@ -3,7 +3,7 @@
  * License: http://www.opensource.org/licenses/BSD-2-Clause
  */
 
-#include "../inc/rmem.h"
+#include <ThirdParty/rmem/inc/rmem.h>
 #include "rmem_hook.h"
 #include "rmem_utils.h"
 

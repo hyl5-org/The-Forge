@@ -26,7 +26,7 @@
 
 #include <Core/IConfig.h>
 
-#include "../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
 typedef struct Texture                    Texture;
 typedef struct Cmd                        Cmd;

@@ -36,12 +36,12 @@
 #include <io.h>
 #include <stdio.h>
 
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IThread.h"
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
+#include <Core/IThread.h>
 #include "../Interfaces/IOperatingSystem.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 template<typename T>
 static inline T withUTF16Path(const char* path, T (*function)(const wchar_t*))

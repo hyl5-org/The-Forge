@@ -33,22 +33,22 @@
 #include <ctime>
 #include <gtk/gtk.h>
 
-#include "../../Utilities/ThirdParty/OpenSource/rmem/inc/rmem.h"
+#include <ThirdParty/rmem/inc/rmem.h>
 
-#include "../../Application/Interfaces/IFont.h"
-#include "../../Application/Interfaces/IProfiler.h"
-#include "../../Application/Interfaces/IUI.h"
+#include <Application/IFont.h>
+#include <Application/IProfiler.h>
+#include <Application/IUI.h>
 #include "../../Game/Interfaces/IScripting.h"
 #include "../../Graphics/Interfaces/IGraphics.h"
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IThread.h"
-#include "../../Utilities/Interfaces/ITime.h"
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
+#include <Core/IThread.h>
+#include <Core/ITime.h>
 #include "../Interfaces/IOperatingSystem.h"
 
-#include "../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 //------------------------------------------------------------------------
 // STATIC STRUCTS

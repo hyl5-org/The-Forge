@@ -24,11 +24,11 @@
 
 #include "ThreadSystem.h"
 
-#include "../ThirdParty/OpenSource/Nothings/stb_ds.h"
+#include <ThirdParty/stb/stb_ds.h>
 
-#include "../Interfaces/ILog.h"
-#include "../Interfaces/IThread.h"
-#include "../Interfaces/ITime.h"
+#include <Core/ILog.h>
+#include <Core/IThread.h>
+#include <Core/ITime.h>
 
 #include "Atomics.h"
 

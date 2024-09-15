@@ -26,8 +26,8 @@
 
 #include <Core/IConfig.h>
 
-#include "../ThirdParty/OpenSource/Nothings/stb_ds.h"
-#include "../ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/stb/stb_ds.h>
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 
 #ifdef __cplusplus
 extern "C"

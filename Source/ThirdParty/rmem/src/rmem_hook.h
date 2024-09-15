@@ -6,7 +6,7 @@
 #ifndef RMEM_HOOK_H
 #define RMEM_HOOK_H
 
-#include "../inc/rmem.h"
+#include <ThirdParty/rmem/inc/rmem.h>
 #include "rmem_config.h"
 #include "rmem_utils.h"
 #include "rmem_mutex.h"

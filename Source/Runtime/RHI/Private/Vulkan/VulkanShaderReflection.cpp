@@ -28,10 +28,10 @@
 
 #include "../ThirdParty/OpenSource/SPIRV_Cross/SpirvTools.h"
 
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 #include "../Interfaces/IGraphics.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 static DescriptorType sSPIRV_TO_DESCRIPTOR[SPIRV_TYPE_COUNT] = {
     DESCRIPTOR_TYPE_UNDEFINED,

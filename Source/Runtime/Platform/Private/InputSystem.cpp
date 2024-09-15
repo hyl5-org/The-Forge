@@ -23,7 +23,7 @@
  * under the License.
  */
 
-#include "../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
+#include <ThirdParty/stb/stb_ds.h>
 
 #include "../Graphics/GraphicsConfig.h"
 
@@ -66,7 +66,7 @@
 #include "../OS/Interfaces/IOperatingSystem.h"
 #include "../Resources/ResourceLoader/Interfaces/IResourceLoader.h"
 #include "../Utilities/Interfaces/IFileSystem.h"
-#include "../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 #include "Interfaces/IInput.h"
 #include "Interfaces/IUI.h"
 

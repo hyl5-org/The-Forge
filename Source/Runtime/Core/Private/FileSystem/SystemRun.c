@@ -25,12 +25,12 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#include "../ThirdParty/OpenSource/Nothings/stb_ds.h"
-#include "../ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/stb/stb_ds.h>
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-#include "../../OS/Interfaces/IOperatingSystem.h"
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Platform/IOperatingSystem.h>
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
 
 int systemRun(const char* command, const char** arguments, size_t argumentCount, const char* stdOutFile)
 {

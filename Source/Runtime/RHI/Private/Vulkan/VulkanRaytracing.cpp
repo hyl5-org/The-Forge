@@ -26,12 +26,12 @@
 
 #ifdef VULKAN
 
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
-#include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/stb/stb_ds.h>
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 
-#include "../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
 // Renderer
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_apis.h"
@@ -39,7 +39,7 @@
 #include "../Interfaces/IGraphics.h"
 #include "../Interfaces/IRay.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 extern VkAllocationCallbacks* GetAllocationCallbacks(VkObjectType objType);
 

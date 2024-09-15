@@ -24,7 +24,7 @@
 
 #include <locale.h>
 
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 
 #include "Buny.h"
 

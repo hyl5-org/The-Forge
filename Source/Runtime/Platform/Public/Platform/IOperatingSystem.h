@@ -26,7 +26,7 @@
 
 #include <Core/IConfig.h>
 
-#include "../CPUConfig.h"
+#include "../Private/CPUConfig.h"
 
 #if defined(_WINDOWS) || defined(XBOX)
 #include <stdlib.h>
@@ -85,13 +85,13 @@ typedef uint64_t uint64;
 
 #if defined(FORGE_DEBUG) && (defined(_WINDOWS) || (defined(__linux__) && !defined(__ANDROID__)) || defined(__APPLE__))
 #define WINDOW_DETAILS 1
-#include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 #else
 #define WINDOW_DETAILS 0
 #endif
 
 #define IMEMORY_FROM_HEADER
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #if !defined(_WINDOWS) && !defined(XBOX)
 #include <unistd.h>

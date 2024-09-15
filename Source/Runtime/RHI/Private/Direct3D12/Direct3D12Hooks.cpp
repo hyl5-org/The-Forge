@@ -33,7 +33,7 @@
 
 #include "Direct3D12Hooks.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #ifndef SAFE_RELEASE
 #define SAFE_RELEASE(p_var) \

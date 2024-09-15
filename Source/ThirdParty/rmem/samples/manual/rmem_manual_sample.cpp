@@ -18,7 +18,7 @@ For example:
 	C:\Users\[username]\AppData\Roaming\MTuner
 */
 
-#include "../../inc/rmem.h"
+#include <ThirdParty/rmem/inc/rmem.h>
 #include <stdlib.h>
 
 #if RMEM_PLATFORM_PS4

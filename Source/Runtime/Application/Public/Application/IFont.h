@@ -27,9 +27,9 @@
 
 #include <Core/IConfig.h>
 
-#include "../../Application/Interfaces/ICameraController.h"
+#include <Application/ICameraController.h>
 
-#include "../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
 typedef struct Renderer      Renderer;
 typedef struct Cmd           Cmd;

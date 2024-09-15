@@ -32,12 +32,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "../../OS/Interfaces/IOperatingSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IThread.h"
-#include "../../Utilities/Interfaces/IToolFileSystem.h"
+#include <Platform/IOperatingSystem.h>
+#include <Core/ILog.h>
+#include <Core/IThread.h>
+#include <Core//IToolFileSystem.h>
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 struct FileWatcher
 {

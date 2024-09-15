@@ -18,7 +18,7 @@ For example:
 	C:\Users\[username]\AppData\Roaming\MTuner
 */
 
-#include "../../inc/rmem.h"
+#include <ThirdParty/rmem/inc/rmem.h>
 #include "../../inc/rmem_entry.h"
 
 #include <stdlib.h>

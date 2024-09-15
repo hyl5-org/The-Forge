@@ -31,13 +31,13 @@
 #import <QuartzCore/CoreAnimation.h>
 #import <UIKit/UIKit.h>
 
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
+#include <ThirdParty/stb/stb_ds.h>
 
-#include "../../Application/Interfaces/IApp.h"
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Application/IApp.h>
+#include <Core/ILog.h>
 #include "../Interfaces/IOperatingSystem.h"
 
-#include "../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
 IApp* pWindowAppRef = NULL;
 

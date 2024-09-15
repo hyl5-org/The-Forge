@@ -31,8 +31,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
 
 static bool        gInitialized = false;
 static const char* gResourceMounts[RM_COUNT];

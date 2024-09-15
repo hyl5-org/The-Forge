@@ -25,11 +25,11 @@
 #define BUNYAR_LIB_INTERNAL
 #include "Buny.h"
 
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
+#include <ThirdParty/stb/stb_ds.h>
 
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IThread.h"
-#include "../../Utilities/Interfaces/ITime.h"
+#include <Core/ILog.h>
+#include <Core/IThread.h>
+#include <Core/ITime.h>
 
 #include "../../Utilities/Threading/Atomics.h"
 #include "../../Utilities/Threading/ThreadSystem.h"

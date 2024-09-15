@@ -31,7 +31,7 @@ struct RenderTarget;
 struct Cmd;
 struct PipelineCache;
 
-#include "../../OS/Interfaces/IOperatingSystem.h"
+#include <Platform/IOperatingSystem.h>
 
 class IMiddleware
 {

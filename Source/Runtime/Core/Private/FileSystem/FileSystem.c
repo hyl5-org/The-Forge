@@ -24,20 +24,20 @@
 
 #include <errno.h>
 
-#include "../ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IThread.h"
-#include "../../Utilities/Interfaces/ITime.h"
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
+#include <Core/IThread.h>
+#include <Core/ITime.h>
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 // This macro enables custom ZSTD allocator features
 #define ZSTD_STATIC_LINKING_ONLY
-#include "../../Utilities/ThirdParty/OpenSource/lz4/lz4.h"
-#include "../../Utilities/ThirdParty/OpenSource/zstd/zstd.h"
 
+#include <ThirdParty/zstd/lib/zstd.h>
+#include <ThirdParty/lz4/lib/lz4.h>
 /************************************************************************/
 // MARK: - Minor filename manipulation
 /************************************************************************/

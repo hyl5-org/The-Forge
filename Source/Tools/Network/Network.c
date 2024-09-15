@@ -26,7 +26,7 @@
 
 #include <string.h>
 
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 
 #define ENETWORKUNINITALIZED INT_MAX
 

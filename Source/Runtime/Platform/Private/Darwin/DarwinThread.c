@@ -29,13 +29,13 @@
 #include <sys/sysctl.h>
 #include <time.h>
 
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IThread.h"
+#include <Core/ILog.h>
+#include <Core/IThread.h>
 #include "../Interfaces/IOperatingSystem.h"
 
 #include "../../Utilities/Threading/UnixThreadID.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #if defined(ENABLE_THREAD_PERFORMANCE_STATS)
 #include <mach/mach.h>

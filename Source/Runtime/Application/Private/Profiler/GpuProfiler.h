@@ -23,7 +23,7 @@
  */
 
 #pragma once
-#include "../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
 struct Cmd;
 struct Renderer;

@@ -29,11 +29,11 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
 #include "../Interfaces/IOperatingSystem.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 extern "C"
 {

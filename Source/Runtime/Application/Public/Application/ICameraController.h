@@ -26,9 +26,9 @@
 
 #include <Core/IConfig.h>
 
-#include "../../OS/Interfaces/IOperatingSystem.h"
+#include <Platform/IOperatingSystem.h>
 
-#include "../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
 #if defined(QUEST_VR)
 #include "../../OS/Quest/VrApi.h"

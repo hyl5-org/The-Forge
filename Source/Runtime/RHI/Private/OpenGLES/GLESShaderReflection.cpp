@@ -28,10 +28,10 @@
 
 #include "../ThirdParty/OpenSource/OpenGL/GLES2/gl2.h"
 
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 #include "../Interfaces/IGraphics.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 inline const char* util_get_enum_string(GLenum value)
 {

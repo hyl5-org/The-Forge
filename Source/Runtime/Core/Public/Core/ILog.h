@@ -28,7 +28,7 @@
 
 #include <stdarg.h>
 
-#include "../Log/Log.h"
+#include "../Private/Log/Log.h"
 
 #ifdef __cplusplus
 extern "C"

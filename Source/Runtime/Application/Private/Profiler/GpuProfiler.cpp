@@ -24,7 +24,7 @@
 
 #include "GpuProfiler.h"
 
-#include "../../Application/Interfaces/IProfiler.h"
+#include <Application/IProfiler.h>
 
 #include "../../Graphics/GraphicsConfig.h"
 
@@ -48,12 +48,12 @@ void         removeGpuProfiler(ProfileToken nProfileToken) {}
 
 #include "../../Graphics/Interfaces/IGraphics.h"
 #include "../../Resources/ResourceLoader/Interfaces/IResourceLoader.h"
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/ITime.h"
+#include <Core/ILog.h>
+#include <Core/ITime.h>
 
 #include "ProfilerBase.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 DECLARE_RENDERER_FUNCTION(void, mapBuffer, Renderer* pRenderer, Buffer* pBuffer, ReadRange* pRange)
 DECLARE_RENDERER_FUNCTION(void, unmapBuffer, Renderer* pRenderer, Buffer* pBuffer)

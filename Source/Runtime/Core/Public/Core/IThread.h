@@ -24,8 +24,8 @@
 
 #include <Core/IConfig.h>
 
-#include "../../OS/Interfaces/IOperatingSystem.h"
-
+#include <Platform/IOperatingSystem.h>
+#include "../Private/Threading/Atomics.h"
 #ifndef _THREAD_H_
 #define _THREAD_H_
 

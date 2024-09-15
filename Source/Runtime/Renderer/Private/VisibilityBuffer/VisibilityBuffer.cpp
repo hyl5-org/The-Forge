@@ -25,8 +25,8 @@
 #include "../../../Common_3/Application/Interfaces/ICameraController.h"
 #include "../../../Common_3/Application/Interfaces/IProfiler.h"
 #include "../../../Common_3/Graphics/Interfaces/IGraphics.h"
-#include "../../../Common_3/Utilities/Interfaces/ILog.h"
-#include "../../../Common_3/Utilities/Interfaces/ITime.h"
+#include <Core/ILog.h>
+#include <Core/ITime.h>
 #include "../Interfaces/IVisibilityBuffer.h"
 
 #include "../../../Common_3/Utilities/RingBuffer.h"

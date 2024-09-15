@@ -24,15 +24,15 @@
 
 #include <Core/IConfig.h>
 
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
-#include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/stb/stb_ds.h>
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-#include "../../Application/Interfaces/IApp.h"
-#include "../../OS/Interfaces/IOperatingSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Application/IApp.h>
+#include <Platform/IOperatingSystem.h>
+#include <Core/ILog.h>
 
 #include "../../Utilities/Math/Algorithms.h"
-#include "../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
 #pragma comment(lib, "WinMM.lib")
 #include <windowsx.h>

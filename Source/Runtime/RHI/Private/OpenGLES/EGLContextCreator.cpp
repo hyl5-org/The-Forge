@@ -28,12 +28,12 @@
 
 #include "../ThirdParty/OpenSource/OpenGL/GLES/egl.h"
 
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 #include "../Interfaces/IGraphics.h"
 
 #include "GLESContextCreator.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 void*                   gDisplay = EGL_NO_DISPLAY;
 thread_local EGLSurface gPlaceholderSurface = EGL_NO_SURFACE;

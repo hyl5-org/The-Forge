@@ -38,11 +38,11 @@
 #include <MetalPerformanceShaders/MetalPerformanceShaders.h>
 #import <simd/simd.h>
 
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
-#include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/stb/stb_ds.h>
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 
 #import "../../Graphics/Interfaces/IGraphics.h"
-#include "../../OS/Interfaces/IOperatingSystem.h"
+#include <Platform/IOperatingSystem.h>
 
 #ifdef ENABLE_OS_PROC_MEMORY
 #include <os/proc.h>
@@ -57,15 +57,15 @@
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_bits.h"
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_query.h"
 
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 
-#include "../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 #include "../../Utilities/Threading/Atomics.h"
 
 #include "MetalCapBuilder.h"
 #include "MetalMemoryAllocatorImpl.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #if defined(AUTOMATED_TESTING)
 #include "IScreenshot.h"

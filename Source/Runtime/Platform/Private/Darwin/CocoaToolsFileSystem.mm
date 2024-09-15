@@ -24,10 +24,10 @@
 
 #include <AppKit/AppKit.h>
 
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IToolFileSystem.h"
+#include <Core/ILog.h>
+#include <Core//IToolFileSystem.h>
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #pragma mark - FileWatcher
 

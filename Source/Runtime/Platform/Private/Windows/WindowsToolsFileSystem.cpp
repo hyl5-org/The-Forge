@@ -27,15 +27,15 @@
 #include <malloc.h> // alloca
 #include <wchar.h>  // _wrename
 
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IThread.h"
-#include "../../Utilities/Interfaces/IToolFileSystem.h"
+#include <Core/ILog.h>
+#include <Core/IThread.h>
+#include <Core//IToolFileSystem.h>
 #include "../Interfaces/IOperatingSystem.h"
 
 #include "commdlg.h"
 #include "shlobj.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 // static
 template<typename T>

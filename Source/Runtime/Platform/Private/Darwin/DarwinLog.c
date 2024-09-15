@@ -31,9 +31,9 @@
 #include "../Interfaces/IOperatingSystem.h"
 
 // interfaces
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 static bool gIsInteractiveMode = true;
 

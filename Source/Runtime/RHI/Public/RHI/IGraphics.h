@@ -24,17 +24,16 @@
 
 #pragma once
 
-#include "../GraphicsConfig.h"
+#include "../Private/GraphicsConfig.h"
 
 #ifdef ENABLE_NSIGHT_AFTERMATH
 #include "../ThirdParty/PrivateNvidia/NsightAftermath/include/AftermathTracker.h"
 #endif
+#include <ThirdParty/tinyimageformat/tinyimageformat_base.h>
 
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_base.h"
-
-#include "../../OS/Interfaces/IOperatingSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IThread.h"
+#include <Platform/IOperatingSystem.h>
+#include <Core/ILog.h>
+#include <Core/IThread.h>
 
 #ifdef __cplusplus
 #ifndef MAKE_ENUM_FLAG

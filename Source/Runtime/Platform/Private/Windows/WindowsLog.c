@@ -29,11 +29,11 @@
 #include <io.h> // _isatty
 
 // interfaces
-#include "../../OS/Interfaces/IOperatingSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IThread.h"
+#include <Platform/IOperatingSystem.h>
+#include <Core/ILog.h>
+#include <Core/IThread.h>
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #define BUFFER_SIZE 4096
 

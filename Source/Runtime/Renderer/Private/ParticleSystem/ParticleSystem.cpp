@@ -22,13 +22,13 @@
  * under the License.
  */
 
-#include "../../../Common_3/Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
+#include <ThirdParty/stb/stb_ds.h>
 
 #include "../../../Common_3/Application/Interfaces/IProfiler.h"
 #include "../../../Common_3/Graphics/Interfaces/IGraphics.h"
 #include "../../../Common_3/Resources/ResourceLoader/Interfaces/IResourceLoader.h"
-#include "../../../Common_3/Utilities/Interfaces/ILog.h"
-#include "../../../Common_3/Utilities/Interfaces/ITime.h"
+#include <Core/ILog.h>
+#include <Core/ITime.h>
 #include "../Interfaces/IParticleSystem.h"
 
 #define NO_FSL_DEFINITIONS

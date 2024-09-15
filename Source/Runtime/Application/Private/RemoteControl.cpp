@@ -23,8 +23,8 @@
  */
 
 #include "../Resources/ResourceLoader/Interfaces/IResourceLoader.h"
-#include "../Utilities/Interfaces/ILog.h"
-#include "../Utilities/Interfaces/IThread.h"
+#include <Core/ILog.h>
+#include <Core/IThread.h>
 #include "Interfaces/IUI.h"
 
 #include "../Tools/Network/Network.h"

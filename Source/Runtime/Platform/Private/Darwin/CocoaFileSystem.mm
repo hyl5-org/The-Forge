@@ -26,11 +26,11 @@
 
 #import <Foundation/Foundation.h>
 
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
 #include "../Interfaces/IOperatingSystem.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 static bool        gInitialized = false;
 static const char* gResourceMounts[RM_COUNT];

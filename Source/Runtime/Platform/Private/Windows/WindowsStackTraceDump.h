@@ -25,8 +25,8 @@
 #pragma once
 #include <Core/IConfig.h>
 
-#include "../../OS/Interfaces/IOperatingSystem.h"
-#include "../../Utilities/Interfaces/IThread.h"
+#include <Platform/IOperatingSystem.h>
+#include <Core/IThread.h>
 
 struct WindowsStackTraceLineInfo
 {

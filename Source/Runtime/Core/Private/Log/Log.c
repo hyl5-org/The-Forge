@@ -29,12 +29,12 @@
 #include <stdarg.h>
 
 #ifdef ENABLE_LOGGING
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IThread.h"
-#include "../../Utilities/Interfaces/ITime.h"
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
+#include <Core/IThread.h>
+#include <Core/ITime.h>
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #define LOG_CALLBACK_MAX_ID FS_MAX_PATH
 #define LOG_MAX_BUFFER      1024

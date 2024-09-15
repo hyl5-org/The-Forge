@@ -22,9 +22,9 @@
  * under the License.
  */
 
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
-#include "../../Utilities/Interfaces/IToolFileSystem.h"
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
+#include <Core//IToolFileSystem.h>
 
 void fsGetFilesWithExtension(ResourceDirectory resourceDir, const char* subDirectory, const char* extension, char*** out, int* count)
 {

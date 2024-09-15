@@ -26,7 +26,7 @@
 #include <stdint.h>
 #include <time.h>
 
-#include "../../Utilities/Interfaces/ITime.h"
+#include <Core/ITime.h>
 
 /************************************************************************/
 // Time Related Functions

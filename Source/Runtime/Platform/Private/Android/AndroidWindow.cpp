@@ -29,8 +29,8 @@
 #include <ctime>
 #include <unistd.h>
 
-#include "../../Application/Interfaces/IApp.h"
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Application/IApp.h>
+#include <Core/ILog.h>
 #include "../Interfaces/IOperatingSystem.h"
 
 #if defined(QUEST_VR)

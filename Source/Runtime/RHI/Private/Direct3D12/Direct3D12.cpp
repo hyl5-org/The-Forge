@@ -38,8 +38,8 @@
 #include <Windows.h>
 
 #define D3D12MA_IMPLEMENTATION
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
-#include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/stb/stb_ds.h>
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 #include "../ThirdParty/OpenSource/D3D12MemoryAllocator/Direct3D12MemoryAllocator.h"
 
 #include "../Interfaces/IGraphics.h"
@@ -56,17 +56,17 @@
 #include "../ThirdParty/OpenSource/nvapi/NvApiHelper.h"
 #include "../ThirdParty/OpenSource/renderdoc/renderdoc_app.h"
 
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
 
 #include "../../Utilities/Math/AlgorithmsImpl.h"
-#include "../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
 #include "Direct3D12CapBuilder.h"
 #include "Direct3D12Hooks.h"
 
 #if defined(AUTOMATED_TESTING)
-#include "../../Application/Interfaces/IScreenshot.h"
+#include <Application/IScreenshot.h>
 #endif
 
 #if !defined(_WINDOWS) && !defined(XBOX)
@@ -85,7 +85,7 @@
 #error "D3D12 requires C++! Sorry!"
 #endif
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #define D3D12_GPU_VIRTUAL_ADDRESS_NULL    ((D3D12_GPU_VIRTUAL_ADDRESS)0)
 #define D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN ((D3D12_GPU_VIRTUAL_ADDRESS)-1)

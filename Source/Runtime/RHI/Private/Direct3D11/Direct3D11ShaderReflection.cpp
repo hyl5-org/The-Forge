@@ -27,12 +27,12 @@
 #ifdef DIRECT3D11
 #include <d3dcompiler.h>
 
-#include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Core/ILog.h>
 #include "../Interfaces/IGraphics.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 static DescriptorType sD3D11_TO_DESCRIPTOR[] = {
     DESCRIPTOR_TYPE_UNIFORM_BUFFER, // D3D_SIT_CBUFFER

@@ -24,6 +24,7 @@
 
 #pragma once
 #include "IFileSystem.h"
+#include "IConfig.h"
 
 #if !defined(_WINDOWS) && !defined(__APPLE__) && !defined(__linux__)
 #error IToolFileSystem.h only implemented on Mac, Windows, Linux

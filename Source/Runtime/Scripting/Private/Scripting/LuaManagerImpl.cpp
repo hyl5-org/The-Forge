@@ -24,13 +24,13 @@
 
 #include "LuaManagerImpl.h"
 
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_ds.h"
-#include "../../Utilities/ThirdParty/OpenSource/bstrlib/bstrlib.h"
+#include <ThirdParty/stb/stb_ds.h>
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-#include "../../Application/Interfaces/ICameraController.h"
-#include "../../Utilities/Interfaces/IFileSystem.h"
+#include <Application/ICameraController.h>
+#include <Core/IFileSystem.h>
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 const char LuaManagerImpl::className[] = "LuaManager";
 bool       LuaManagerImpl::m_registered = false;

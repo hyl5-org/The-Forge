@@ -34,16 +34,16 @@
 #include "../../Graphics/Interfaces/IGraphics.h"
 
 // INTERFACES
-#include "../../Application/Interfaces/IFont.h"
-#include "../../Application/Interfaces/IProfiler.h"
-#include "../../Application/Interfaces/IUI.h"
+#include <Application/IFont.h>
+#include <Application/IProfiler.h>
+#include <Application/IUI.h>
 #include "../../Game/Interfaces/IScripting.h"
-#include "../../OS/Interfaces/IOperatingSystem.h"
-#include "../../Utilities/Interfaces/IFileSystem.h"
+#include <Platform/IOperatingSystem.h>
+#include <Core/IFileSystem.h>
 
 #include "../../Utilities/Math/Algorithms.h"
 
-#include "../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #ifdef ENABLE_PROFILER
 /////////////////////////////////////////////////////////////////////////////

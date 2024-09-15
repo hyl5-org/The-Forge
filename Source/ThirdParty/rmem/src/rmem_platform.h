@@ -6,7 +6,7 @@
 #ifndef RMEM_PLATFORM_H
 #define RMEM_PLATFORM_H
 
-#include "../inc/rmem.h"
+#include <ThirdParty/rmem/inc/rmem.h>
 #include "rmem_config.h"
 
 //--------------------------------------------------------------------------

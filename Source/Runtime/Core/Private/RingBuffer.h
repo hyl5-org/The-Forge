@@ -28,7 +28,7 @@
 
 #include "../Graphics/Interfaces/IGraphics.h"
 #include "../Resources/ResourceLoader/Interfaces/IResourceLoader.h"
-#include "Interfaces/ILog.h"
+#include <Core/ILog.h>
 
 /************************************************************************/
 /* RING BUFFER MANAGEMENT											  */

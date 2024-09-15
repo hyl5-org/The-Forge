@@ -23,6 +23,9 @@
 */
 #pragma once
 
+#include "../Private/Config.h"
+
+
 //Support external config file override
 #if defined(EXTERNAL_CONFIG_FILEPATH)
 	#include EXTERNAL_CONFIG_FILEPATH
@@ -31,7 +34,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
-
 //////////////////////////////////////////////
 //// Compiler setup
 //////////////////////////////////////////////
@@ -286,7 +288,7 @@ char(*array_counter(const T(&)[N]))[N];
 //                         This define allows to hide Renderer functionality to the Game, so that if someone tries to use it it'll get a linker error.
 #define FORGE_API
 #define FORGE_RENDERER_API
-
+#define FORGE_TOOL_API
 #ifndef FORGE_DEBUG
 #if defined(DEBUG) || defined(_DEBUG) || defined(AUTOMATED_TESTING)
 #define FORGE_DEBUG

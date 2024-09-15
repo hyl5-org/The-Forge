@@ -32,9 +32,9 @@
 #include "ThirdParty/OpenSource/tinyktx/tinyktx.h"
 
 #include "../../Graphics/Interfaces/IGraphics.h"
-#include "../../OS/Interfaces/IOperatingSystem.h"
-#include "../../Utilities/Interfaces/IFileSystem.h"
-#include "../../Utilities/Interfaces/ILog.h"
+#include <Platform/IOperatingSystem.h>
+#include <Core/IFileSystem.h>
+#include <Core/ILog.h>
 
 /************************************************************************/
 // Surface Utils
