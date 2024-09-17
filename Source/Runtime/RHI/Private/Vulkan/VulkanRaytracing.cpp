@@ -34,10 +34,10 @@
 #include <Core/IMath.h>
 
 // Renderer
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_apis.h"
+#include <ThirdParty/tinyimageformat/tinyimageformat_apis.h>
 
-#include "../Interfaces/IGraphics.h"
-#include "../Interfaces/IRay.h"
+#include <RHI/IGraphics.h>
+#include <RHI/IRay.h>
 
 #include <Core/IMemory.h>
 
@@ -72,7 +72,7 @@ extern VkDeviceMemory get_vk_device_memory(Renderer* pRenderer, Buffer* pBuffer)
 extern VkDeviceSize   get_vk_device_memory_offset(Renderer* pRenderer, Buffer* pBuffer);
 
 extern uint32_t util_get_memory_type(uint32_t typeBits, const VkPhysicalDeviceMemoryProperties& memoryProperties,
-                                     VkMemoryPropertyFlags properties, VkBool32* memTypeFound = nullptr);
+                                     VkMemoryPropertyFlags properties, VkBool32* memTypeFound);
 
 static uint64_t GetBufferDeviceAddress(Renderer* pRenderer, Buffer* pBuffer)
 {

@@ -1,47 +1,24 @@
 # RHI
 
-set(RHI_INCLUDE_DIR ${ENGINE_RUNTIME_SOURCE_DIR}/RHI/Public)
+set(RHI_INTERFACE_DIR ${ENGINE_RUNTIME_SOURCE_DIR}/RHI/Public)
 set(RHI_SOURCE_DIR ${ENGINE_RUNTIME_SOURCE_DIR}/RHI/Private)
 
 
-file(GLOB RHI_SOURCE_FILES ${RHI_SOURCE_DIR}/*.cpp)
+file(GLOB RHI_INTERFACE_FILES ${RHI_INTERFACE_DIR}/RHI/*.h ${RHI_INTERFACE_DIR}/RHI/*.hpp)
 
-# set(RHI_SOURCE_FILES
-# ${RHI_SOURCE_DIR}/*.cpp
-# )
-file(GLOB RHI_INCLUDE_FILES ${RHI_SOURCE_DIR}/Interfaces/*.h)
-# set(RHI_INCLUDE_FILES
-#     ${RHI_SOURCE_DIR}/Interfaces/*.h
-# )
 
-set(METAL_FILES
-    ${RHI_SOURCE_DIR}/Metal/MetalAvailabilityMacros.h
-    ${RHI_SOURCE_DIR}/Metal/MetalCapBuilder.h
-    ${RHI_SOURCE_DIR}/Metal/MetalConfig.h
-    ${RHI_SOURCE_DIR}/Metal/MetalMemoryAllocator.h
-    ${RHI_SOURCE_DIR}/Metal/MetalMemoryAllocatorImpl.h
-    ${RHI_SOURCE_DIR}/Metal/MetalRaytracing.mm
-    ${RHI_SOURCE_DIR}/Metal/MetalRenderer.mm
-    ${RHI_SOURCE_DIR}/Metal/MetalShaderReflection.mm
-)
+file(GLOB_RECURSE DX11_INCLUDE_FILES ${RHI_SOURCE_DIR}/Direct3D11/*.h ${RHI_SOURCE_DIR}/Direct3D11/*.hpp)
+file(GLOB_RECURSE DX11_SOURCE_FILES ${RHI_SOURCE_DIR}/Direct3D11/*.cpp ${RHI_SOURCE_DIR}/Direct3D11/*.c)
 
-set(RENDER_QUEST_FILES
-    ${RHI_SOURCE_DIR}/Quest/VrApiHooks.cpp
-    ${RHI_SOURCE_DIR}/Quest/VrApiHooks.h
-)
+file(GLOB_RECURSE DX12_INCLUDE_FILES ${RHI_SOURCE_DIR}/Direct3D12/*.h ${RHI_SOURCE_DIR}/Direct3D12/*.hpp)
+file(GLOB_RECURSE DX12_SOURCE_FILES ${RHI_SOURCE_DIR}/Direct3D12/*.cpp ${RHI_SOURCE_DIR}/Direct3D12/*.c)
 
-file(GLOB DX11_FILES ${RHI_SOURCE_DIR}/Direct3D11/*.cpp)
-# set(DX11_FILES
-#     ${RHI_SOURCE_DIR}/Direct3D11/*.cpp
-# )
-file(GLOB DX12_FILES ${RHI_SOURCE_DIR}/Direct3D12/*.cpp)
-# set(DX12_FILES
-#     ${RHI_SOURCE_DIR}/Direct3D12/*.cpp
-# )
-file(GLOB VULKAN_FILES ${RHI_SOURCE_DIR}/Vulkan/*.cpp)
-# set(VULKAN_FILES
-#     ${RHI_SOURCE_DIR}/Vulkan/*.cpp
-# )
+file(GLOB_RECURSE VULKAN_INCLUDE_FILES ${RHI_SOURCE_DIR}/Vulkan/**.cpp ${RHI_SOURCE_DIR}/Vulkan/**.c)
+file(GLOB_RECURSE VULKAN_SOURCE_FILES ${RHI_SOURCE_DIR}/Vulkan/**.h ${RHI_SOURCE_DIR}/Vulkan/**.hpp)
+
+file(GLOB RHI_INCLUDE_FILES ${RHI_SOURCE_DIR}/*.h ${RHI_SOURCE_DIR}/*.hpp)
+file(GLOB RHI_SOURCE_FILES ${RHI_SOURCE_DIR}/*.cpp ${RHI_SOURCE_DIR}/*.c)
+
 
 if(${METAL} MATCHES ON)
     find_library(APPLE_METAL Metal)
@@ -54,7 +31,7 @@ if(${METAL} MATCHES ON)
         ${APPLE_METALPS}
     )
 
-    set(RHI_FILES ${RHI_FILES} ${METAL_FILES})
+    set(RHI_SOURCE_FILES ${RHI_SOURCE_FILES} ${METAL_FILES})
 endif()
 
 if(${VULKAN} MATCHES ON)
@@ -62,6 +39,7 @@ if(${VULKAN} MATCHES ON)
     if (Vulkan_FOUND MATCHES TRUE)
         message("Vulkan SDK found.")
         set(RHI_LIBRARIES ${RHI_LIBRARIES} Vulkan::Vulkan)
+        #add_definitions(VULKANSDKFOUND)
     else()
         message("Vulkan SDK not found.  Please make sure it is installed and added to your path.")
     endif()
@@ -70,8 +48,8 @@ if(${VULKAN} MATCHES ON)
         VulkanMemoryAllocator
         SpirvTools
     )
-
-    set(RHI_FILES ${RHI_FILES} ${VULKAN_FILES})
+    set(RHI_INCLUDE_FILES ${RHI_INCLUDE_FILES} ${VULKAN_INCLUDE_FILES})
+    set(RHI_SOURCE_FILES ${RHI_SOURCE_FILES} ${VULKAN_SOURCE_FILES})
 endif()
 
 if(${DX11} MATCHES ON)
@@ -79,7 +57,8 @@ if(${DX11} MATCHES ON)
         DirectXShaderCompiler
         "d3d11.lib"
     )
-    set(RHI_FILES ${RHI_FILES} ${DX11_FILES})
+    set(RHI_INCLUDE_FILES ${RHI_INCLUDE_FILES} ${DX11_INCLUDE_FILES})
+    set(RHI_SOURCE_FILES ${RHI_SOURCE_FILES} ${DX11_SOURCE_FILES})
 endif()
 
 if(${DX12} MATCHES ON)
@@ -90,22 +69,22 @@ if(${DX12} MATCHES ON)
     set(RHI_LIBRARIES ${RHI_LIBRARIES}
         "d3d12.lib"
     )
-
-    set(RHI_FILES ${RHI_FILES} ${DX12_FILES})
+    set(RHI_INCLUDE_FILES ${RHI_INCLUDE_FILES} ${DX12_INCLUDE_FILES})
+    set(RHI_SOURCE_FILES ${RHI_SOURCE_FILES} ${DX12_SOURCE_FILES})
 endif()
 
-if(${APPLE_PLATFORM} MATCHES ON)
-    find_library(APPLE_APPKIT AppKit)
-    find_library(APPLE_QUARTZCORE QuartzCore)
-    find_library(APPLE_IOKIT IOKit)
+# if(${APPLE_PLATFORM} MATCHES ON)
+#     find_library(APPLE_APPKIT AppKit)
+#     find_library(APPLE_QUARTZCORE QuartzCore)
+#     find_library(APPLE_IOKIT IOKit)
 
-    set(RHI_LIBRARIES
-        ${RHI_LIBRARIES}
-        ${APPLE_QUARTZCORE}
-        ${APPLE_APPKIT}
-        ${APPLE_IOKIT}
-    )
-endif()
+#     set(RHI_LIBRARIES
+#         ${RHI_LIBRARIES}
+#         ${APPLE_QUARTZCORE}
+#         ${APPLE_APPKIT}
+#         ${APPLE_IOKIT}
+#     )
+# endif()
 
 if(${WINDOWS} MATCHES ON)
     set(RHI_LIBRARIES ${RHI_LIBRARIES}

@@ -41,7 +41,7 @@
 #include <ThirdParty/stb/stb_ds.h>
 #include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-#import "../../Graphics/Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 #include <Platform/IOperatingSystem.h>
 
 #ifdef ENABLE_OS_PROC_MEMORY
@@ -52,8 +52,8 @@
 #include <mach/mach.h>
 #include <mach/mach_host.h>
 
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_apis.h"
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_base.h"
+#include <ThirdParty/tinyimageformat/tinyimageformat_apis.h>
+#include <ThirdParty/tinyimageformat/tinyimageformat_base.h>
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_bits.h"
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_query.h"
 

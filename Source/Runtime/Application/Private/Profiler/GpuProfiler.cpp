@@ -46,7 +46,7 @@ GpuProfiler* getGpuProfiler(ProfileToken nProfileToken) { return NULL; }
 void         removeGpuProfiler(ProfileToken nProfileToken) {}
 #else
 
-#include "../../Graphics/Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 #include "../../Resources/ResourceLoader/Interfaces/IResourceLoader.h"
 #include <Core/ILog.h>
 #include <Core/ITime.h>

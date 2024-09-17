@@ -28,7 +28,7 @@
 #include <Core/IConfig.h>
 
 // LUA
-#include "../Scripting/LuaManager.h"
+#include "../Private/Scripting/LuaManager.h"
 
 #ifdef ENABLE_FORGE_SCRIPTING
 #define REGISTER_LUA_WIDGET(x)   luaRegisterWidget((x))

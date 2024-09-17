@@ -26,7 +26,7 @@
 
 #include <Core/IConfig.h>
 
-#include "../../Graphics/Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 
 #include <Core/IMath.h>
 

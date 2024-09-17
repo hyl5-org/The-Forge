@@ -35,7 +35,7 @@
 #include <ThirdParty/bstrlib_tf/bstrlib.h>
 #include "../ThirdParty/OpenSource/Fontstash/src/fontstash.h"
 
-#include "../../Graphics/Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 #include "../../Resources/ResourceLoader/Interfaces/IResourceLoader.h"
 
 #include "../../Utilities/RingBuffer.h"

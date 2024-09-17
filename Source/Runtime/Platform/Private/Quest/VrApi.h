@@ -29,7 +29,7 @@
 // #include "../ThirdParty/PrivateOculus/ovr_sdk_mobile/VrApi/Include/VrApi.h"
 // #include "../ThirdParty/PrivateOculus/ovr_sdk_mobile/VrApi/Include/VrApi_Helpers.h"
 
-// #include "../Interfaces/IOperatingSystem.h"
+#include <Platform/IOperatingSystem.h>
 
 // #include <Core/IMath.h>
 

@@ -26,10 +26,10 @@
 
 #ifdef VULKAN
 
-#include "../ThirdParty/OpenSource/SPIRV_Cross/SpirvTools.h"
+#include "../SpirvTools.h"
 
 #include <Core/ILog.h>
-#include "../Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 
 #include <Core/IMemory.h>
 

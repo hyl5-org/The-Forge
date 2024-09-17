@@ -45,7 +45,9 @@
 #else
 #endif
 
-#define VOLK_VULKAN_H_PATH "ThirdParty/Vulkan-Headers/include/vulkan/vulkan.h"
+//#define VOLK_VULKAN_H_PATH "ThirdParty/Vulkan-Headers/include/vulkan/vulkan.h"
+
+#define VOLK_VULKAN_H_PATH <vulkan/vulkan.h>
 #include <ThirdParty/volk/volk.h>
 
 // #define USE_EXTERNAL_MEMORY_EXTENSIONS

@@ -44,9 +44,10 @@
 #include <ThirdParty/bstrlib_tf/bstrlib.h>
 
 #include <Core/ILog.h>
-#include "../Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 
 #include <Core/IMath.h>
+#include <Core/IAlgorithm.h>
 
 #if defined(__clang__)
 #pragma clang diagnostic push
@@ -59,20 +60,20 @@
 #pragma GCC diagnostic ignored "-Wswitch"
 #endif
 
-#include "../ThirdParty/OpenSource/VulkanMemoryAllocator/VulkanMemoryAllocator.h"
-#include "../ThirdParty/OpenSource/ags/AgsHelper.h"
-#include "../ThirdParty/OpenSource/nvapi/NvApiHelper.h"
+#include <ThirdParty/VulkanMemoryAllocator/include/VulkanMemoryAllocator.h>
+#include <ThirdParty/ags/AgsHelper.h>
+#include <ThirdParty/nvapi/NvApiHelper.h>
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #elif defined(__GNUC__)
 #pragma GCC diagnostic pop
 #endif
 
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_base.h"
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_query.h"
+#include <ThirdParty/tinyimageformat/tinyimageformat_base.h>
+#include <ThirdParty/tinyimageformat/tinyimageformat_query.h>
 
-#include "../../Utilities/Math/AlgorithmsImpl.h"
-#include "../../Utilities/Threading/Atomics.h"
+#include <Core/IAlgorithm.h>
+#include <Core/IThread.h>
 
 #include "VulkanCapsBuilder.h"
 
@@ -96,7 +97,7 @@ extern RenderTarget* pFragmentDensityMask;
 #if defined(AUTOMATED_TESTING)
 #include <Application/IScreenshot.h>
 #endif
-#include "../ThirdParty/OpenSource/ags/AgsHelper.h"
+#include <ThirdParty/ags/AgsHelper.h>
 
 extern void vk_createShaderReflection(const uint8_t* shaderCode, uint32_t shaderSize, ShaderStage shaderStage,
                                       ShaderReflection* pOutReflection);
@@ -4294,7 +4295,7 @@ void vk_initRenderer(const char* appName, const RendererDesc* pDesc, Renderer** 
         }
 
         VmaVulkanFunctions vulkanFunctions = {};
-        vulkanFunctions.vkGetInstanceProcAddr = _vkGetInstanceProcAddr;
+        vulkanFunctions.vkGetInstanceProcAddr = vkGetInstanceProcAddr;
         vulkanFunctions.vkGetDeviceProcAddr = vkGetDeviceProcAddr;
         vulkanFunctions.vkAllocateMemory = vkAllocateMemory;
         vulkanFunctions.vkBindBufferMemory = vkBindBufferMemory;
@@ -5627,7 +5628,8 @@ void vk_addTexture(Renderer* pRenderer, const TextureDesc* pDesc, Texture** ppTe
     // ASTC decode mode extension
     VkImageViewASTCDecodeModeEXT astcDecodeMode = { VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT };
     astcDecodeMode.decodeMode = VK_FORMAT_R8G8B8A8_UNORM;
-    if (pRenderer->pGpu->mVk.mASTCDecodeModeExtension && TinyImageFormat_IsCompressedASTC(pDesc->mFormat))
+    
+    if (pRenderer->pGpu->mVk.mASTCDecodeModeExtension && TinyImageFormat_IsCompressed(pDesc->mFormat))
     {
         srvDesc.pNext = &astcDecodeMode;
     }
@@ -9506,7 +9508,7 @@ static inline FORGE_CONSTEXPR uint32_t ToQueryWidth(QueryType type)
     switch (type)
     {
     case QUERY_TYPE_PIPELINE_STATISTICS:
-        return VMA_COUNT_BITS_SET(gPipelineStatsFlags) * sizeof(uint64_t);
+        return VmaCountBitsSet(gPipelineStatsFlags) * sizeof(uint64_t);
     default:
         return sizeof(uint64_t);
     }
@@ -9545,7 +9547,7 @@ void vk_addQueryPool(Renderer* pRenderer, const QueryPoolDesc* pDesc, QueryPool*
     {
         pipelineStatsFlags &= ~VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_CONTROL_SHADER_PATCHES_BIT;
         pipelineStatsFlags &= ~VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT;
-        pQueryPool->mStride = VMA_COUNT_BITS_SET(pipelineStatsFlags) * sizeof(uint64_t);
+        pQueryPool->mStride = VmaCountBitsSet(pipelineStatsFlags) * sizeof(uint64_t);
     }
 
     VkQueryPoolCreateInfo createInfo = {};
@@ -10062,7 +10064,7 @@ void exitVulkanRendererContext(RendererContext* pContext)
     vk_exitRendererContext(pContext);
 }
 
-#include "../ThirdParty/OpenSource/volk/volk.c"
+#include <ThirdParty/volk/volk.c>
 #if defined(VK_USE_DISPATCH_TABLES)
 #include "../ThirdParty/OpenSource/volk/volkForgeExt.c"
 #endif

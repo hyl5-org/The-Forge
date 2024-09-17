@@ -24,13 +24,14 @@
 
 #include <Core/IConfig.h>
 
-#include <Application/IApp.h>
+// #include <Application/IApp.h>
 #include <Platform/IInput.h>"
-#include <Application/IScreenshot.h>
-#include <Application/IUI.h>
-#include "../../Game/Interfaces/IScripting.h"
-#include <Platform/IOperatingSystem.h>
+// #include <Application/IScreenshot.h>
+// #include <Application/IUI.h>
+// #include <Scripting/IScripting.h>
 #include <Core/ITime.h>
+#include <Platform/IOperatingSystem.h>
+
 
 static WindowDesc*  pWindowRef = NULL;
 static UIComponent* pWindowControlsComponent = NULL;

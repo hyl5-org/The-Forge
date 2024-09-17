@@ -24,8 +24,8 @@
 
 #include <ThirdParty/stb/stb_ds.h>
 #include <ThirdParty/bstrlib_tf/bstrlib.h>
-#include "ThirdParty/OpenSource/tinyimageformat/tinyimageformat_apis.h"
-#include "ThirdParty/OpenSource/tinyimageformat/tinyimageformat_base.h"
+#include <ThirdParty/tinyimageformat/tinyimageformat_apis.h>
+#include <ThirdParty/tinyimageformat/tinyimageformat_base.h>
 #include "ThirdParty/OpenSource/tinyimageformat/tinyimageformat_bits.h"
 #include "ThirdParty/OpenSource/tinyimageformat/tinyimageformat_query.h"
 
@@ -37,7 +37,7 @@
 #define TINYDDS_IMPLEMENTATION
 #include "ThirdParty/OpenSource/tinydds/tinydds.h"
 
-#include "../../Graphics/Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 #include <Core/IFileSystem.h>
 #include <Core/ILog.h>
 #include <Core/IThread.h>

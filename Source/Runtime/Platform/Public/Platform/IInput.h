@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "../Config.h"
+#include <Core/IConfig.h>
 
 #include <Platform/IOperatingSystem.h>
 

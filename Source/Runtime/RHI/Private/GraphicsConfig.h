@@ -47,13 +47,13 @@
 // ------------------------------- renderer configuration ------------------------------- //
 
 // Comment/uncomment includes to disable/enable rendering APIs
-#if defined(_WINDOWS)
+#if defined(_WINDOWS) && ENABLE_DX12
 #ifndef _WINDOWS7
 #include "Direct3D12/Direct3D12Config.h"
 #endif
 #include "Direct3D11/Direct3D11Config.h"
 #include "Vulkan/VulkanConfig.h"
-#elif defined(XBOX)
+#elif defined(XBOX) && ENABLE_DX12
 #include "Direct3D12/Direct3D12Config.h"
 #elif defined(__APPLE__)
 #include "Metal/MetalConfig.h"

@@ -28,37 +28,39 @@ set_property(TARGET DirectXShaderCompiler PROPERTY IMPORTED_LOCATION
     ${ENGINE_THIRD_PARTY_SOURCE_DIR}/DirectXShaderCompiler/lib/x64/dxcompiler.lib
 )
 
-if(ANTUMBRA_BUILD_VK)
-    # prefer to use system installed vulkan sdk
-    find_package(Vulkan)
+# if(ANTUMBRA_BUILD_VK)
+#     # prefer to use system installed vulkan sdk
+#     find_package(Vulkan)
 
-    if(Vulkan_FOUND)
-        message("found vulkan sdk")
-        #target_include_directories(${PROJECT_NAME} PUBLIC ${Vulkan_INCLUDE_DIRS})
-        #target_link_libraries(${PROJECT_NAME} PUBLIC ${Vulkan_LIBRARIES})
-    else()
-        # target_include_directories(${PROJECT_NAME} PUBLIC
-        #     Vulkan-Headers/include)
+#     if(Vulkan_FOUND)
+#         message("found vulkan sdk")
 
-        # if(WIN32)
-        #     find_library(Vulkan_LIBRARY NAMES vulkan-1 PATHS ${VK_LIB_PATH}/windows)
-        # elseif(LINUX)
-        #     find_library(Vulkan_LIBRARY NAMES vulkan PATHS ${VK_LIB_PATH}/linux)
-        # endif()
+#         target_include_directories(${PROJECT_NAME} PUBLIC ${Vulkan_INCLUDE_DIRS})
+#         target_link_libraries(${PROJECT_NAME} PUBLIC ${Vulkan_LIBRARIES})
+#         add_definitions(-DNONE_VALUE_MACRO)
+#     else()
+#         # target_include_directories(${PROJECT_NAME} PUBLIC
+#         #     Vulkan-Headers/include)
 
-        # if(Vulkan_LIBRARY)
-        #     message("using bundled vulkan in ${VK_LIB_PATH}")
-        #     target_link_libraries(${PROJECT_NAME} PUBLIC ${Vulkan_LIBRARY})
-        # else()
-        #     message("failed to find vulkan library")
-        # endif()
-    endif()
-endif()
+#         # if(WIN32)
+#         #     find_library(Vulkan_LIBRARY NAMES vulkan-1 PATHS ${VK_LIB_PATH}/windows)
+#         # elseif(LINUX)
+#         #     find_library(Vulkan_LIBRARY NAMES vulkan PATHS ${VK_LIB_PATH}/linux)
+#         # endif()
 
-add_library(Vulkan-Headers INTERFACE)
-target_include_directories(Vulkan-Headers INTERFACE
-    ${ENGINE_THIRD_PARTY_SOURCE_DIR}/Vulkan-Headers
-)
+#         # if(Vulkan_LIBRARY)
+#         #     message("using bundled vulkan in ${VK_LIB_PATH}")
+#         #     target_link_libraries(${PROJECT_NAME} PUBLIC ${Vulkan_LIBRARY})
+#         # else()
+#         #     message("failed to find vulkan library")
+#         # endif()
+#     endif()
+# endif()
+
+# add_library(Vulkan-Headers INTERFACE)
+# target_include_directories(Vulkan-Headers INTERFACE
+#     ${ENGINE_THIRD_PARTY_SOURCE_DIR}/Vulkan-Headers
+# )
 
 add_library(VulkanMemoryAllocator INTERFACE)
 target_include_directories(VulkanMemoryAllocator INTERFACE

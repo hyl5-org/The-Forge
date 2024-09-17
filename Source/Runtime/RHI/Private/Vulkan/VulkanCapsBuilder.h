@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_apis.h"
+#include <ThirdParty/tinyimageformat/tinyimageformat_apis.h>
 
 #include "../GraphicsConfig.h"
 

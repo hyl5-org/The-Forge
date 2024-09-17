@@ -30,7 +30,7 @@
 #ifdef ENABLE_FORGE_SCRIPTING
 
 // RENDERER
-#include "../../Graphics/Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 
 // PREPROCESSOR DEFINES
 #define MAX_LUA_STR_LEN       256

@@ -32,18 +32,18 @@
 #define RENDERER_IMPLEMENTATION
 #define IID_ARGS IID_PPV_ARGS
 
-#include "../../OS/ThirdParty/OpenSource/winpixeventruntime/Include/WinPixEventRuntime/pix3.h"
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_apis.h"
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_base.h"
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_query.h"
+#include <ThirdParty/winpixeventruntime/Include/WinPixEventRuntime/pix3.h>
+#include <ThirdParty/tinyimageformat/tinyimageformat_apis.h>
+#include <ThirdParty/tinyimageformat/tinyimageformat_base.h>
+#include <ThirdParty/tinyimageformat/tinyimageformat_query.h>
 #include <ThirdParty/stb/stb_ds.h>
 #include <ThirdParty/bstrlib_tf/bstrlib.h>
 
 #include <Core/IFileSystem.h>
 #include <Core/ILog.h>
-#include "../Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 
-#include "../../Utilities/RingBuffer.h"
+#include <Core/IMemory.h>
 
 #include "Direct3D11CapBuilder.h"
 

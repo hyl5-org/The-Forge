@@ -33,7 +33,7 @@
 
 #include <Core/ILog.h>
 #include <Core/IThread.h>
-#include "../Interfaces/IOperatingSystem.h"
+#include <Platform/IOperatingSystem.h>
 
 #include "../../Utilities/Threading/UnixThreadID.h"
 

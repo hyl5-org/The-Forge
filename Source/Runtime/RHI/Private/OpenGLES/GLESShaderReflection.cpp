@@ -29,7 +29,7 @@
 #include "../ThirdParty/OpenSource/OpenGL/GLES2/gl2.h"
 
 #include <Core/ILog.h>
-#include "../Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 
 #include <Core/IMemory.h>
 

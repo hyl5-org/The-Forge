@@ -26,14 +26,14 @@
 #include "Interfaces/IScreenshot.h"
 
 #if defined(ENABLE_SCREENSHOT)
-#include "../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_decode.h"
+#include <ThirdParty/tinyimageformat/tinyimageformat_decode.h>
 #include "../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_query.h"
 
-#include "../Utilities/Interfaces/IFileSystem.h"
+#include <Core/IFileSystem.h>
 #include <Core/ILog.h>
 #include "Interfaces/IUI.h"
 
-#include "../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
 #if defined(ORBIS)
 #include "../../PS4/Common_3/OS/Orbis/OrbisScreenshot.h"

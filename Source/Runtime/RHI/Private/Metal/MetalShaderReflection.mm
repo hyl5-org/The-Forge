@@ -31,7 +31,7 @@
 #include <ThirdParty/stb/stb_ds.h>
 #include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-#include "../../Graphics/Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 #include <Core/ILog.h>
 
 #include <Core/IMemory.h>

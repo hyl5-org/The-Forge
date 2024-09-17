@@ -28,8 +28,9 @@
 #error "Direct3D11Config should be included from RendererConfig only"
 #endif
 
+#if 0
 #define DIRECT3D11
-
+#endif
 #include <d3d11_1.h>
 #include <dxgi1_2.h>
 

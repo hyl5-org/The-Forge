@@ -39,7 +39,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wstrict-aliasing"
 #endif
-#include <ThirdParty/ModifiedSonyMath/vectormath.hpp>
+#include <ThirdParty/ModifiedSonyMath_tf/vectormath.hpp>
 #if defined(__GNUC__)
 #pragma GCC diagnostic pop
 #elif defined(__clang__)

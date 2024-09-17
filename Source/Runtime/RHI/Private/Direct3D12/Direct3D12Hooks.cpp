@@ -25,11 +25,11 @@
 
 #ifdef DIRECT3D12
 
-#include "../ThirdParty/OpenSource/D3D12MemoryAllocator/Direct3D12MemoryAllocator.h"
+//#include "../ThirdParty/OpenSource/D3D12MemoryAllocator/Direct3D12MemoryAllocator.h"
+#include <ThirdParty/D3D12MemoryAllocator/include/D3D12MemAlloc.h>
+#include <RHI/IGraphics.h>
 
-#include "../Interfaces/IGraphics.h"
-
-#include "../../../Common_3/Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
 #include "Direct3D12Hooks.h"
 

@@ -31,8 +31,8 @@
 #include <Platform/IOperatingSystem.h>
 #include <Core/ILog.h>
 
-#include "../../Utilities/Math/Algorithms.h"
 #include <Core/IMath.h>
+#include <Core/IAlgorithm.h>
 
 #pragma comment(lib, "WinMM.lib")
 #include <windowsx.h>

@@ -39,12 +39,12 @@
 #include <Application/IProfiler.h>
 #include <Application/IUI.h>
 #include "../../Game/Interfaces/IScripting.h"
-#include "../../Graphics/Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 #include <Core/IFileSystem.h>
 #include <Core/ILog.h>
 #include <Core/IThread.h>
 #include <Core/ITime.h>
-#include "../Interfaces/IOperatingSystem.h"
+#include <Platform/IOperatingSystem.h>
 
 #include <Core/IMath.h>
 

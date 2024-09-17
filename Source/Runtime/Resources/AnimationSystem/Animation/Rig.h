@@ -32,7 +32,7 @@
 
 #include <Core/ILog.h>
 
-#include "../../../Utilities/Math/MathTypes.h"
+#include <Core/IMath.h>
 
 // Stores skeleton properties and posable by animations
 class FORGE_API Rig

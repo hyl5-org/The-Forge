@@ -26,13 +26,15 @@
 
 #ifdef DIRECT3D12
 #include <Core/ILog.h>
-#include "../Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 
 #if defined(XBOX)
 #include "../../../Xbox/Common_3/Graphics/Direct3D12/Direct3D12X.h"
 #else
-#include "../ThirdParty/OpenSource/Direct3d12Agility/include/d3d12shader.h"
-#include "../ThirdParty/OpenSource/DirectXShaderCompiler/inc/dxcapi.h"
+//#include "../ThirdParty/OpenSource/Direct3d12Agility/include/d3d12shader.h"
+//#include "../ThirdParty/OpenSource/DirectXShaderCompiler/inc/dxcapi.h"
+#include <ThirdParty/DirectX-Headers/include/directx/d3d12shader.h>
+#include <ThirdParty/DirectXShaderCompiler/inc/dxcapi.h>
 #endif
 
 #include <Core/IMemory.h>

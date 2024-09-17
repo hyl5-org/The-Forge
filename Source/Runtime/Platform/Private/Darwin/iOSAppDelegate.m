@@ -24,7 +24,7 @@
 
 #import "iOSAppDelegate.h"
 
-#include "../Interfaces/IOperatingSystem.h"
+#include <Platform/IOperatingSystem.h>
 
 #include "../../Graphics/GraphicsConfig.h"
 

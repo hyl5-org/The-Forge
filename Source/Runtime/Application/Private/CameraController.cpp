@@ -27,7 +27,7 @@
 #include "Interfaces/ICameraController.h"
 
 // Include this file as last include in all cpp files allocating memory
-#include "../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 static const float k_scrollSpeed = -5.0f;
 

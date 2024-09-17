@@ -25,7 +25,7 @@
 #include <ThirdParty/stb/stb_ds.h>
 
 #include "../../../Common_3/Application/Interfaces/IProfiler.h"
-#include "../../../Common_3/Graphics/Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 #include "../../../Common_3/Resources/ResourceLoader/Interfaces/IResourceLoader.h"
 #include <Core/ILog.h>
 #include <Core/ITime.h>
@@ -35,7 +35,7 @@
 #include "Shaders/particle_shared.h.fsl"
 #undef NO_FSL_DEFINITIONS
 
-#include "../../../Common_3/Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 DECLARE_RENDERER_FUNCTION(void, mapBuffer, Renderer* pRenderer, Buffer* pBuffer, ReadRange* pRange)
 DECLARE_RENDERER_FUNCTION(void, unmapBuffer, Renderer* pRenderer, Buffer* pBuffer)

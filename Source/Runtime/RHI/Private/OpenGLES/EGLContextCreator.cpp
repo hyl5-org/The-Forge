@@ -29,7 +29,7 @@
 #include "../ThirdParty/OpenSource/OpenGL/GLES/egl.h"
 
 #include <Core/ILog.h>
-#include "../Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 
 #include "GLESContextCreator.h"
 

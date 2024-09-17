@@ -27,10 +27,10 @@
 #include <ThirdParty/stb/stb_ds.h>
 #include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-#include "../Utilities/Interfaces/IFileSystem.h"
-#include "Interfaces/IGraphics.h"
+#include <Core/IFileSystem.h>
+#include <RHI/IGraphics.h>
 
-#include "../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 ///////////////////////////////////////////////////////////
 // HELPER DECLARATIONS

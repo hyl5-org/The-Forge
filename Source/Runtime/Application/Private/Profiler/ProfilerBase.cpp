@@ -31,7 +31,7 @@
 #include "GpuProfiler.h"
 
 // RENDERER
-#include "../../Graphics/Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 
 // INTERFACES
 #include <Application/IFont.h>

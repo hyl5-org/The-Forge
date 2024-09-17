@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "../Interfaces/IOperatingSystem.h"
+#include <Platform/IOperatingSystem.h>
 
 // interfaces
 #include <Core/ILog.h>

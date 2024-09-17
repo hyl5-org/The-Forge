@@ -42,7 +42,7 @@
 #include <ThirdParty/bstrlib_tf/bstrlib.h>
 #include "../ThirdParty/OpenSource/D3D12MemoryAllocator/Direct3D12MemoryAllocator.h"
 
-#include "../Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 
 #if defined(XBOX)
 #include <pix3.h>
@@ -50,7 +50,7 @@
 #include "../../OS/ThirdParty/OpenSource/winpixeventruntime/Include/WinPixEventRuntime/pix3.h"
 #endif
 
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_base.h"
+#include <ThirdParty/tinyimageformat/tinyimageformat_base.h>
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_query.h"
 #include "../ThirdParty/OpenSource/ags/AgsHelper.h"
 #include "../ThirdParty/OpenSource/nvapi/NvApiHelper.h"

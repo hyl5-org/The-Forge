@@ -30,7 +30,7 @@
 #include <ThirdParty/bstrlib_tf/bstrlib.h>
 
 #include <Core/ILog.h>
-#include "../Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 
 #include <Core/IMemory.h>
 

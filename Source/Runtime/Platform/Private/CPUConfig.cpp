@@ -26,9 +26,8 @@
 
 #include <stdio.h>
 
-#include "ThirdParty/OpenSource/cpu_features/src/cpuinfo_aarch64.h"
-#include "ThirdParty/OpenSource/cpu_features/src/cpuinfo_x86.h"
-
+// #include <ThirdParty/cpu_features/include/cpuinfo_aarch64.h>
+// #include <ThirdParty/cpu_features/include/cpuinfo_x86.h>
 #define MAXCPUNAME 49
 
 char* trimString(char* inString);
@@ -39,7 +38,7 @@ bool initCpuInfo(CpuInfo* outCpuInfo, JNIEnv* pJavaEnv)
 bool initCpuInfo(CpuInfo* outCpuInfo)
 #endif
 {
-    bool result = false;
+    bool result = true;
     outCpuInfo->mName[0] = '\0';
 
 #if defined(ARCH_X86_FAMILY) && !defined(TARGET_IOS_SIMULATOR)
@@ -48,7 +47,7 @@ bool initCpuInfo(CpuInfo* outCpuInfo)
     const char* simdName = "Unknown";
 
     // get cpu data
-    result = GetX86Info(&info);
+    info = GetX86Info();
 
     if (result)
     {
@@ -58,10 +57,10 @@ bool initCpuInfo(CpuInfo* outCpuInfo)
 #elif defined(PROSPERO)
         snprintf(info.name, sizeof(info.name), "Prospero");
 #else
-        char cpuName[MAXCPUNAME] = "";
-        FillX86BrandString(cpuName);
-        char* trimmedName = trimString(cpuName);
-        snprintf(info.name, sizeof(info.name), "%s", trimmedName);
+        //char cpuName[MAXCPUNAME] = "";
+        //FillX86BrandString(cpuName);
+        char* trimmedName = trimString(info.brand_string);
+        snprintf(info.brand_string, sizeof(info.brand_string), "%s", trimmedName);
 #endif
 
         // detect simd
@@ -90,7 +89,7 @@ bool initCpuInfo(CpuInfo* outCpuInfo)
     outCpuInfo->mFeaturesX86 = info.features;
     outCpuInfo->mArchitectureX86 = GetX86Microarchitecture(&info);
 
-    snprintf(outCpuInfo->mName, sizeof(outCpuInfo->mName), "%s \t\t\t\t\t %s", info.name, simdName);
+    snprintf(outCpuInfo->mName, sizeof(outCpuInfo->mName), "%s \t\t\t\t\t %s", info.brand_string, simdName);
 #endif
 
 #if defined(ARCH_ARM64) || defined(TARGET_IOS_SIMULATOR)

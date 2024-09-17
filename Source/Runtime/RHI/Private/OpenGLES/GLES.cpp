@@ -31,15 +31,15 @@
 
 #define VAO_STATE_CACHE_SIZE 64
 
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_apis.h"
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_base.h"
+#include <ThirdParty/tinyimageformat/tinyimageformat_apis.h>
+#include <ThirdParty/tinyimageformat/tinyimageformat_base.h>
 #include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_query.h"
 #include <ThirdParty/stb/stb_ds.h>
 #include <ThirdParty/bstrlib_tf/bstrlib.h>
 
 #include <Core/ILog.h>
-#include "../Interfaces/IGraphics.h"
-#include "../Interfaces/IRay.h"
+#include <RHI/IGraphics.h>
+#include <RHI/IRay.h>
 
 #include "../../Utilities/Math/AlgorithmsImpl.h"
 #include "../../Utilities/RingBuffer.h"

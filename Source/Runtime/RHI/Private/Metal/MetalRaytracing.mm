@@ -32,10 +32,10 @@
 
 #ifdef METAL
 
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_apis.h"
+#include <ThirdParty/tinyimageformat/tinyimageformat_apis.h>
 
-#import "../../Graphics/Interfaces/IGraphics.h"
-#import "../../Graphics/Interfaces/IRay.h"
+#include <RHI/IGraphics.h>
+#include <RHI/IRay.h>
 #import "../../Resources/ResourceLoader/Interfaces/IResourceLoader.h"
 #include <Core/ILog.h>
 

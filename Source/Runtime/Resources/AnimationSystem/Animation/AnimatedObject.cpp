@@ -27,7 +27,7 @@
 #include "../ThirdParty/OpenSource/ozz-animation/include/ozz/animation/runtime/ik_aim_job.h"
 #include "../ThirdParty/OpenSource/ozz-animation/include/ozz/animation/runtime/ik_two_bone_job.h"
 
-#include "../../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 namespace
 {

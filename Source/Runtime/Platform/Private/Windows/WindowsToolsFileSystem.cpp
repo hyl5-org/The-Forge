@@ -30,7 +30,7 @@
 #include <Core/ILog.h>
 #include <Core/IThread.h>
 #include <Core//IToolFileSystem.h>
-#include "../Interfaces/IOperatingSystem.h"
+#include <Platform/IOperatingSystem.h>
 
 #include "commdlg.h"
 #include "shlobj.h"
@@ -39,7 +39,7 @@
 
 // static
 template<typename T>
-static inline T withUTF16Path(const char* path, T (*function)(const wchar_t*))
+static inline T withUTF16Path1(const char* path, T (*function)(const wchar_t*))
 {
     size_t   len = strlen(path);
     wchar_t* buffer = (wchar_t*)alloca((len + 1) * sizeof(wchar_t));
@@ -69,7 +69,7 @@ void fswThreadFunc(void* data)
     FileWatcher* fs = (FileWatcher*)data;
 
     HANDLE hDir =
-        withUTF16Path<HANDLE>(fs->mPath,
+        withUTF16Path1<HANDLE>(fs->mPath,
                               [](const wchar_t* pathStr)
                               {
                                   return CreateFileW(pathStr, FILE_LIST_DIRECTORY, FILE_SHARE_WRITE | FILE_SHARE_READ | FILE_SHARE_DELETE,

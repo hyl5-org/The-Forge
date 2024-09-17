@@ -26,7 +26,7 @@
 
 #if defined(QUEST_VR)
 
-#include "../Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 
 bool hook_add_vk_instance_extensions(const char** instanceExtensionCache, uint* extensionCount, uint maxExtensionCount, char* pBuffer,
                                      uint bufferSize);

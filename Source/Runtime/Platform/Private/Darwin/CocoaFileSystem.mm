@@ -28,7 +28,7 @@
 
 #include <Core/IFileSystem.h>
 #include <Core/ILog.h>
-#include "../Interfaces/IOperatingSystem.h"
+#include <Platform/IOperatingSystem.h>
 
 #include <Core/IMemory.h>
 

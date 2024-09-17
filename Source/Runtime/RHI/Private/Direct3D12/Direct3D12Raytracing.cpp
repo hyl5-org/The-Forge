@@ -43,10 +43,10 @@
 #include <Core/IMath.h>
 
 // Renderer
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_apis.h"
+#include <ThirdParty/tinyimageformat/tinyimageformat_apis.h>
 
-#include "../Interfaces/IGraphics.h"
-#include "../Interfaces/IRay.h"
+#include <RHI/IGraphics.h>
+#include <RHI/IRay.h>
 
 #include "Direct3D12Hooks.h"
 

@@ -24,7 +24,7 @@
 
 #include "../../../Common_3/Application/Interfaces/ICameraController.h"
 #include "../../../Common_3/Application/Interfaces/IProfiler.h"
-#include "../../../Common_3/Graphics/Interfaces/IGraphics.h"
+#include <RHI/IGraphics.h>
 #include <Core/ILog.h>
 #include <Core/ITime.h>
 #include "../Interfaces/IVisibilityBuffer.h"
@@ -33,7 +33,7 @@
 
 #include "../VisibilityBuffer/Shaders/FSL/vb_structs.h.fsl"
 
-#include "../../../Common_3/Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 /************************************************************************/
 // Settings

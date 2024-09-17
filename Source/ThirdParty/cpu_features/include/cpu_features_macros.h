@@ -140,13 +140,23 @@
 // Cpp
 ////////////////////////////////////////////////////////////////////////////////
 
+//#if defined(__cplusplus)
+//#define CPU_FEATURES_START_CPP_NAMESPACE \
+//  namespace cpu_features {               \
+//  extern "C" {
+//#define CPU_FEATURES_END_CPP_NAMESPACE \
+//  }                                    \
+//  }
+//#else
+//#define CPU_FEATURES_START_CPP_NAMESPACE
+//#define CPU_FEATURES_END_CPP_NAMESPACE
+//#endif
+
 #if defined(__cplusplus)
 #define CPU_FEATURES_START_CPP_NAMESPACE \
-  namespace cpu_features {               \
   extern "C" {
 #define CPU_FEATURES_END_CPP_NAMESPACE \
-  }                                    \
-  }
+  }                                    
 #else
 #define CPU_FEATURES_START_CPP_NAMESPACE
 #define CPU_FEATURES_END_CPP_NAMESPACE

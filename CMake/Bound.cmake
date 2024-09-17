@@ -115,12 +115,15 @@ endif()
 
 if(${DX12} MATCHES ON)
     message("DirectX 12 rendering API")
+    add_compile_definitions(ENABLE_DX12)
 endif()
 
 if(${DYNAMIC_LIB} MATCHES ON)
     message("Dynamic library")
 endif()
 
+set(DX12 OFF)
+set(DX11 OFF)
 message("\n")
 
 set(ENGINE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Source)
