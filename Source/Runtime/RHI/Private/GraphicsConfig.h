@@ -52,6 +52,7 @@
 #include "Direct3D12/Direct3D12Config.h"
 #endif
 #include "Direct3D11/Direct3D11Config.h"
+#elif defined(_WINDOWS) && ENABLE_VULKAN
 #include "Vulkan/VulkanConfig.h"
 #elif defined(XBOX) && ENABLE_DX12
 #include "Direct3D12/Direct3D12Config.h"

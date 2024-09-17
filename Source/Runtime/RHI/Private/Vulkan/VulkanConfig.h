@@ -80,6 +80,8 @@
 #define VK_OVERRIDE_LAYER_PATH 1
 #endif
 
+
+
 extern void OnVkDeviceLost(struct Renderer*);
 
 // Validate VkResult for functions that take a VkDevice or object created using VkDevice

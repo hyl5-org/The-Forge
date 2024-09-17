@@ -41,6 +41,7 @@
 
 #include <Core/IFileSystem.h>
 #include <Core/ILog.h>
+#include <Core/IMath.h>
 #include <RHI/IGraphics.h>
 
 #include <Core/IMemory.h>
@@ -1616,7 +1617,7 @@ void d3d11_addSwapChain(Renderer* pRenderer, const SwapChainDesc* pDesc, SwapCha
     desc.SampleDesc.Count = 1; // If multisampling is needed, we'll resolve it later
     desc.SampleDesc.Quality = 0;
     desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    desc.BufferCount = max(1u, pDesc->mImageCount); // Count includes the front buffer so 1+2 is triple buffering.
+    desc.BufferCount = TF_MAX(1u, pDesc->mImageCount); // Count includes the front buffer so 1+2 is triple buffering.
     desc.OutputWindow = hwnd;
     desc.Windowed = TRUE;
     desc.Flags = 0;
@@ -1806,7 +1807,7 @@ void d3d11_addRenderTarget(Renderer* pRenderer, const RenderTargetDesc* pDesc, R
 
     ASSERT(!((isDepth) && (pDesc->mDescriptors & DESCRIPTOR_TYPE_RW_TEXTURE)) && "Cannot use depth stencil as UAV");
 
-    ((RenderTargetDesc*)pDesc)->mMipLevels = max(1U, pDesc->mMipLevels);
+    ((RenderTargetDesc*)pDesc)->mMipLevels = TF_MAX(1U, pDesc->mMipLevels);
 
     uint32_t numRTVs = pDesc->mMipLevels;
     if ((pDesc->mDescriptors & DESCRIPTOR_TYPE_RENDER_TARGET_ARRAY_SLICES) ||
@@ -1987,7 +1988,7 @@ void d3d11_addSampler(Renderer* pRenderer, const SamplerDesc* pDesc, Sampler** p
     desc.AddressV = util_to_dx11_texture_address_mode(pDesc->mAddressV);
     desc.AddressW = util_to_dx11_texture_address_mode(pDesc->mAddressW);
     desc.MipLODBias = pDesc->mMipLodBias;
-    desc.MaxAnisotropy = max((UINT)pDesc->mMaxAnisotropy, 1U);
+    desc.MaxAnisotropy = TF_MAX((UINT)pDesc->mMaxAnisotropy, 1U);
     desc.ComparisonFunc = gComparisonFuncTranslator[pDesc->mCompareFunc];
     desc.BorderColor[0] = 0.0f;
     desc.BorderColor[1] = 0.0f;

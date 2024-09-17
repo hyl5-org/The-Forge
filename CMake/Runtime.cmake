@@ -88,16 +88,23 @@ if(${API_SELECTED} MATCHES OFF)
     endif()
 endif()
 
-if(${DX12} MATCHES ON)
-    set(DX11 ON)
-endif()
+# set(DX12 OFF)
+# set(DX11 OFF)
 
 if(${DX12} MATCHES ON)
+    set(DX11 ON)
     add_compile_definitions(ENABLE_DX12)
 endif()
 
-set(DX12 OFF)
-set(DX11 OFF)
+if(${DX11} MATCHES ON)
+    add_compile_definitions(ENABLE_DX11)
+endif()
+
+if(${VULKAN} MATCHES ON)
+    add_compile_definitions(ENABLE_VULKAN)
+endif()
+
+
 message("\n")
 
 include(Platform)
@@ -144,8 +151,8 @@ set(RUNTIME_SOURCE_FILES
     ${CORE_SOURCE_FILES}
     ${PLATFORM_INCLUDE_FILES}
     ${PLATFORM_SOURCE_FILES}
-    #${RHI_INCLUDE_FILES}
-    #${RHI_SOURCE_FILES}
+    ${RHI_INCLUDE_FILES}
+    ${RHI_SOURCE_FILES}
 
     # ${PLATFORM_WINDOWS_SOURCE_FILES}
 

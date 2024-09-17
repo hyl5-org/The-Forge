@@ -99,6 +99,7 @@ extern RenderTarget* pFragmentDensityMask;
 #endif
 #include <ThirdParty/ags/AgsHelper.h>
 
+
 extern void vk_createShaderReflection(const uint8_t* shaderCode, uint32_t shaderSize, ShaderStage shaderStage,
                                       ShaderReflection* pOutReflection);
 
@@ -355,15 +356,15 @@ const char* gVkWantedDeviceExtensions[] =
 // #NOTE: Keep the door open to disable the extension on buggy drivers as it is still new
 bool gEnableDynamicRenderingExtension = true;
 
-//-V:SAFE_FREE:779
-#define SAFE_FREE(p_var)       \
+//-V:SAFE_FREE_VK:779
+#define SAFE_FREE_VK(p_var)       \
     if (p_var)                 \
     {                          \
         tf_free((void*)p_var); \
         p_var = NULL;          \
     }
 
-//-V:SAFE_FREE:547 - The TF memory manager might not appreciate having null passed to tf_free.
+//-V:SAFE_FREE_VK:547 - The TF memory manager might not appreciate having null passed to tf_free.
 // Don't trigger PVS warnings about always-true/false on this macro
 
 #if defined(GFX_DRIVER_MEMORY_TRACKING) || defined(GFX_DEVICE_MEMORY_TRACKING)
@@ -537,7 +538,7 @@ VkAllocationCallbacks* GetAllocationCallbacks(VkObjectType type)
         [](void* pUserData, void* pMemory)
         {
             UNREF_PARAM(pUserData); 
-            SAFE_FREE(pMemory);
+            SAFE_FREE_VK(pMemory);
         }
     };
     // clang-format on
@@ -830,8 +831,8 @@ void OnVkDeviceLost(Renderer* pRenderer)
         }
     }
 
-    SAFE_FREE(faultInfo.pVendorInfos);
-    SAFE_FREE(faultInfo.pAddressInfos);
+    SAFE_FREE_VK(faultInfo.pVendorInfos);
+    SAFE_FREE_VK(faultInfo.pAddressInfos);
 }
 
 // Internal utility functions (may become external one day)
@@ -2776,7 +2777,7 @@ static bool QueryGpuSettings(const RendererContextDesc* pDesc, RendererContext* 
                     }
                 }
             }
-            SAFE_FREE(properties);
+            SAFE_FREE_VK(properties);
         }
         arrfree(wantedDeviceExtensions);
     }
@@ -3352,7 +3353,7 @@ void CreateInstance(const char* app_name, const RendererContextDesc* pDesc, uint
                     }
                 }
             }
-            SAFE_FREE(properties);
+            SAFE_FREE_VK(properties);
         }
         // Standalone extensions
         {
@@ -3384,7 +3385,7 @@ void CreateInstance(const char* app_name, const RendererContextDesc* pDesc, uint
                         }
                     }
                 }
-                SAFE_FREE(properties);
+                SAFE_FREE_VK(properties);
             }
         }
 
@@ -3720,7 +3721,7 @@ static bool AddDevice(const RendererDesc* pDesc, Renderer* pRenderer)
                     }
                 }
             }
-            SAFE_FREE(properties);
+            SAFE_FREE_VK(properties);
         }
         arrfree(wantedDeviceExtensions);
     }
@@ -4105,7 +4106,7 @@ void vk_initRendererContext(const char* appName, const RendererContextDesc* pDes
             ++realGpuCount;
         }
 
-        SAFE_FREE(queueFamilyProperties);
+        SAFE_FREE_VK(queueFamilyProperties);
     }
 
     pContext->mGpuCount = realGpuCount;
@@ -4155,7 +4156,7 @@ void vk_exitRendererContext(RendererContext* pContext)
     gDeviceMemStats = {};
 #endif
 
-    SAFE_FREE(pContext);
+    SAFE_FREE_VK(pContext);
 }
 
 /************************************************************************/
@@ -4234,7 +4235,7 @@ void vk_initRenderer(const char* appName, const RendererDesc* pDesc, Renderer** 
             pRenderer->mOwnsContext = true;
             if (!pRenderer->pContext)
             {
-                SAFE_FREE(pRenderer);
+                SAFE_FREE_VK(pRenderer);
                 return;
             }
         }
@@ -4245,7 +4246,7 @@ void vk_initRenderer(const char* appName, const RendererDesc* pDesc, Renderer** 
             {
                 vk_exitRendererContext(pRenderer->pContext);
             }
-            SAFE_FREE(pRenderer);
+            SAFE_FREE_VK(pRenderer);
             return;
         }
 
@@ -4259,7 +4260,7 @@ void vk_initRenderer(const char* appName, const RendererDesc* pDesc, Renderer** 
             {
                 vk_exitRendererContext(pRenderer->pContext);
             }
-            SAFE_FREE(pRenderer);
+            SAFE_FREE_VK(pRenderer);
             LOGF(LogLevel::eERROR, "Selected GPU has an Office Preset in gpu.cfg.");
             LOGF(LogLevel::eERROR, "Office preset is not supported by The Forge.");
 
@@ -4379,12 +4380,12 @@ void vk_initRenderer(const char* appName, const RendererDesc* pDesc, Renderer** 
     if (!hook_post_init_renderer(pRenderer->pContext->mVk.pInstance, pRenderer->pGpu->mVk.pGpu, pRenderer->mVk.pDevice))
     {
         vmaDestroyAllocator(pRenderer->mVk.pVmaAllocator);
-        SAFE_FREE(pRenderer->pName);
+        SAFE_FREE_VK(pRenderer->pName);
 #if !defined(VK_USE_DISPATCH_TABLES)
         RemoveDevice(pRenderer);
         if (pDesc->mGpuMode != GPU_MODE_UNLINKED)
             exitRendererContext(pRenderer->pContext);
-        SAFE_FREE(pRenderer);
+        SAFE_FREE_VK(pRenderer);
         LOGF(LogLevel::eERROR, "Failed to initialize VrApi Vulkan systems.");
 #endif
         *ppRenderer = NULL;
@@ -4437,8 +4438,8 @@ void vk_exitRenderer(Renderer* pRenderer)
         }
         hmfree(gFrameBufferMap[pRenderer->mUnlinkedRendererIndex]);
 
-        SAFE_FREE(gRenderPassMap[pRenderer->mUnlinkedRendererIndex]);
-        SAFE_FREE(gFrameBufferMap[pRenderer->mUnlinkedRendererIndex]);
+        SAFE_FREE_VK(gRenderPassMap[pRenderer->mUnlinkedRendererIndex]);
+        SAFE_FREE_VK(gFrameBufferMap[pRenderer->mUnlinkedRendererIndex]);
     }
 
 #if defined(QUEST_VR)
@@ -4459,14 +4460,14 @@ void vk_exitRenderer(Renderer* pRenderer)
 
     for (uint32_t i = 0; i < pRenderer->mLinkedNodeCount; ++i)
     {
-        SAFE_FREE(pRenderer->mVk.pAvailableQueueCount[i]);
-        SAFE_FREE(pRenderer->mVk.pUsedQueueCount[i]);
+        SAFE_FREE_VK(pRenderer->mVk.pAvailableQueueCount[i]);
+        SAFE_FREE_VK(pRenderer->mVk.pUsedQueueCount[i]);
     }
 
     // Free all the renderer components!
-    SAFE_FREE(pRenderer->mVk.pAvailableQueueCount);
-    SAFE_FREE(pRenderer->mVk.pUsedQueueCount);
-    SAFE_FREE(pRenderer);
+    SAFE_FREE_VK(pRenderer->mVk.pAvailableQueueCount);
+    SAFE_FREE_VK(pRenderer->mVk.pUsedQueueCount);
+    SAFE_FREE_VK(pRenderer);
 }
 /************************************************************************/
 // Resource Creation Functions
@@ -4498,7 +4499,7 @@ void vk_removeFence(Renderer* pRenderer, Fence* pFence)
 
     vkDestroyFence(pRenderer->mVk.pDevice, pFence->mVk.pFence, GetAllocationCallbacks(VK_OBJECT_TYPE_FENCE));
 
-    SAFE_FREE(pFence);
+    SAFE_FREE_VK(pFence);
 }
 
 void vk_addSemaphore(Renderer* pRenderer, Semaphore** ppSemaphore)
@@ -4531,7 +4532,7 @@ void vk_removeSemaphore(Renderer* pRenderer, Semaphore* pSemaphore)
 
     vkDestroySemaphore(pRenderer->mVk.pDevice, pSemaphore->mVk.pSemaphore, GetAllocationCallbacks(VK_OBJECT_TYPE_SEMAPHORE));
 
-    SAFE_FREE(pSemaphore);
+    SAFE_FREE_VK(pSemaphore);
 }
 
 void vk_addQueue(Renderer* pRenderer, QueueDesc* pDesc, Queue** ppQueue)
@@ -4613,7 +4614,7 @@ void vk_removeQueue(Renderer* pRenderer, Queue* pQueue)
     const uint32_t nodeIndex = pRenderer->mGpuMode == GPU_MODE_LINKED ? pQueue->mNodeIndex : 0;
     --pRenderer->mVk.pUsedQueueCount[nodeIndex][pQueue->mVk.mQueueFamilyIndex];
 
-    SAFE_FREE(pQueue);
+    SAFE_FREE_VK(pQueue);
 }
 
 void vk_addCmdPool(Renderer* pRenderer, const CmdPoolDesc* pDesc, CmdPool** ppCmdPool)
@@ -4652,7 +4653,7 @@ void vk_removeCmdPool(Renderer* pRenderer, CmdPool* pCmdPool)
 
     vkDestroyCommandPool(pRenderer->mVk.pDevice, pCmdPool->pCmdPool, GetAllocationCallbacks(VK_OBJECT_TYPE_COMMAND_POOL));
 
-    SAFE_FREE(pCmdPool);
+    SAFE_FREE_VK(pCmdPool);
 }
 
 void vk_addCmd(Renderer* pRenderer, const CmdDesc* pDesc, Cmd** ppCmd)
@@ -4690,7 +4691,7 @@ void vk_removeCmd(Renderer* pRenderer, Cmd* pCmd)
 
     vkFreeCommandBuffers(pRenderer->mVk.pDevice, pCmd->mVk.pCmdPool->pCmdPool, 1, &(pCmd->mVk.pCmdBuf));
 
-    SAFE_FREE(pCmd);
+    SAFE_FREE_VK(pCmd);
 }
 
 void vk_addCmd_n(Renderer* pRenderer, const CmdDesc* pDesc, uint32_t cmdCount, Cmd*** pppCmd)
@@ -4724,7 +4725,7 @@ void vk_removeCmd_n(Renderer* pRenderer, uint32_t cmdCount, Cmd** ppCmds)
         removeCmd(pRenderer, ppCmds[i]);
     }
 
-    SAFE_FREE(ppCmds);
+    SAFE_FREE_VK(ppCmds);
 }
 
 void vk_toggleVSync(Renderer* pRenderer, SwapChain** ppSwapChain)
@@ -4927,7 +4928,7 @@ void vk_addSwapChain(Renderer* pRenderer, const SwapChainDesc* pDesc, SwapChain*
     }
 
     // Free formats
-    SAFE_FREE(formats);
+    SAFE_FREE_VK(formats);
 
     // The VK_PRESENT_MODE_FIFO_KHR mode must always be present as per spec
     // This mode waits for the vertical blank ("v-sync")
@@ -5174,7 +5175,7 @@ void vk_removeSwapChain(Renderer* pRenderer, SwapChain* pSwapChain)
     vkDestroySwapchainKHR(pRenderer->mVk.pDevice, pSwapChain->mVk.pSwapChain, GetAllocationCallbacks(VK_OBJECT_TYPE_SWAPCHAIN_KHR));
     vkDestroySurfaceKHR(pRenderer->pContext->mVk.pInstance, pSwapChain->mVk.pSurface, GetAllocationCallbacks(VK_OBJECT_TYPE_SURFACE_KHR));
 
-    SAFE_FREE(pSwapChain);
+    SAFE_FREE_VK(pSwapChain);
 }
 
 void vk_addResourceHeap(Renderer* pRenderer, const ResourceHeapDesc* pDesc, ResourceHeap** ppHeap)
@@ -5451,7 +5452,7 @@ void vk_removeBuffer(Renderer* pRenderer, Buffer* pBuffer)
         pBuffer->mVk.pAllocation = VMA_NULL;
     }
 
-    SAFE_FREE(pBuffer);
+    SAFE_FREE_VK(pBuffer);
 }
 
 void vk_addTexture(Renderer* pRenderer, const TextureDesc* pDesc, Texture** ppTexture)
@@ -5708,7 +5709,7 @@ void vk_removeTexture(Renderer* pRenderer, Texture* pTexture)
     }
 
     pTexture->mVk.pImage = VK_NULL_HANDLE;
-    SAFE_FREE(pTexture);
+    SAFE_FREE_VK(pTexture);
 }
 
 void vk_addRenderTarget(Renderer* pRenderer, const RenderTargetDesc* pDesc, RenderTarget** ppRenderTarget)
@@ -5927,7 +5928,7 @@ void vk_removeRenderTarget(Renderer* pRenderer, RenderTarget* pRenderTarget)
     }
 #endif
 
-    SAFE_FREE(pRenderTarget);
+    SAFE_FREE_VK(pRenderTarget);
 }
 
 void vk_addSampler(Renderer* pRenderer, const SamplerDesc* pDesc, Sampler** ppSampler)
@@ -6037,7 +6038,7 @@ void vk_removeSampler(Renderer* pRenderer, Sampler* pSampler)
                                         GetAllocationCallbacks(VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION));
     }
 
-    SAFE_FREE(pSampler);
+    SAFE_FREE_VK(pSampler);
 }
 
 /************************************************************************/
@@ -6233,7 +6234,7 @@ void vk_removeDescriptorSet(Renderer* pRenderer, DescriptorSet* pDescriptorSet)
 
     vkDestroyDescriptorPool(pRenderer->mVk.pDevice, pDescriptorSet->mVk.pDescriptorPool,
                             GetAllocationCallbacks(VK_OBJECT_TYPE_DESCRIPTOR_POOL));
-    SAFE_FREE(pDescriptorSet);
+    SAFE_FREE_VK(pDescriptorSet);
 }
 
 #if defined(ENABLE_GRAPHICS_DEBUG) || defined(PVS_STUDIO)
@@ -6958,7 +6959,7 @@ void vk_removeShader(Renderer* pRenderer, Shader* pShaderProgram)
     }
 
     destroyPipelineReflection(pShaderProgram->pReflection);
-    SAFE_FREE(pShaderProgram);
+    SAFE_FREE_VK(pShaderProgram);
 }
 /************************************************************************/
 // Root Signature Functions
@@ -7414,7 +7415,7 @@ void vk_removeRootSignature(Renderer* pRenderer, RootSignature* pRootSignature)
     vkDestroyPipelineLayout(pRenderer->mVk.pDevice, pRootSignature->mVk.pPipelineLayout,
                             GetAllocationCallbacks(VK_OBJECT_TYPE_PIPELINE_LAYOUT));
 
-    SAFE_FREE(pRootSignature);
+    SAFE_FREE_VK(pRootSignature);
 }
 
 uint32_t vk_getDescriptorIndexFromName(const RootSignature* pRootSignature, const char* pName)
@@ -7861,7 +7862,7 @@ void vk_removePipeline(Renderer* pRenderer, Pipeline* pPipeline)
 
     vkDestroyPipeline(pRenderer->mVk.pDevice, pPipeline->mVk.pPipeline, GetAllocationCallbacks(VK_OBJECT_TYPE_PIPELINE));
 
-    SAFE_FREE(pPipeline);
+    SAFE_FREE_VK(pPipeline);
 }
 
 void vk_addPipelineCache(Renderer* pRenderer, const PipelineCacheDesc* pDesc, PipelineCache** ppPipelineCache)
@@ -7893,7 +7894,7 @@ void vk_removePipelineCache(Renderer* pRenderer, PipelineCache* pPipelineCache)
         vkDestroyPipelineCache(pRenderer->mVk.pDevice, pPipelineCache->mVk.pCache, GetAllocationCallbacks(VK_OBJECT_TYPE_PIPELINE_CACHE));
     }
 
-    SAFE_FREE(pPipelineCache);
+    SAFE_FREE_VK(pPipelineCache);
 }
 
 void vk_getPipelineCacheData(Renderer* pRenderer, PipelineCache* pPipelineCache, size_t* pSize, void* pData)
@@ -9434,7 +9435,7 @@ void vk_addIndirectCommandSignature(Renderer* pRenderer, const CommandSignatureD
 void vk_removeIndirectCommandSignature(Renderer* pRenderer, CommandSignature* pCommandSignature)
 {
     ASSERT(pRenderer);
-    SAFE_FREE(pCommandSignature);
+    SAFE_FREE_VK(pCommandSignature);
 }
 
 void vk_cmdExecuteIndirect(Cmd* pCmd, CommandSignature* pCommandSignature, uint maxCommandCount, Buffer* pIndirectBuffer,
@@ -9572,7 +9573,7 @@ void vk_removeQueryPool(Renderer* pRenderer, QueryPool* pQueryPool)
     ASSERT(pQueryPool);
     vkDestroyQueryPool(pRenderer->mVk.pDevice, pQueryPool->mVk.pQueryPool, GetAllocationCallbacks(VK_OBJECT_TYPE_QUERY_POOL));
 
-    SAFE_FREE(pQueryPool);
+    SAFE_FREE_VK(pQueryPool);
 }
 
 void vk_cmdBeginQuery(Cmd* pCmd, QueryPool* pQueryPool, QueryDesc* pQuery)

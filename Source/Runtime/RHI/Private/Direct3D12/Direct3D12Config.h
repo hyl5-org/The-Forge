@@ -28,6 +28,7 @@
 #error "Direct3D12Config should be included from RendererConfig only"
 #endif
 
+//#ifdef ENABLE_DX12
 #if 0
 #define DIRECT3D12
 #endif

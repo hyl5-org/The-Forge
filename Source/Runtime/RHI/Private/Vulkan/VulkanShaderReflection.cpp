@@ -26,7 +26,7 @@
 
 #ifdef VULKAN
 
-#include "../SpirvTools.h"
+#include <ThirdParty/SPIRV_Cross/SpirvTools.h>
 
 #include <Core/ILog.h>
 #include <RHI/IGraphics.h>
