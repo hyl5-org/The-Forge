@@ -40,26 +40,27 @@
 #define D3D12MA_IMPLEMENTATION
 #include <ThirdParty/stb/stb_ds.h>
 #include <ThirdParty/bstrlib_tf/bstrlib.h>
-#include "../ThirdParty/OpenSource/D3D12MemoryAllocator/Direct3D12MemoryAllocator.h"
+//#include <ThirdParty/D3D12MemoryAllocator/include/D3D12MemAlloc.h>
+#include "Direct3D12MemoryAllocator.h"
 
 #include <RHI/IGraphics.h>
 
 #if defined(XBOX)
 #include <pix3.h>
 #else
-#include "../../OS/ThirdParty/OpenSource/winpixeventruntime/Include/WinPixEventRuntime/pix3.h"
+#include <ThirdParty/winpixeventruntime/Include/WinPixEventRuntime/pix3.h>
 #endif
 
 #include <ThirdParty/tinyimageformat/tinyimageformat_base.h>
-#include "../../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_query.h"
-#include "../ThirdParty/OpenSource/ags/AgsHelper.h"
-#include "../ThirdParty/OpenSource/nvapi/NvApiHelper.h"
-#include "../ThirdParty/OpenSource/renderdoc/renderdoc_app.h"
+#include <ThirdParty/tinyimageformat/tinyimageformat_query.h>
+#include <ThirdParty/ags/AgsHelper.h>
+#include <ThirdParty/nvapi/NvApiHelper.h>
+//#include <ThirdParty/renderdoc/renderdoc_app.h>
 
 #include <Core/IFileSystem.h>
 #include <Core/ILog.h>
 
-#include "../../Utilities/Math/AlgorithmsImpl.h"
+#include <Core/IAlgorithm.h>
 #include <Core/IMath.h>
 
 #include "Direct3D12CapBuilder.h"
@@ -2767,33 +2768,33 @@ void d3d12_initRenderer(const char* appName, const RendererDesc* pDesc, Renderer
             // the device again.
             if (shaderModelSupport.HighestShaderModel != D3D_SHADER_MODEL_6_0 || waveIntrinsicsSupport.WaveOps == FALSE)
             {
-                RENDERDOC_API_1_1_2* rdoc_api = NULL;
-                // At init, on windows
-                if (HMODULE mod = GetModuleHandleA("renderdoc.dll"))
-                {
-                    pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)GetProcAddress(mod, "RENDERDOC_GetAPI");
-                    RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_1_2, (void**)&rdoc_api);
-                }
+                // RENDERDOC_API_1_1_2* rdoc_api = NULL;
+                // // At init, on windows
+                // if (HMODULE mod = GetModuleHandleA("renderdoc.dll"))
+                // {
+                //     pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)GetProcAddress(mod, "RENDERDOC_GetAPI");
+                //     RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_1_2, (void**)&rdoc_api);
+                // }
 
-                // If RenderDoc is connected shader model 6 is not detected but it still works
-                if (!rdoc_api || !rdoc_api->IsTargetControlConnected())
-                {
-                    // If the device still doesn't support SM6 or Wave Intrinsics after enabling the experimental feature, you could set up
-                    // your application to use the highest supported shader model. For simplicity we just exit the application here.
-                    if (shaderModelSupport.HighestShaderModel < D3D_SHADER_MODEL_6_0 ||
-                        (waveIntrinsicsSupport.WaveOps == FALSE && !SUCCEEDED(EnableExperimentalShaderModels())))
-                    {
-                        RemoveDevice(pRenderer);
-                        LOGF(LogLevel::eERROR, "Hardware does not support Shader Model 6.0");
-                        return;
-                    }
-                }
-                else
-                {
-                    LOGF(LogLevel::eWARNING,
-                         "\nRenderDoc does not support SM 6.0 or higher. Application might work but you won't be able to debug the SM 6.0+ "
-                         "shaders or view their bytecode.");
-                }
+                // // If RenderDoc is connected shader model 6 is not detected but it still works
+                // if (!rdoc_api || !rdoc_api->IsTargetControlConnected())
+                // {
+                //     // If the device still doesn't support SM6 or Wave Intrinsics after enabling the experimental feature, you could set up
+                //     // your application to use the highest supported shader model. For simplicity we just exit the application here.
+                //     if (shaderModelSupport.HighestShaderModel < D3D_SHADER_MODEL_6_0 ||
+                //         (waveIntrinsicsSupport.WaveOps == FALSE && !SUCCEEDED(EnableExperimentalShaderModels())))
+                //     {
+                //         RemoveDevice(pRenderer);
+                //         LOGF(LogLevel::eERROR, "Hardware does not support Shader Model 6.0");
+                //         return;
+                //     }
+                // }
+                // else
+                // {
+                //     LOGF(LogLevel::eWARNING,
+                //          "\nRenderDoc does not support SM 6.0 or higher. Application might work but you won't be able to debug the SM 6.0+ "
+                //          "shaders or view their bytecode.");
+                // }
             }
         }
 #endif
@@ -2883,7 +2884,6 @@ void d3d12_exitRenderer(Renderer* pRenderer)
         remove_descriptor_heap(pRenderer->mDx.pCbvSrvUavHeaps[i]);
         remove_descriptor_heap(pRenderer->mDx.pSamplerHeaps[i]);
     }
-
     SAFE_RELEASE(pRenderer->mDx.pResourceAllocator);
 
     RemoveDevice(pRenderer);
