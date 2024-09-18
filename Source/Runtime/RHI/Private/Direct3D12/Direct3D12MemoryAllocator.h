@@ -24,6 +24,9 @@
 
 #include "../GraphicsConfig.h"
 
+#define D3D12MAAllocator  D3D12MA::Allocator
+#define D3D12MAAllocation D3D12MA::Allocation
+
 /** \mainpage D3D12 Memory Allocator
 
 <b>Version 2.0.1</b> (2022-04-05)
@@ -146,11 +149,11 @@ public:
     virtual ULONG STDMETHODCALLTYPE Release();
 protected:
     virtual void ReleaseThis() { 
-        tf_delete(this);
+        delete (this);
         //delete this; 
         }
 private:
-    D3D12MA_ATOMIC_UINT32 m_RefCount = 1;
+    D3D12MA_ATOMIC_UINT32 m_RefCount{1};
 };
 } // namespace D3D12MA
 
@@ -7636,7 +7639,7 @@ private:
     D3D12MA_ATOMIC_UINT64 m_BlockBytes[DXGI_MEMORY_SEGMENT_GROUP_COUNT] = {};
     D3D12MA_ATOMIC_UINT64 m_AllocationBytes[DXGI_MEMORY_SEGMENT_GROUP_COUNT] = {};
 
-    D3D12MA_ATOMIC_UINT32 m_OperationsSinceBudgetFetch = 0;
+    D3D12MA_ATOMIC_UINT32 m_OperationsSinceBudgetFetch{0};
     D3D12MA_RW_MUTEX m_BudgetMutex;
     UINT64 m_D3D12Usage[DXGI_MEMORY_SEGMENT_GROUP_COUNT] = {};
     UINT64 m_D3D12Budget[DXGI_MEMORY_SEGMENT_GROUP_COUNT] = {};
@@ -7874,7 +7877,7 @@ class AllocatorPimpl
     friend class Allocator;
     friend class Pool;
 public:
-    std::atomic_uint32_t m_RefCount = 1;
+    std::atomic_uint32_t m_RefCount{1};
     CurrentBudgetData m_Budget;
 
     AllocatorPimpl(const ALLOCATION_CALLBACKS& allocationCallbacks, const ALLOCATOR_DESC& desc);

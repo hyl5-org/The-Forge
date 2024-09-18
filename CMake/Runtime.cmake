@@ -201,7 +201,7 @@ target_link_directories(${ENGINE_RUNTIME} PUBLIC ${RENDER_LIBRARY_PATHS})
 target_compile_definitions(${ENGINE_RUNTIME} PUBLIC ${RENDER_DEFINES})
 
 # unity build
-set_target_properties(${ENGINE_RUNTIME} PROPERTIES UNITY_BUILD OFF)
+set_target_properties(${ENGINE_RUNTIME} PROPERTIES UNITY_BUILD ON)
 
 if (${APPLE_PLATFORM} MATCHES ON)
     set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++17 -stdlib=libc++ -x objective-c++")
