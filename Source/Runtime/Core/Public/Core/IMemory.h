@@ -155,14 +155,14 @@ static void tf_delete_internal(T* ptr, const char* f, int l, const char* sf)
 #define free(ptr) static_assert(false, "Please use tf_free");
 #endif
 
-#ifdef __cplusplus
-#ifndef new
-#define new static_assert(false, "Please use tf_placement_new");
-#endif
-#ifndef delete
-#define delete static_assert(false, "Please use tf_free with explicit destructor call");
-#endif
-#endif
+//#ifdef __cplusplus
+//#ifndef new
+//#define new static_assert(false, "Please use tf_placement_new");
+//#endif
+//#ifndef delete
+//#define delete static_assert(false, "Please use tf_free with explicit destructor call");
+//#endif
+//#endif
 
 #endif
 

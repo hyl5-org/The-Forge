@@ -88,7 +88,7 @@ if(${API_SELECTED} MATCHES OFF)
     endif()
 endif()
 
-# set(DX12 OFF)
+set(DX12 OFF)
 # set(DX11 OFF)
 
 if(${DX12} MATCHES ON)
@@ -123,47 +123,19 @@ source_group(TREE ${RHI_SOURCE_DIR} PREFIX "Source Files\\RHI" FILES ${RHI_INCLU
 
 
 set(RUNTIME_INTERFACE_FILES
-
-    # ${RHI_SOURCE_FILES}
-    # ${RHI_INCLUDE_FILES}
-    # ${RHI_FILES}
     ${CORE_INTERFACE_FILES}
     ${PLATFORM_INTERFACE_FILES}
-    #${RHI_INTERFACE_FILES}
-    # ${PLATFORM_WINDOWS_SOURCE_FILES}
+    ${RHI_INTERFACE_FILES}
 
-    # ${CORE_CAMERA_FILES}
-    # ${CORE_CORE_FILES}
-    # ${CORE_FILESYSTEM_FILES}
-    # #${PLATFORM_INPUT_FILES}
-    # #${OS_INTERFACES_FILES}
-    # ${CORE_LOGGING_FILES}
-    # ${CORE_MATH_FILES}
-    # ${CORE_MEMORYTRACKING_FILES}
 )
 
 set(RUNTIME_SOURCE_FILES
-
-    # ${RHI_SOURCE_FILES}
-    # ${RHI_INCLUDE_FILES}
-    # ${RHI_FILES}
     ${CORE_INCLUDE_FILES}
     ${CORE_SOURCE_FILES}
     ${PLATFORM_INCLUDE_FILES}
     ${PLATFORM_SOURCE_FILES}
     ${RHI_INCLUDE_FILES}
     ${RHI_SOURCE_FILES}
-
-    # ${PLATFORM_WINDOWS_SOURCE_FILES}
-
-    # ${CORE_CAMERA_FILES}
-    # ${CORE_CORE_FILES}
-    # ${CORE_FILESYSTEM_FILES}
-    # #${PLATFORM_INPUT_FILES}
-    # #${OS_INTERFACES_FILES}
-    # ${CORE_LOGGING_FILES}
-    # ${CORE_MATH_FILES}
-    # ${CORE_MEMORYTRACKING_FILES}
 )
 
 if(${DYNAMIC_LIB} MATCHES OFF)
@@ -188,9 +160,13 @@ target_include_directories(${ENGINE_RUNTIME} PUBLIC
     ${ENGINE_RUNTIME_SOURCE_DIR}/Resource/Public
     ${ENGINE_RUNTIME_SOURCE_DIR}/Application/Public
     ${ENGINE_RUNTIME_SOURCE_DIR}/Scripting/Public
-
-    # ${RENDER_INCLUDES}
 )
+
+# https://cmake.org/cmake/help/latest/command/target_precompile_headers.html
+target_precompile_headers(${ENGINE_RUNTIME} PUBLIC
+    $<$<COMPILE_LANGUAGE:CXX>:${RUNTIME_INTERFACE_FILES}>
+)
+
 if(Vulkan_FOUND MATCHES TRUE)
     target_include_directories(${ENGINE_RUNTIME} PUBLIC ${Vulkan_INCLUDE_DIRS})
 endif()
