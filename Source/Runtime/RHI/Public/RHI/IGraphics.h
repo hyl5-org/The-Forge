@@ -82,11 +82,16 @@ enum
 #endif
 
 #ifdef DIRECT3D12
-#ifndef D3D12MAAllocator
-// Forward declare opaque memory allocator structs
-typedef struct D3D12MAAllocator  D3D12MAAllocator;
-typedef struct D3D12MAAllocation D3D12MAAllocation;
-#endif
+// #ifndef D3D12MAAllocator
+// // Forward declare opaque memory allocator structs
+// typedef struct D3D12MAAllocator  D3D12MAAllocator;
+// typedef struct D3D12MAAllocation D3D12MAAllocation;
+// #endif
+namespace D3D12MA
+{
+class Allocator;
+class Allocation;
+}
 typedef int32_t DxDescriptorID;
 #endif
 
@@ -1042,7 +1047,7 @@ typedef struct DEFINE_ALIGNED(Buffer, 64)
             {
                 ID3D12Heap*        pMarkerBufferHeap;
                 /// Contains resource allocation info such as parent heap, offset in heap
-                D3D12MAAllocation* pAllocation;
+                D3D12MA::Allocation* pAllocation;
             };
         } mDx;
 #endif
@@ -1162,7 +1167,7 @@ typedef struct DEFINE_ALIGNED(Texture, 64)
             /// Native handle of the underlying resource
             ID3D12Resource*    pResource;
             /// Contains resource allocation info such as parent heap, offset in heap
-            D3D12MAAllocation* pAllocation;
+            D3D12MA::Allocation* pAllocation;
             uint32_t           mHandleCount : 24;
             uint32_t           mUavStartIndex;
         } mDx;
@@ -2999,7 +3004,7 @@ typedef struct DEFINE_ALIGNED(Renderer, 64)
             struct DescriptorHeap** pCPUDescriptorHeaps;
             struct DescriptorHeap** pCbvSrvUavHeaps;
             struct DescriptorHeap** pSamplerHeaps;
-            D3D12MAAllocator*       pResourceAllocator;
+            D3D12MA::Allocator*       pResourceAllocator;
 #if defined(XBOX)
             ID3D12Device* pDevice;
             EsramManager* pESRAMManager;

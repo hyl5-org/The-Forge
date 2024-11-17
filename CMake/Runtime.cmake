@@ -88,11 +88,10 @@ if(${API_SELECTED} MATCHES OFF)
     endif()
 endif()
 
-set(DX12 OFF)
-# set(DX11 OFF)
+#set(DX12 OFF)
+set(DX11 OFF)
 
 if(${DX12} MATCHES ON)
-    set(DX11 ON)
     add_compile_definitions(ENABLE_DX12)
 endif()
 
@@ -178,6 +177,8 @@ target_compile_definitions(${ENGINE_RUNTIME} PUBLIC ${RENDER_DEFINES})
 
 # unity build
 set_target_properties(${ENGINE_RUNTIME} PROPERTIES UNITY_BUILD ON)
+
+set_property(TARGET ${ENGINE_RUNTIME} PROPERTY CXX_STANDARD 17)
 
 if (${APPLE_PLATFORM} MATCHES ON)
     set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++17 -stdlib=libc++ -x objective-c++")

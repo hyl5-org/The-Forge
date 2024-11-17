@@ -73,6 +73,21 @@ char(*array_counter(const T(&)[N]))[N];
 #define TF_MAX(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
+
+#if (__cplusplus >= 201703L)
+#define MAYBE_UNUSED [[maybe_unused]]
+#else
+#define MAYBE_UNUSED
+#endif
+
+// language features
+#if (__cplusplus == 201703L)
+#elif (__cplusplus == 201402L)
+#elif (__cplusplus == 201103L)
+#elif (__cplusplus == 199711L)
+#else
+#endif
+
 #if defined(_MSC_VER) && !defined(__clang__)
 	#if !defined(_DEBUG) && !defined(NDEBUG)
 		#define NDEBUG

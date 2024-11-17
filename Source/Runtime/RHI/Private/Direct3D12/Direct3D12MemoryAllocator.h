@@ -24,8 +24,8 @@
 
 #include "../GraphicsConfig.h"
 
-#define D3D12MAAllocator  D3D12MA::Allocator
-#define D3D12MAAllocation D3D12MA::Allocation
+// #define D3D12MAAllocator  D3D12MA::Allocator
+// #define D3D12MAAllocation D3D12MA::Allocation
 
 /** \mainpage D3D12 Memory Allocator
 
