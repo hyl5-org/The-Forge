@@ -169,11 +169,12 @@ target_precompile_headers(${ENGINE_RUNTIME} PUBLIC
 if(Vulkan_FOUND MATCHES TRUE)
     target_include_directories(${ENGINE_RUNTIME} PUBLIC ${Vulkan_INCLUDE_DIRS})
 endif()
-target_link_libraries(${ENGINE_RUNTIME} PUBLIC ${RENDER_LIBRARIES} ${THIRD_PARTY_DEPS})
 
-target_link_directories(${ENGINE_RUNTIME} PUBLIC ${RENDER_LIBRARY_PATHS})
+target_link_libraries(${ENGINE_RUNTIME} PUBLIC ${RHI_LIBRARIES} ${THIRD_PARTY_DEPS})
 
-target_compile_definitions(${ENGINE_RUNTIME} PUBLIC ${RENDER_DEFINES})
+target_link_directories(${ENGINE_RUNTIME} PUBLIC ${RHI_LIBRARY_PATHS})
+
+target_compile_definitions(${ENGINE_RUNTIME} PUBLIC ${RHI_DEFINES})
 
 # unity build
 set_target_properties(${ENGINE_RUNTIME} PROPERTIES UNITY_BUILD ON)

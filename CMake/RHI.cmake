@@ -98,7 +98,7 @@ if(${WINDOWS} MATCHES ON)
         "ws2_32.lib"
     )
 
-    set(RENDER_DEFINES ${RENDER_DEFINES}
+    set(RHI_DEFINES ${RHI_DEFINES}
         "_WINDOWS"
     )
 endif()
