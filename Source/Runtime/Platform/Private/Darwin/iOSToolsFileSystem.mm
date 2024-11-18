@@ -25,7 +25,7 @@
 #include <UIKit/UIKit.h>
 
 #include <Core/ILog.h>
-#include <Core//IToolFileSystem.h>
+#include <Core/IToolFileSystem.h>
 
 bool fsGetFilesWithExtension(ResourceDirectory resourceDir, const char* subDirectory, const char* extension, char*** out, int* count)
 {

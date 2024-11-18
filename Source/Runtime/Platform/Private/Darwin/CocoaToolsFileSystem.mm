@@ -25,7 +25,7 @@
 #include <AppKit/AppKit.h>
 
 #include <Core/ILog.h>
-#include <Core//IToolFileSystem.h>
+#include <Core/IToolFileSystem.h>
 
 #include <Core/IMemory.h>
 

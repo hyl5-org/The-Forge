@@ -29,7 +29,7 @@
 
 #include <Core/ILog.h>
 #include <Core/IThread.h>
-#include <Core//IToolFileSystem.h>
+#include <Core/IToolFileSystem.h>
 #include <Platform/IOperatingSystem.h>
 
 #include "commdlg.h"
