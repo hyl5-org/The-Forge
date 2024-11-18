@@ -9,8 +9,8 @@ jobs:
     - uses: actions/checkout@v3
     - uses: DoozyX/clang-format-lint-action@v0.13
       with:
-        source: './Source/'
-        exclude: './Source/ThirdParty/'
+        source: './Source/Runtime'
+        exclude: ''
         extensions: 'h,cpp,hpp'
         clangFormatVersion: 12
         inplace: True
