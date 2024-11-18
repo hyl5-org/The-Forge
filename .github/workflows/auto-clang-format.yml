@@ -1,6 +1,9 @@
 name: auto-clang-format
 on: [pull_request, push]
 
+
+permissions: read-all|write-all
+
 jobs:
   build:
     runs-on: ubuntu-latest
