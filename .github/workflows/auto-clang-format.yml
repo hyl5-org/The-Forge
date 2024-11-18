@@ -11,10 +11,10 @@ jobs:
       with:
         source: './Source/Runtime'
         exclude: ''
-        extensions: 'h,cpp,hpp'
+        extensions: 'h,hpp,c,cpp'
         clangFormatVersion: 12
         inplace: True
-    - uses: EndBug/add-and-commit@v4
+    - uses: EndBug/add-and-commit@4
       with:
         author_name: Clang Robot
         author_email: clang
