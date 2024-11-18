@@ -348,9 +348,9 @@
 ////   - FORGE_API: is used to expose OS functionality, which usually should be accessible from all the program (Engine and Game) because it
 ////   contains the Assert/Logging/Memory functionality
 ////   - FORGE_RENDERER_API: is used to expose Renderer functionality, wich usually only the Engine needs access to (the Game should
-///leverage /   the Engine and never call the Renderer). /                         This define allows to hide Renderer functionality to the
-///Game, so that if someone tries to use it it'll get a /                         linker error. /   - FORGE_TOOL_API: is used to expose tool
-///functionality, mostly tool filesystem.
+/// leverage /   the Engine and never call the Renderer). /                         This define allows to hide Renderer functionality to the
+/// Game, so that if someone tries to use it it'll get a /                         linker error. /   - FORGE_TOOL_API: is used to expose
+/// tool functionality, mostly tool filesystem.
 //#define FORGE_API
 //#define FORGE_RENDERER_API
 //#define FORGE_TOOL_API
