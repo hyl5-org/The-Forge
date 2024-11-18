@@ -28,7 +28,6 @@
 
 #include <Core/IFileSystem.h>
 
-
 #include "stdbool.h"
 
 #ifndef FILENAME_NAME_LENGTH_LOG

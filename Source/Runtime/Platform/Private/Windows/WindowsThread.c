@@ -70,8 +70,8 @@ typedef struct CallOnceFnWrapper
 
 static BOOL callOnceImpl(MAYBE_UNUSED PINIT_ONCE initOnce, PVOID pWrapper, MAYBE_UNUSED PVOID* ppContext)
 {
-    //UNREF_PARAM(initOnce);
-    //UNREF_PARAM(ppContext);
+    // UNREF_PARAM(initOnce);
+    // UNREF_PARAM(ppContext);
     CallOnceFn fn = ((CallOnceFnWrapper*)pWrapper)->fn;
     if (fn)
         fn();

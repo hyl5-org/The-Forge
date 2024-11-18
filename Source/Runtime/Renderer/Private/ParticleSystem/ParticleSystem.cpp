@@ -213,143 +213,145 @@ bool particleSystemInit(const ParticleSystemInitDesc* pDesc)
     }
 
     // pipeline
-    { { RasterizerStateDesc rasterizerStateCullNoneDesc = { CULL_MODE_NONE };
-    BlendStateDesc nullBlending = {};
-    DepthStateDesc depthStateDesc = {};
-    depthStateDesc.mDepthTest = true;
-    depthStateDesc.mDepthWrite = false;
-    depthStateDesc.mDepthFunc = CMP_GEQUAL;
-
-    PipelineDesc pipelineDesc = {};
-    pipelineDesc.mType = PIPELINE_TYPE_GRAPHICS;
-    pipelineDesc.mGraphicsDesc.mPrimitiveTopo = PRIMITIVE_TOPO_TRI_LIST;
-    pipelineDesc.mGraphicsDesc.mRenderTargetCount = 1;
-    pipelineDesc.mGraphicsDesc.pDepthState = &depthStateDesc;
-    pipelineDesc.mGraphicsDesc.pBlendState = &nullBlending;
-    pipelineDesc.mGraphicsDesc.pRasterizerState = &rasterizerStateCullNoneDesc;
-    pipelineDesc.mGraphicsDesc.pRootSignature = gPSSettings.pParticleRenderRootSignature;
-    pipelineDesc.mGraphicsDesc.pShaderProgram = gPSSettings.pParticleRenderShader;
-    pipelineDesc.mGraphicsDesc.mSampleCount = SAMPLE_COUNT_1;
-    pipelineDesc.mGraphicsDesc.pColorFormats = &gPSSettings.mSwapColorFormat;
-    pipelineDesc.mGraphicsDesc.mDepthStencilFormat = (TinyImageFormat)pDesc->mDepthFormat;
-    pipelineDesc.mGraphicsDesc.mSampleQuality = gPSSettings.mColorSampleQuality;
-    pipelineDesc.mGraphicsDesc.mSupportIndirectCommandBuffer = false;
-    addPipeline(gPSSettings.pRenderer, &pipelineDesc, &gPSSettings.pParticleRenderPipeline);
-}
-
-{
-    PipelineDesc pipelineDesc = {};
-    pipelineDesc.mType = PIPELINE_TYPE_COMPUTE;
-    pipelineDesc.mComputeDesc.pRootSignature = gPSSettings.pParticleSimulateRootSignature;
-    pipelineDesc.mComputeDesc.pShaderProgram = gPSSettings.pParticleSimulateShader;
-    addPipeline(gPSSettings.pRenderer, &pipelineDesc, &gPSSettings.pParticleSimulatePipeline);
-
-    pipelineDesc.mComputeDesc.pShaderProgram = gPSSettings.pResetSortingShader;
-    addPipeline(gPSSettings.pRenderer, &pipelineDesc, &gPSSettings.pResetSortingPipeline);
-}
-}
-
-// descriptor sets
-{
-    DescriptorSetDesc descriptorSetDesc = { gPSSettings.pParticleRenderRootSignature, DESCRIPTOR_UPDATE_FREQ_PER_FRAME,
-                                            gPSSettings.mFramesInFlight };
-    addDescriptorSet(gPSSettings.pRenderer, &descriptorSetDesc, &gPSSettings.pParticleRenderDescriptorSet_PerFrame);
-
-    for (uint32_t i = 0; i < gPSSettings.mFramesInFlight; ++i)
     {
-        DescriptorData params[8] = {};
-        params[0].pName = "ParticleConstantBufferData";
-        params[0].ppBuffers = &gPSSettings.ppParticleConstantBuffer[i];
-        params[1].pName = "ParticlesDataBuffer";
-        params[1].ppBuffers = &gPSSettings.pParticlesData;
-        params[2].pName = "BitfieldBuffer";
-        params[2].ppBuffers = &gPSSettings.pBitfieldData;
-        params[3].pName = "TransparencyList";
-        params[3].ppBuffers = &gPSSettings.pTransparencyListBuffer;
-        params[4].pName = "TransparencyListHeads";
-        params[4].ppBuffers = &gPSSettings.pTransparencyListHeadsBuffer;
-        params[5].pName = "ParticlesToRasterize";
-        params[5].ppBuffers = &gPSSettings.pParticlesToRasterize;
-        updateDescriptorSet(gPSSettings.pRenderer, i, gPSSettings.pParticleRenderDescriptorSet_PerFrame, 6, params);
+        {
+            RasterizerStateDesc rasterizerStateCullNoneDesc = { CULL_MODE_NONE };
+            BlendStateDesc      nullBlending = {};
+            DepthStateDesc      depthStateDesc = {};
+            depthStateDesc.mDepthTest = true;
+            depthStateDesc.mDepthWrite = false;
+            depthStateDesc.mDepthFunc = CMP_GEQUAL;
+
+            PipelineDesc pipelineDesc = {};
+            pipelineDesc.mType = PIPELINE_TYPE_GRAPHICS;
+            pipelineDesc.mGraphicsDesc.mPrimitiveTopo = PRIMITIVE_TOPO_TRI_LIST;
+            pipelineDesc.mGraphicsDesc.mRenderTargetCount = 1;
+            pipelineDesc.mGraphicsDesc.pDepthState = &depthStateDesc;
+            pipelineDesc.mGraphicsDesc.pBlendState = &nullBlending;
+            pipelineDesc.mGraphicsDesc.pRasterizerState = &rasterizerStateCullNoneDesc;
+            pipelineDesc.mGraphicsDesc.pRootSignature = gPSSettings.pParticleRenderRootSignature;
+            pipelineDesc.mGraphicsDesc.pShaderProgram = gPSSettings.pParticleRenderShader;
+            pipelineDesc.mGraphicsDesc.mSampleCount = SAMPLE_COUNT_1;
+            pipelineDesc.mGraphicsDesc.pColorFormats = &gPSSettings.mSwapColorFormat;
+            pipelineDesc.mGraphicsDesc.mDepthStencilFormat = (TinyImageFormat)pDesc->mDepthFormat;
+            pipelineDesc.mGraphicsDesc.mSampleQuality = gPSSettings.mColorSampleQuality;
+            pipelineDesc.mGraphicsDesc.mSupportIndirectCommandBuffer = false;
+            addPipeline(gPSSettings.pRenderer, &pipelineDesc, &gPSSettings.pParticleRenderPipeline);
+        }
+
+        {
+            PipelineDesc pipelineDesc = {};
+            pipelineDesc.mType = PIPELINE_TYPE_COMPUTE;
+            pipelineDesc.mComputeDesc.pRootSignature = gPSSettings.pParticleSimulateRootSignature;
+            pipelineDesc.mComputeDesc.pShaderProgram = gPSSettings.pParticleSimulateShader;
+            addPipeline(gPSSettings.pRenderer, &pipelineDesc, &gPSSettings.pParticleSimulatePipeline);
+
+            pipelineDesc.mComputeDesc.pShaderProgram = gPSSettings.pResetSortingShader;
+            addPipeline(gPSSettings.pRenderer, &pipelineDesc, &gPSSettings.pResetSortingPipeline);
+        }
     }
 
-    descriptorSetDesc = { gPSSettings.pParticleRenderRootSignature, DESCRIPTOR_UPDATE_FREQ_NONE, 1 };
-    addDescriptorSet(gPSSettings.pRenderer, &descriptorSetDesc, &gPSSettings.pParticleRenderDescriptorSet_None);
+    // descriptor sets
     {
-        DescriptorData params[2] = {};
-        params[0].pName = "ParticleTextures";
-        params[0].ppTextures = gPSSettings.ppParticleTextures;
-        params[0].mCount = MAX_PARTICLE_SET_COUNT;
-        updateDescriptorSet(gPSSettings.pRenderer, 0, gPSSettings.pParticleRenderDescriptorSet_None, 1, params);
-    }
-
-    descriptorSetDesc = { gPSSettings.pParticleSimulateRootSignature, DESCRIPTOR_UPDATE_FREQ_PER_FRAME, gPSSettings.mFramesInFlight };
-    addDescriptorSet(gPSSettings.pRenderer, &descriptorSetDesc, &gPSSettings.pParticleSimulateDescriptorSet_PerFrame);
-    for (uint32_t i = 0; i < gPSSettings.mFramesInFlight; ++i)
-    {
-        DescriptorData params[13] = {};
-        params[0].pName = "ParticleConstantBufferData";
-        params[0].ppBuffers = &gPSSettings.ppParticleConstantBuffer[i];
-        params[1].pName = "DepthBuffer";
-        params[1].ppTextures = &gPSSettings.pDepthBuffer;
-        params[2].pName = "ParticlesDataBuffer";
-        params[2].ppBuffers = &gPSSettings.pParticlesData;
-        params[3].pName = "ParticleCountsBuffer";
-        params[3].ppBuffers = &gPSSettings.pParticleCountsBuffer;
-        params[4].pName = "ParticlesToRasterizeCount";
-        params[4].ppBuffers = &gPSSettings.pParticlesToRasterizeCount;
-        params[5].pName = "BitfieldBuffer";
-        params[5].ppBuffers = &gPSSettings.pBitfieldData;
-        params[6].pName = "ParticleSectionsIndices";
-        params[6].ppBuffers = &gPSSettings.pParticlesSectionsIndicesBuffer;
-        params[7].pName = "ParticleSetVisibility";
-        params[7].ppBuffers = &gPSSettings.pParticleSetVisibilityFlagBuffer;
-        params[8].pName = "ParticlesToRasterize";
-        params[8].ppBuffers = &gPSSettings.pParticlesToRasterize;
-        params[9].pName = "TransparencyListHeads";
-        params[9].ppBuffers = &gPSSettings.pTransparencyListHeadsBuffer;
-        params[10].pName = "TransparencyList";
-        params[10].ppBuffers = &gPSSettings.pTransparencyListBuffer;
-
-        updateDescriptorSet(gPSSettings.pRenderer, i, gPSSettings.pParticleSimulateDescriptorSet_PerFrame, 11, params);
-    }
-
-    descriptorSetDesc = { gPSSettings.pParticleSimulateRootSignature, DESCRIPTOR_UPDATE_FREQ_NONE, 1 };
-    addDescriptorSet(gPSSettings.pRenderer, &descriptorSetDesc, &gPSSettings.pParticleSimulateDescriptorSet_None);
-
-    {
-        DescriptorData params[2] = {};
-        params[0].pName = "ParticleTextures";
-        params[0].ppTextures = gPSSettings.ppParticleTextures;
-        params[0].mCount = MAX_PARTICLE_SET_COUNT;
-        updateDescriptorSet(gPSSettings.pRenderer, 0, gPSSettings.pParticleSimulateDescriptorSet_None, 1, params);
-    }
-
-    descriptorSetDesc = { gPSSettings.pParticleSimulateRootSignature, DESCRIPTOR_UPDATE_FREQ_PER_FRAME, gPSSettings.mFramesInFlight };
-    addDescriptorSet(gPSSettings.pRenderer, &descriptorSetDesc, &gPSSettings.pParticleBeginDescriptorSet_PerFrame);
-
-    {
-        DescriptorData params[7] = {};
+        DescriptorSetDesc descriptorSetDesc = { gPSSettings.pParticleRenderRootSignature, DESCRIPTOR_UPDATE_FREQ_PER_FRAME,
+                                                gPSSettings.mFramesInFlight };
+        addDescriptorSet(gPSSettings.pRenderer, &descriptorSetDesc, &gPSSettings.pParticleRenderDescriptorSet_PerFrame);
 
         for (uint32_t i = 0; i < gPSSettings.mFramesInFlight; ++i)
         {
+            DescriptorData params[8] = {};
             params[0].pName = "ParticleConstantBufferData";
             params[0].ppBuffers = &gPSSettings.ppParticleConstantBuffer[i];
-            params[1].pName = "ParticleCountsBuffer";
-            params[1].ppBuffers = &gPSSettings.pParticleCountsBuffer;
-            params[2].pName = "ParticlesToRasterizeCount";
-            params[2].ppBuffers = &gPSSettings.pParticlesToRasterizeCount;
-            params[3].pName = "ParticleSectionsIndices";
-            params[3].ppBuffers = &gPSSettings.pParticlesSectionsIndicesBuffer;
-            params[4].pName = "ParticleSetVisibility";
-            params[4].ppBuffers = &gPSSettings.pParticleSetVisibilityFlagBuffer;
+            params[1].pName = "ParticlesDataBuffer";
+            params[1].ppBuffers = &gPSSettings.pParticlesData;
+            params[2].pName = "BitfieldBuffer";
+            params[2].ppBuffers = &gPSSettings.pBitfieldData;
+            params[3].pName = "TransparencyList";
+            params[3].ppBuffers = &gPSSettings.pTransparencyListBuffer;
+            params[4].pName = "TransparencyListHeads";
+            params[4].ppBuffers = &gPSSettings.pTransparencyListHeadsBuffer;
+            params[5].pName = "ParticlesToRasterize";
+            params[5].ppBuffers = &gPSSettings.pParticlesToRasterize;
+            updateDescriptorSet(gPSSettings.pRenderer, i, gPSSettings.pParticleRenderDescriptorSet_PerFrame, 6, params);
+        }
 
-            updateDescriptorSet(gPSSettings.pRenderer, i, gPSSettings.pParticleBeginDescriptorSet_PerFrame, 5, params);
+        descriptorSetDesc = { gPSSettings.pParticleRenderRootSignature, DESCRIPTOR_UPDATE_FREQ_NONE, 1 };
+        addDescriptorSet(gPSSettings.pRenderer, &descriptorSetDesc, &gPSSettings.pParticleRenderDescriptorSet_None);
+        {
+            DescriptorData params[2] = {};
+            params[0].pName = "ParticleTextures";
+            params[0].ppTextures = gPSSettings.ppParticleTextures;
+            params[0].mCount = MAX_PARTICLE_SET_COUNT;
+            updateDescriptorSet(gPSSettings.pRenderer, 0, gPSSettings.pParticleRenderDescriptorSet_None, 1, params);
+        }
+
+        descriptorSetDesc = { gPSSettings.pParticleSimulateRootSignature, DESCRIPTOR_UPDATE_FREQ_PER_FRAME, gPSSettings.mFramesInFlight };
+        addDescriptorSet(gPSSettings.pRenderer, &descriptorSetDesc, &gPSSettings.pParticleSimulateDescriptorSet_PerFrame);
+        for (uint32_t i = 0; i < gPSSettings.mFramesInFlight; ++i)
+        {
+            DescriptorData params[13] = {};
+            params[0].pName = "ParticleConstantBufferData";
+            params[0].ppBuffers = &gPSSettings.ppParticleConstantBuffer[i];
+            params[1].pName = "DepthBuffer";
+            params[1].ppTextures = &gPSSettings.pDepthBuffer;
+            params[2].pName = "ParticlesDataBuffer";
+            params[2].ppBuffers = &gPSSettings.pParticlesData;
+            params[3].pName = "ParticleCountsBuffer";
+            params[3].ppBuffers = &gPSSettings.pParticleCountsBuffer;
+            params[4].pName = "ParticlesToRasterizeCount";
+            params[4].ppBuffers = &gPSSettings.pParticlesToRasterizeCount;
+            params[5].pName = "BitfieldBuffer";
+            params[5].ppBuffers = &gPSSettings.pBitfieldData;
+            params[6].pName = "ParticleSectionsIndices";
+            params[6].ppBuffers = &gPSSettings.pParticlesSectionsIndicesBuffer;
+            params[7].pName = "ParticleSetVisibility";
+            params[7].ppBuffers = &gPSSettings.pParticleSetVisibilityFlagBuffer;
+            params[8].pName = "ParticlesToRasterize";
+            params[8].ppBuffers = &gPSSettings.pParticlesToRasterize;
+            params[9].pName = "TransparencyListHeads";
+            params[9].ppBuffers = &gPSSettings.pTransparencyListHeadsBuffer;
+            params[10].pName = "TransparencyList";
+            params[10].ppBuffers = &gPSSettings.pTransparencyListBuffer;
+
+            updateDescriptorSet(gPSSettings.pRenderer, i, gPSSettings.pParticleSimulateDescriptorSet_PerFrame, 11, params);
+        }
+
+        descriptorSetDesc = { gPSSettings.pParticleSimulateRootSignature, DESCRIPTOR_UPDATE_FREQ_NONE, 1 };
+        addDescriptorSet(gPSSettings.pRenderer, &descriptorSetDesc, &gPSSettings.pParticleSimulateDescriptorSet_None);
+
+        {
+            DescriptorData params[2] = {};
+            params[0].pName = "ParticleTextures";
+            params[0].ppTextures = gPSSettings.ppParticleTextures;
+            params[0].mCount = MAX_PARTICLE_SET_COUNT;
+            updateDescriptorSet(gPSSettings.pRenderer, 0, gPSSettings.pParticleSimulateDescriptorSet_None, 1, params);
+        }
+
+        descriptorSetDesc = { gPSSettings.pParticleSimulateRootSignature, DESCRIPTOR_UPDATE_FREQ_PER_FRAME, gPSSettings.mFramesInFlight };
+        addDescriptorSet(gPSSettings.pRenderer, &descriptorSetDesc, &gPSSettings.pParticleBeginDescriptorSet_PerFrame);
+
+        {
+            DescriptorData params[7] = {};
+
+            for (uint32_t i = 0; i < gPSSettings.mFramesInFlight; ++i)
+            {
+                params[0].pName = "ParticleConstantBufferData";
+                params[0].ppBuffers = &gPSSettings.ppParticleConstantBuffer[i];
+                params[1].pName = "ParticleCountsBuffer";
+                params[1].ppBuffers = &gPSSettings.pParticleCountsBuffer;
+                params[2].pName = "ParticlesToRasterizeCount";
+                params[2].ppBuffers = &gPSSettings.pParticlesToRasterizeCount;
+                params[3].pName = "ParticleSectionsIndices";
+                params[3].ppBuffers = &gPSSettings.pParticlesSectionsIndicesBuffer;
+                params[4].pName = "ParticleSetVisibility";
+                params[4].ppBuffers = &gPSSettings.pParticleSetVisibilityFlagBuffer;
+
+                updateDescriptorSet(gPSSettings.pRenderer, i, gPSSettings.pParticleBeginDescriptorSet_PerFrame, 5, params);
+            }
         }
     }
-}
 
-return true;
+    return true;
 }
 
 void particleSystemExit()

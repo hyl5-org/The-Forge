@@ -32,7 +32,6 @@
 #include <Core/ITime.h>
 #include <Platform/IOperatingSystem.h>
 
-
 static WindowDesc*  pWindowRef = NULL;
 static UIComponent* pWindowControlsComponent = NULL;
 

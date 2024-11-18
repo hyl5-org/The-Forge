@@ -70,11 +70,11 @@ void fswThreadFunc(void* data)
 
     HANDLE hDir =
         withUTF16Path1<HANDLE>(fs->mPath,
-                              [](const wchar_t* pathStr)
-                              {
-                                  return CreateFileW(pathStr, FILE_LIST_DIRECTORY, FILE_SHARE_WRITE | FILE_SHARE_READ | FILE_SHARE_DELETE,
-                                                     NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL);
-                              });
+                               [](const wchar_t* pathStr)
+                               {
+                                   return CreateFileW(pathStr, FILE_LIST_DIRECTORY, FILE_SHARE_WRITE | FILE_SHARE_READ | FILE_SHARE_DELETE,
+                                                      NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL);
+                               });
     HANDLE hEvt = ::CreateEvent(NULL, TRUE, FALSE, NULL);
 
     BYTE       notifyBuffer[1024];

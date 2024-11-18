@@ -73,9 +73,9 @@
 //#include <Core/IMemory.h>
 //
 //#ifdef GAINPUT_PLATFORM_GGP
-//namespace gainput
+// namespace gainput
 //{
-//extern void SetWindow(void* pData);
+// extern void SetWindow(void* pData);
 //}
 //#endif
 //
@@ -95,21 +95,21 @@
 //
 //// gainput::TouchButton enum has four values for each finger touch, for finger 0 these are: Touch0Down, Touch0X, Touch0Y, Touch0Pressure
 //// by dividing by four we get the finger id
-//FORGE_CONSTEXPR const uint32_t GAINPUT_TOUCH_BUTTONS_PER_FINGER = 4;
+// FORGE_CONSTEXPR const uint32_t GAINPUT_TOUCH_BUTTONS_PER_FINGER = 4;
 //#endif
 //
 ///**********************************************/
 //// VirtualJoystick
 ///**********************************************/
 //
-//typedef struct VirtualJoystickDesc
+// typedef struct VirtualJoystickDesc
 //{
 //    Renderer*   pRenderer;
 //    const char* pJoystickTexture;
 //
 //} VirtualJoystickDesc;
 //
-//typedef struct VirtualJoystick
+// typedef struct VirtualJoystick
 //{
 //#if TOUCH_INPUT
 //    Renderer*      pRenderer = NULL;
@@ -140,9 +140,9 @@
 //#endif
 //} VirtualJoystick;
 //
-//static VirtualJoystick* gVirtualJoystick = NULL;
+// static VirtualJoystick* gVirtualJoystick = NULL;
 //
-//void initVirtualJoystick(VirtualJoystickDesc* pDesc, VirtualJoystick** ppVirtualJoystick)
+// void initVirtualJoystick(VirtualJoystickDesc* pDesc, VirtualJoystick** ppVirtualJoystick)
 //{
 //    UNREF_PARAM(pDesc);
 //    ASSERT(ppVirtualJoystick);
@@ -196,7 +196,7 @@
 //    *ppVirtualJoystick = gVirtualJoystick;
 //}
 //
-//void exitVirtualJoystick(VirtualJoystick** ppVirtualJoystick)
+// void exitVirtualJoystick(VirtualJoystick** ppVirtualJoystick)
 //{
 //    ASSERT(ppVirtualJoystick);
 //    VirtualJoystick* pVirtualJoystick = *ppVirtualJoystick;
@@ -213,7 +213,7 @@
 //    *ppVirtualJoystick = NULL;
 //}
 //
-//bool loadVirtualJoystick(ReloadType loadType, TinyImageFormat colorFormat, uint32_t width, uint32_t height, uint32_t displayWidth,
+// bool loadVirtualJoystick(ReloadType loadType, TinyImageFormat colorFormat, uint32_t width, uint32_t height, uint32_t displayWidth,
 //                         uint32_t displayHeight)
 //{
 //    UNREF_PARAM(loadType);
@@ -322,7 +322,7 @@
 //    return true;
 //}
 //
-//void unloadVirtualJoystick(ReloadType unloadType)
+// void unloadVirtualJoystick(ReloadType unloadType)
 //{
 //    UNREF_PARAM(unloadType);
 //#if TOUCH_INPUT
@@ -347,7 +347,7 @@
 //#endif
 //}
 //
-//void drawVirtualJoystick(Cmd* pCmd, const float4* color)
+// void drawVirtualJoystick(Cmd* pCmd, const float4* color)
 //{
 //    UNREF_PARAM(pCmd);
 //    UNREF_PARAM(color);
@@ -417,7 +417,7 @@
 //#endif
 //}
 //
-//uint8_t virtualJoystickIndexFromArea(TouchScreenArea area)
+// uint8_t virtualJoystickIndexFromArea(TouchScreenArea area)
 //{
 //    switch (area)
 //    {
@@ -434,7 +434,7 @@
 //    return 0;
 //}
 //
-//bool isPositionInsideScreenArea(float2 position, TouchScreenArea area, float2 displaySize)
+// bool isPositionInsideScreenArea(float2 position, TouchScreenArea area, float2 displaySize)
 //{
 //    if (area == AREA_FULL)
 //        return true;
@@ -446,7 +446,7 @@
 //    return false;
 //}
 //
-//void virtualJoystickOnMove(VirtualJoystick* pVirtualJoystick, uint32_t id, InputActionContext* ctx)
+// void virtualJoystickOnMove(VirtualJoystick* pVirtualJoystick, uint32_t id, InputActionContext* ctx)
 //{
 //    UNREF_PARAM(pVirtualJoystick);
 //    UNREF_PARAM(id);
@@ -480,7 +480,7 @@
 //// InputSystem
 ///**********************************************/
 //#ifdef ENABLE_FORGE_INPUT
-//struct InputSystemImpl: public gainput::InputListener
+// struct InputSystemImpl: public gainput::InputListener
 //{
 //    // **********************************************
 //    // ***** Structures
@@ -2962,10 +2962,10 @@
 ///**********************************************/
 //
 //#ifdef ENABLE_FORGE_INPUT
-//static InputSystemImpl* pInputSystem = NULL;
+// static InputSystemImpl* pInputSystem = NULL;
 //
 //#if (defined(_WINDOWS) && !defined(XBOX)) || (defined(__APPLE__) && !defined(TARGET_IOS))
-//static void ResetInputStates()
+// static void ResetInputStates()
 //{
 //    pInputSystem->pInputManager->ClearAllStates(pInputSystem->mMouseDeviceID);
 //    pInputSystem->pInputManager->ClearAllStates(pInputSystem->mKeyboardDeviceID);
@@ -2978,7 +2978,7 @@
 //
 //#endif
 //
-//int32_t InputSystemHandleMessage(WindowDesc* pWindow, void* msg)
+// int32_t InputSystemHandleMessage(WindowDesc* pWindow, void* msg)
 //{
 //    UNREF_PARAM(msg);
 //    UNREF_PARAM(pWindow);
@@ -3015,7 +3015,7 @@
 //    return 0;
 //}
 //
-//bool initInputSystem(InputSystemDesc* pDesc)
+// bool initInputSystem(InputSystemDesc* pDesc)
 //{
 //#ifdef ENABLE_FORGE_INPUT
 //
@@ -3047,7 +3047,7 @@
 //#endif
 //}
 //
-//void exitInputSystem()
+// void exitInputSystem()
 //{
 //#ifdef ENABLE_FORGE_INPUT
 //    ASSERT(pInputSystem);
@@ -3064,7 +3064,7 @@
 //#endif
 //}
 //
-//void updateInputSystem(float deltaTime, uint32_t width, uint32_t height)
+// void updateInputSystem(float deltaTime, uint32_t width, uint32_t height)
 //{
 //    UNREF_PARAM(deltaTime);
 //    UNREF_PARAM(width);
@@ -3077,7 +3077,7 @@
 //#endif
 //}
 //
-//void addInputAction(const InputActionDesc* pDesc, const InputActionMappingDeviceTarget actionMappingTarget)
+// void addInputAction(const InputActionDesc* pDesc, const InputActionMappingDeviceTarget actionMappingTarget)
 //{
 //#ifdef ENABLE_FORGE_INPUT
 //    ASSERT(pInputSystem);
@@ -3085,7 +3085,7 @@
 //#endif
 //}
 //
-//void removeInputAction(const InputActionDesc* pDesc, const InputActionMappingDeviceTarget actionMappingTarget)
+// void removeInputAction(const InputActionDesc* pDesc, const InputActionMappingDeviceTarget actionMappingTarget)
 //{
 //#ifdef ENABLE_FORGE_INPUT
 //    ASSERT(pInputSystem);
@@ -3093,7 +3093,7 @@
 //#endif
 //}
 //
-//void setGlobalInputAction(const GlobalInputActionDesc* pDesc)
+// void setGlobalInputAction(const GlobalInputActionDesc* pDesc)
 //{
 //#ifdef ENABLE_FORGE_INPUT
 //    ASSERT(pInputSystem);
@@ -3101,7 +3101,7 @@
 //#endif
 //}
 //
-//void addActionMappings(ActionMappingDesc* const actionMappings, const uint32_t numActions,
+// void addActionMappings(ActionMappingDesc* const actionMappings, const uint32_t numActions,
 //                       const InputActionMappingDeviceTarget actionMappingTarget)
 //{
 //#ifdef ENABLE_FORGE_INPUT
@@ -3110,7 +3110,7 @@
 //#endif
 //}
 //
-//void removeActionMappings(const InputActionMappingDeviceTarget actionMappingTarget)
+// void removeActionMappings(const InputActionMappingDeviceTarget actionMappingTarget)
 //{
 //#ifdef ENABLE_FORGE_INPUT
 //    ASSERT(pInputSystem);
@@ -3118,7 +3118,7 @@
 //#endif
 //}
 //
-//void addDefaultActionMappings()
+// void addDefaultActionMappings()
 //{
 //    ActionMappingDesc actionMappingsArr[] = {
 //        // Camera actions
@@ -3445,7 +3445,7 @@
 //    addActionMappings(actionMappingsArr, TF_ARRAY_COUNT(actionMappingsArr), INPUT_ACTION_MAPPING_TARGET_ALL);
 //}
 //
-//bool setEnableCaptureInput(bool enable)
+// bool setEnableCaptureInput(bool enable)
 //{
 //#ifdef ENABLE_FORGE_INPUT
 //    ASSERT(pInputSystem);
@@ -3456,7 +3456,7 @@
 //#endif
 //}
 //
-//void setVirtualKeyboard(uint32_t type)
+// void setVirtualKeyboard(uint32_t type)
 //{
 //#ifdef ENABLE_FORGE_INPUT
 //    ASSERT(pInputSystem);
@@ -3465,7 +3465,7 @@
 //#endif
 //}
 //
-//void setDeadZone(unsigned gamePadIndex, float deadZoneSize)
+// void setDeadZone(unsigned gamePadIndex, float deadZoneSize)
 //{
 //#ifdef ENABLE_FORGE_INPUT
 //    ASSERT(pInputSystem);
@@ -3474,7 +3474,7 @@
 //#endif
 //}
 //
-//const char* getGamePadName(int gamePadIndex)
+// const char* getGamePadName(int gamePadIndex)
 //{
 //#ifdef ENABLE_FORGE_INPUT
 //    ASSERT(pInputSystem);
@@ -3485,7 +3485,7 @@
 //#endif
 //}
 //
-//bool gamePadConnected(int gamePadIndex)
+// bool gamePadConnected(int gamePadIndex)
 //{
 //#ifdef ENABLE_FORGE_INPUT
 //    ASSERT(pInputSystem);
@@ -3496,7 +3496,7 @@
 //#endif
 //}
 //
-//bool setRumbleEffect(int gamePadIndex, float left_motor, float right_motor, uint32_t duration_ms)
+// bool setRumbleEffect(int gamePadIndex, float left_motor, float right_motor, uint32_t duration_ms)
 //{
 //#ifdef ENABLE_FORGE_INPUT
 //    ASSERT(pInputSystem);
@@ -3516,7 +3516,7 @@
 //#endif
 //}
 //
-//void setLEDColor(int gamePadIndex, uint8_t r, uint8_t g, uint8_t b)
+// void setLEDColor(int gamePadIndex, uint8_t r, uint8_t g, uint8_t b)
 //{
 //#ifdef ENABLE_FORGE_INPUT
 //    ASSERT(pInputSystem);
@@ -3525,7 +3525,7 @@
 //#endif
 //}
 //
-//void setOnDeviceChangeCallBack(void (*onDeviceChnageCallBack)(const char* name, bool added, int gamepadIndex))
+// void setOnDeviceChangeCallBack(void (*onDeviceChnageCallBack)(const char* name, bool added, int gamepadIndex))
 //{
 //#ifdef ENABLE_FORGE_INPUT
 //    ASSERT(pInputSystem);

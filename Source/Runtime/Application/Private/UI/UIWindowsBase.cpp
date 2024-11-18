@@ -39,7 +39,6 @@
 #include <ThirdParty/rmem/inc/rmem.h>
 #include <ThirdParty/stb/stb_ds.h>
 
-
 // #include <Application/IApp.h>
 // #include <Application/IFont.h>
 // #include <Application/IProfiler.h>
@@ -52,7 +51,6 @@
 #include <Core/ITime.h>
 #include <Platform/IOperatingSystem.h>
 
-
 #if defined(ENABLE_FORGE_REMOTE_UI)
 #include "../../Tools/Network/Network.h"
 #endif
@@ -61,7 +59,6 @@
 #endif
 #include <Core/IMath.h>
 #include <Core/IMemory.h>
-
 
 #ifdef ENABLE_FORGE_STACKTRACE_DUMP
 #include "WindowsStackTraceDump.h"

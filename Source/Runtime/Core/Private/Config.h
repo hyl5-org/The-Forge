@@ -90,7 +90,7 @@
 //#define COMPILE_ASSERT(exp) _STATIC_ASSERT(exp)
 //
 //#include <BaseTsd.h>
-//typedef SSIZE_T ssize_t;
+// typedef SSIZE_T ssize_t;
 //
 //#if defined(_M_X64)
 //#define ARCH_X64
@@ -156,7 +156,7 @@
 //
 //#if defined(_WIN32)
 //#include <BaseTsd.h>
-//typedef SSIZE_T ssize_t;
+// typedef SSIZE_T ssize_t;
 //#endif
 //
 //#define OPT_COMMA_VA_ARGS(...) , ##__VA_ARGS__
@@ -168,10 +168,10 @@
 //#ifndef SSIZE_MAX
 //#if PTR_SIZE == 4
 //#define SSIZE_MAX INT32_MAX
-//COMPILE_ASSERT(sizeof(ssize_t) == sizeof(int32_t));
+// COMPILE_ASSERT(sizeof(ssize_t) == sizeof(int32_t));
 //#elif PTR_SIZE == 8
 //#define SSIZE_MAX INT64_MAX
-//COMPILE_ASSERT(sizeof(ssize_t) == sizeof(int64_t));
+// COMPILE_ASSERT(sizeof(ssize_t) == sizeof(int64_t));
 //#endif
 //#endif // !SSIZE_MAX
 //
@@ -347,11 +347,10 @@
 //// Compiling TheForge as a DLL:
 ////   - FORGE_API: is used to expose OS functionality, which usually should be accessible from all the program (Engine and Game) because it
 ////   contains the Assert/Logging/Memory functionality
-////   - FORGE_RENDERER_API: is used to expose Renderer functionality, wich usually only the Engine needs access to (the Game should leverage
-////   the Engine and never call the Renderer).
-////                         This define allows to hide Renderer functionality to the Game, so that if someone tries to use it it'll get a
-////                         linker error.
-////   - FORGE_TOOL_API: is used to expose tool functionality, mostly tool filesystem.
+////   - FORGE_RENDERER_API: is used to expose Renderer functionality, wich usually only the Engine needs access to (the Game should
+///leverage /   the Engine and never call the Renderer). /                         This define allows to hide Renderer functionality to the
+///Game, so that if someone tries to use it it'll get a /                         linker error. /   - FORGE_TOOL_API: is used to expose tool
+///functionality, mostly tool filesystem.
 //#define FORGE_API
 //#define FORGE_RENDERER_API
 //#define FORGE_TOOL_API

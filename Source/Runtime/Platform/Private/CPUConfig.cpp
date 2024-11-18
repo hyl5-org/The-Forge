@@ -57,8 +57,8 @@ bool initCpuInfo(CpuInfo* outCpuInfo)
 #elif defined(PROSPERO)
         snprintf(info.name, sizeof(info.name), "Prospero");
 #else
-        //char cpuName[MAXCPUNAME] = "";
-        //FillX86BrandString(cpuName);
+        // char cpuName[MAXCPUNAME] = "";
+        // FillX86BrandString(cpuName);
         char* trimmedName = trimString(info.brand_string);
         snprintf(info.brand_string, sizeof(info.brand_string), "%s", trimmedName);
 #endif

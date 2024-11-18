@@ -37,7 +37,7 @@
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
 
-//include "ThirdParty/OpenSource/Direct3d12Agility/include/d3d12.h"
+// include "ThirdParty/OpenSource/Direct3d12Agility/include/d3d12.h"
 #include <ThirdParty/DirectX-Headers/include/directx/d3d12.h>
 #include <ThirdParty/DirectXShaderCompiler/inc/dxcapi.h>
 #endif

@@ -34,7 +34,7 @@
 #include <Core/ITime.h>
 #include <ThirdParty/bstrlib_tf/bstrlib.h>
 
-static WindowDesc*  pWindowRef = NULL;
+static WindowDesc* pWindowRef = NULL;
 
 static char    gPlatformNameBuffer[64];
 static bstring gPlatformName = bemptyfromarr(gPlatformNameBuffer);
@@ -312,4 +312,3 @@ void platformUpdateWindowSystem()
                                                      : (pWindowRef->mWindowMode == WM_FULLSCREEN ? "Fullscreen" : "Windowed"));
 #endif
 }
-

@@ -68,60 +68,60 @@
 //#define elementsOf(a) (sizeof(a) / sizeof((a)[0]))
 //
 //// App Data
-//static IApp*       pApp = nullptr;
-//static WindowDesc* gWindowDesc = nullptr;
-//static bool        gShowPlatformUI = true;
-//static ResetDesc   gResetDescriptor = { RESET_TYPE_NONE };
-//static ReloadDesc  gReloadDescriptor = { RELOAD_TYPE_ALL };
+// static IApp*       pApp = nullptr;
+// static WindowDesc* gWindowDesc = nullptr;
+// static bool        gShowPlatformUI = true;
+// static ResetDesc   gResetDescriptor = { RESET_TYPE_NONE };
+// static ReloadDesc  gReloadDescriptor = { RELOAD_TYPE_ALL };
 ///// CPU
-//static CpuInfo     gCpu;
-//static OSInfo      gOsInfo = {};
+// static CpuInfo     gCpu;
+// static OSInfo      gOsInfo = {};
 //
 //// UI
-//static UIComponent* pAPISwitchingComponent = NULL;
-//static UIComponent* pToggleVSyncComponent = NULL;
+// static UIComponent* pAPISwitchingComponent = NULL;
+// static UIComponent* pToggleVSyncComponent = NULL;
 //#if defined(ENABLE_FORGE_RELOAD_SHADER)
-//static UIComponent* pReloadShaderComponent = NULL;
+// static UIComponent* pReloadShaderComponent = NULL;
 //#endif
-//static UIWidget* pSwitchComponentLabelWidget = NULL;
-//static UIWidget* pSelectApUIWidget = NULL;
-//static UIWidget* pSelectGraphicCardWidget = NULL;
-//static uint32_t  gSelectedApiIndex = 0;
+// static UIWidget* pSwitchComponentLabelWidget = NULL;
+// static UIWidget* pSelectApUIWidget = NULL;
+// static UIWidget* pSelectGraphicCardWidget = NULL;
+// static uint32_t  gSelectedApiIndex = 0;
 //
 //// PickRenderingAPI.cpp
-//extern PlatformParameters gPlatformParameters;
-//extern bool               gD3D11Unsupported;
+// extern PlatformParameters gPlatformParameters;
+// extern bool               gD3D11Unsupported;
 //
 //// WindowsWindow.cpp
-//extern IApp*        pWindowAppRef;
-//extern WindowDesc*  gWindow;
-//extern bool         gCursorVisible;
-//extern bool         gCursorInsideRectangle;
-//extern MonitorDesc* gMonitors;
-//extern uint32_t     gMonitorCount;
+// extern IApp*        pWindowAppRef;
+// extern WindowDesc*  gWindow;
+// extern bool         gCursorVisible;
+// extern bool         gCursorInsideRectangle;
+// extern MonitorDesc* gMonitors;
+// extern uint32_t     gMonitorCount;
 //
 //// WindowsLog.c
-//extern "C" HWND* gLogWindowHandle;
+// extern "C" HWND* gLogWindowHandle;
 //
 ////------------------------------------------------------------------------
 //// STATIC HELPER FUNCTIONS
 ////------------------------------------------------------------------------
 //
-//static inline float CounterToSecondsElapsed(int64_t start, int64_t end) { return (float)(end - start) / (float)1e6; }
+// static inline float CounterToSecondsElapsed(int64_t start, int64_t end) { return (float)(end - start) / (float)1e6; }
 //
-//ThermalStatus getThermalStatus() { return THERMAL_STATUS_NOT_SUPPORTED; }
+// ThermalStatus getThermalStatus() { return THERMAL_STATUS_NOT_SUPPORTED; }
 //
 ////------------------------------------------------------------------------
 //// OPERATING SYSTEM INTERFACE FUNCTIONS
 ////------------------------------------------------------------------------
 //
-//void requestShutdown() { PostQuitMessage(0); }
+// void requestShutdown() { PostQuitMessage(0); }
 //
-//void requestReset(const ResetDesc* pResetDesc) { gResetDescriptor = *pResetDesc; }
+// void requestReset(const ResetDesc* pResetDesc) { gResetDescriptor = *pResetDesc; }
 //
-//void requestReload(const ReloadDesc* pReloadDesc) { gReloadDescriptor = *pReloadDesc; }
+// void requestReload(const ReloadDesc* pReloadDesc) { gReloadDescriptor = *pReloadDesc; }
 //
-//void errorMessagePopup(const char* title, const char* msg, WindowHandle* handle, errorMessagePopupCallbackFn callback)
+// void errorMessagePopup(const char* title, const char* msg, WindowHandle* handle, errorMessagePopupCallbackFn callback)
 //{
 //    UNREF_PARAM(handle);
 //#if defined(AUTOMATED_TESTING)
@@ -136,14 +136,14 @@
 //    }
 //}
 //
-//CustomMessageProcessor sCustomProc = nullptr;
-//void                   setCustomMessageProcessor(CustomMessageProcessor proc) { sCustomProc = proc; }
+// CustomMessageProcessor sCustomProc = nullptr;
+// void                   setCustomMessageProcessor(CustomMessageProcessor proc) { sCustomProc = proc; }
 //
-//CpuInfo* getCpuInfo() { return &gCpu; }
+// CpuInfo* getCpuInfo() { return &gCpu; }
 //
-//OSInfo* getOsInfo() { return &gOsInfo; }
+// OSInfo* getOsInfo() { return &gOsInfo; }
 //
-//void getOsVersion(ULONG& majorVersion, ULONG& minorVersion, ULONG& buildNumber)
+// void getOsVersion(ULONG& majorVersion, ULONG& minorVersion, ULONG& buildNumber)
 //{
 //    void(WINAPI * pfnRtlGetNtVersionNumbers)(__out_opt ULONG * pNtMajorVersion, __out_opt ULONG * pNtMinorVersion,
 //                                             __out_opt ULONG * pNtBuildNumber);
@@ -160,7 +160,7 @@
 //// PLATFORM LAYER CORE SUBSYSTEMS
 ////------------------------------------------------------------------------
 //
-//bool initBaseSubsystems()
+// bool initBaseSubsystems()
 //{
 //    // Not exposed in the interface files / app layer
 //    extern bool platformInitFontSystem();
@@ -204,7 +204,7 @@
 //    return true;
 //}
 //
-//void updateBaseSubsystems(float deltaTime, bool appDrawn)
+// void updateBaseSubsystems(float deltaTime, bool appDrawn)
 //{
 //    // Not exposed in the interface files / app layer
 //    extern void platformUpdateLuaScriptingSystem(bool appDrawn);
@@ -222,7 +222,7 @@
 //#endif
 //}
 //
-//void exitBaseSubsystems()
+// void exitBaseSubsystems()
 //{
 //    // Not exposed in the interface files / app layer
 //    extern void platformExitFontSystem();
@@ -261,13 +261,13 @@
 ////------------------------------------------------------------------------
 //
 //// WindowsWindow.cpp
-//extern void initWindowClass();
-//extern void exitWindowClass();
+// extern void initWindowClass();
+// extern void exitWindowClass();
 //
-//int          IApp::argc;
-//const char** IApp::argv;
+// int          IApp::argc;
+// const char** IApp::argv;
 //
-//int WindowsMain(int argc, char** argv, IApp* app)
+// int WindowsMain(int argc, char** argv, IApp* app)
 //{
 //    UNREF_PARAM(argc);
 //    UNREF_PARAM(argv);
@@ -326,7 +326,8 @@
 //    gWindowDesc = &window; // WindowsBase.cpp
 //    gLogWindowHandle =
 //        (HWND*)&window.handle
-//            .window; // WindowsLog.c, save the address to this handle to avoid having to adding includes to WindowsLog.c to use WindowDesc*.
+//            .window; // WindowsLog.c, save the address to this handle to avoid having to adding includes to WindowsLog.c to use
+//            WindowDesc*.
 //
 //    if (pSettings->mMonitorIndex < 0 || pSettings->mMonitorIndex >= (int)gMonitorCount)
 //    {

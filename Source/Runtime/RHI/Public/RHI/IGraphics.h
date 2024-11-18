@@ -91,7 +91,7 @@ namespace D3D12MA
 {
 class Allocator;
 class Allocation;
-}
+} // namespace D3D12MA
 typedef int32_t DxDescriptorID;
 #endif
 
@@ -1045,7 +1045,7 @@ typedef struct DEFINE_ALIGNED(Buffer, 64)
             ID3D12Resource* pResource;
             union
             {
-                ID3D12Heap*        pMarkerBufferHeap;
+                ID3D12Heap*          pMarkerBufferHeap;
                 /// Contains resource allocation info such as parent heap, offset in heap
                 D3D12MA::Allocation* pAllocation;
             };
@@ -1163,13 +1163,13 @@ typedef struct DEFINE_ALIGNED(Texture, 64)
         struct
         {
             /// Descriptor handle of the SRV in a CPU visible descriptor heap (applicable to TEXTURE_USAGE_SAMPLED_IMAGE)
-            DxDescriptorID     mDescriptors;
+            DxDescriptorID       mDescriptors;
             /// Native handle of the underlying resource
-            ID3D12Resource*    pResource;
+            ID3D12Resource*      pResource;
             /// Contains resource allocation info such as parent heap, offset in heap
             D3D12MA::Allocation* pAllocation;
-            uint32_t           mHandleCount : 24;
-            uint32_t           mUavStartIndex;
+            uint32_t             mHandleCount : 24;
+            uint32_t             mUavStartIndex;
         } mDx;
 #endif
 #if defined(VULKAN)
@@ -3004,7 +3004,7 @@ typedef struct DEFINE_ALIGNED(Renderer, 64)
             struct DescriptorHeap** pCPUDescriptorHeaps;
             struct DescriptorHeap** pCbvSrvUavHeaps;
             struct DescriptorHeap** pSamplerHeaps;
-            D3D12MA::Allocator*       pResourceAllocator;
+            D3D12MA::Allocator*     pResourceAllocator;
 #if defined(XBOX)
             ID3D12Device* pDevice;
             EsramManager* pESRAMManager;

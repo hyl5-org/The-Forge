@@ -109,8 +109,8 @@
 //     {
 //         if (!pQuest->pOvr)
 //         {
-//             ovrModeParmsVulkan parms = vrapi_DefaultModeParmsVulkan(&pQuest->mJava, (unsigned long long)pSynchronisationQueue->mVk.pQueue);
-//             parms.ModeParms.Flags &= ~VRAPI_MODE_FLAG_RESET_WINDOW_FULLSCREEN;
+//             ovrModeParmsVulkan parms = vrapi_DefaultModeParmsVulkan(&pQuest->mJava, (unsigned long
+//             long)pSynchronisationQueue->mVk.pQueue); parms.ModeParms.Flags &= ~VRAPI_MODE_FLAG_RESET_WINDOW_FULLSCREEN;
 //             parms.ModeParms.Flags |= VRAPI_MODE_FLAG_NATIVE_WINDOW;
 //             if (pQuest->isSrgb)
 //                 parms.ModeParms.Flags |= VRAPI_MODE_FLAG_FRONT_BUFFER_SRGB;

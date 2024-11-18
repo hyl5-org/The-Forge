@@ -42,8 +42,8 @@ void addGPURingBuffer(Renderer* pRenderer, const BufferDesc* pBufferDesc, GPURin
     addResource(&loadDesc, NULL);
 }
 
-void addUniformGPURingBuffer(Renderer* pRenderer, uint32_t requiredUniformBufferSize, GPURingBuffer* pRingBuffer,
-                                           bool const ownMemory, ResourceMemoryUsage memoryUsage)
+void addUniformGPURingBuffer(Renderer* pRenderer, uint32_t requiredUniformBufferSize, GPURingBuffer* pRingBuffer, bool const ownMemory,
+                             ResourceMemoryUsage memoryUsage)
 {
     *pRingBuffer = {};
     pRingBuffer->pRenderer = pRenderer;

@@ -99,7 +99,6 @@ extern RenderTarget* pFragmentDensityMask;
 #endif
 #include <ThirdParty/ags/AgsHelper.h>
 
-
 extern void vk_createShaderReflection(const uint8_t* shaderCode, uint32_t shaderSize, ShaderStage shaderStage,
                                       ShaderReflection* pOutReflection);
 
@@ -357,7 +356,7 @@ const char* gVkWantedDeviceExtensions[] =
 bool gEnableDynamicRenderingExtension = true;
 
 //-V:SAFE_FREE_VK:779
-#define SAFE_FREE_VK(p_var)       \
+#define SAFE_FREE_VK(p_var)    \
     if (p_var)                 \
     {                          \
         tf_free((void*)p_var); \
@@ -5629,7 +5628,7 @@ void vk_addTexture(Renderer* pRenderer, const TextureDesc* pDesc, Texture** ppTe
     // ASTC decode mode extension
     VkImageViewASTCDecodeModeEXT astcDecodeMode = { VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT };
     astcDecodeMode.decodeMode = VK_FORMAT_R8G8B8A8_UNORM;
-    
+
     if (pRenderer->pGpu->mVk.mASTCDecodeModeExtension && TinyImageFormat_IsCompressed(pDesc->mFormat))
     {
         srvDesc.pNext = &astcDecodeMode;

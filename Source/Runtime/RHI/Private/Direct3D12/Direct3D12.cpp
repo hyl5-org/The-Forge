@@ -2779,7 +2779,8 @@ void d3d12_initRenderer(const char* appName, const RendererDesc* pDesc, Renderer
                 // // If RenderDoc is connected shader model 6 is not detected but it still works
                 // if (!rdoc_api || !rdoc_api->IsTargetControlConnected())
                 // {
-                //     // If the device still doesn't support SM6 or Wave Intrinsics after enabling the experimental feature, you could set up
+                //     // If the device still doesn't support SM6 or Wave Intrinsics after enabling the experimental feature, you could set
+                //     up
                 //     // your application to use the highest supported shader model. For simplicity we just exit the application here.
                 //     if (shaderModelSupport.HighestShaderModel < D3D_SHADER_MODEL_6_0 ||
                 //         (waveIntrinsicsSupport.WaveOps == FALSE && !SUCCEEDED(EnableExperimentalShaderModels())))
@@ -2792,8 +2793,8 @@ void d3d12_initRenderer(const char* appName, const RendererDesc* pDesc, Renderer
                 // else
                 // {
                 //     LOGF(LogLevel::eWARNING,
-                //          "\nRenderDoc does not support SM 6.0 or higher. Application might work but you won't be able to debug the SM 6.0+ "
-                //          "shaders or view their bytecode.");
+                //          "\nRenderDoc does not support SM 6.0 or higher. Application might work but you won't be able to debug the
+                //          SM 6.0+ " "shaders or view their bytecode.");
                 // }
             }
         }
