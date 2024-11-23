@@ -162,7 +162,6 @@ void exitMemAlloc(void)
     // Return all allocated memory to the OS. Analyze memory usage, dump memory leaks, ...
 }
 
-
 void* tf_malloc_internal(size_t size, const char* f, int l, const char* sf)
 {
     UNREF_PARAM(f);
