@@ -162,8 +162,9 @@ target_include_directories(${ENGINE_RUNTIME} PUBLIC
 )
 
 # https://cmake.org/cmake/help/latest/command/target_precompile_headers.html
-target_precompile_headers(${ENGINE_RUNTIME} PUBLIC
-    $<$<COMPILE_LANGUAGE:CXX>:${RUNTIME_INTERFACE_FILES}>
+target_precompile_headers(${ENGINE_RUNTIME} INTERFACE
+    #$<$<COMPILE_LANGUAGE:CXX>:${RUNTIME_INTERFACE_FILES}>
+    ${RUNTIME_INTERFACE_FILES}>
 )
 
 if(Vulkan_FOUND MATCHES TRUE)

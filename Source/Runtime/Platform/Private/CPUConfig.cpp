@@ -100,7 +100,7 @@ bool initCpuInfo(CpuInfo* outCpuInfo)
 
     // ARM64 supported platforms by cpu_features
 #if defined(ANDROID) || defined(__LINUX__) || defined(TARGET_APPLE_ARM64)
-    result = GetAarch64Info(&info);
+    info = GetAarch64Info();
 #endif
 
 #if defined(ANDROID)
@@ -136,8 +136,9 @@ bool initCpuInfo(CpuInfo* outCpuInfo)
 #endif
 
     outCpuInfo->mFeaturesAarch64 = info.features;
-
-    snprintf(outCpuInfo->mName, sizeof(outCpuInfo->mName), "%s\t\t\t\t\t %s", info.name, simdName);
+    
+    // no name recorded in aarchinfo
+    snprintf(outCpuInfo->mName, sizeof(outCpuInfo->mName), "%s\t\t\t\t\t %s", "", simdName);
 #endif
 
     return result;
