@@ -136,7 +136,7 @@ bool initCpuInfo(CpuInfo* outCpuInfo)
 #endif
 
     outCpuInfo->mFeaturesAarch64 = info.features;
-    
+
     // no name recorded in aarchinfo
     snprintf(outCpuInfo->mName, sizeof(outCpuInfo->mName), "%s\t\t\t\t\t %s", "", simdName);
 #endif
