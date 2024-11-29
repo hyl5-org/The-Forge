@@ -76,17 +76,7 @@ target_include_directories(D3D12MemoryAllocator INTERFACE
 # ${ENGINE_THIRD_PARTY_SOURCE_DIR}/basis_universal/transcoder/basisu_transcoder.cpp
 # )
 # add_library(Basisu STATIC ${BASISU_FILES})
-# add_subdirectory(${ENGINE_THIRD_PARTY_SOURCE_DIR}/EASTL)
-file(GLOB EASTL_SOURCES ${ENGINE_THIRD_PARTY_SOURCE_DIR}/EASTL/source/*.cpp)
 
-add_library(Eastl STATIC ${EASTL_SOURCES})
-target_include_directories(Eastl PRIVATE ${ENGINE_THIRD_PARTY_SOURCE_DIR}/EASTL/include)
-
-if(NOT TARGET EABase)
-    add_subdirectory(${ENGINE_THIRD_PARTY_SOURCE_DIR}/EASTL/test/packages/EABase)
-endif()
-
-target_link_libraries(Eastl EABase)
 
 set(IMGUI_FILES
      ${ENGINE_THIRD_PARTY_SOURCE_DIR}/imgui/imconfig.h
@@ -348,7 +338,6 @@ add_subdirectory(${ENGINE_THIRD_PARTY_SOURCE_DIR}/DirectX-Headers)
 set(THIRD_PARTY_DEPS
 
     # Basisu
-    Eastl
     Imgui
 
     # Lua
