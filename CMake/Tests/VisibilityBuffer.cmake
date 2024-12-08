@@ -6,8 +6,6 @@ set(VB_PROJECT_DIR ${ENGINE_DIR}/Tests/Visibility_Buffer2)
 set(PROJECT_NAME VisbilityBuffer)
 
 # Set C++ standard
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 file(GLOB_RECURSE VB_INCLUDE_FILES ${VB_PROJECT_DIR}/Sources/*.h)
 file(GLOB_RECURSE VB_SOURCE_FILES ${VB_PROJECT_DIR}/Sources/*.cpp)
@@ -21,8 +19,12 @@ source_group(TREE ${VB_PROJECT_DIR} FILES ${VB_INCLUDE_FILES} ${VB_SOURCE_FILES}
 # Add executable
 add_executable(${PROJECT_NAME} ${VB_SOURCE_FILES} ${VB_INCLUDE_FILES} ${VB_SHADER_FILES})
 
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
+
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${RUNTIME_INCLUDE_DIR}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${ENGINE_RUNTIME})
+
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Tests")

@@ -109,6 +109,7 @@ set(RUNTIME_INCLUDE_DIR
     ${ENGINE_RUNTIME_SOURCE_DIR}/Graphics/Public
     ${ENGINE_RUNTIME_SOURCE_DIR}/Application/Public
     ${ENGINE_RUNTIME_SOURCE_DIR}/Scripting/Public
+    ${THIRD_PARTY_INCLUDES}
 )
 
 target_include_directories(${ENGINE_RUNTIME} PUBLIC
@@ -130,4 +131,24 @@ target_compile_definitions(${ENGINE_RUNTIME} PUBLIC ${RHI_DEFINES})
 # unity build
 set_target_properties(${ENGINE_RUNTIME} PROPERTIES UNITY_BUILD ON)
 
-set_property(TARGET ${ENGINE_RUNTIME} PROPERTY CXX_STANDARD 20)
+target_compile_features(${ENGINE_RUNTIME} PRIVATE cxx_std_20)
+
+
+
+if (${APPLE_PLATFORM} MATCHES ON)
+    set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++20 -stdlib=libc++ -x objective-c++")
+    target_compile_options(${ENGINE_RUNTIME} PRIVATE "-fobjc-arc")
+endif()
+
+
+
+# Add compiler-specific flags
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(${ENGINE_RUNTIME} PRIVATE -fno-rtti -fno-exceptions)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    SET(CMAKE_CXX_FLAGS "/GR- /EHsc-")
+    #target_compile_options(${ENGINE_RUNTIME} PRIVATE /GR- /EHs-c-)
+    # will produe warning, https://cmake.org/pipermail/cmake/2010-December/041639.html
+endif()
+
+set_target_properties(${ENGINE_RUNTIME} PROPERTIES FOLDER "Horizon")

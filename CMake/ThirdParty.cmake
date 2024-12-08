@@ -133,6 +133,8 @@ set(RMEM_FILES
 )
 add_library(RMem STATIC ${RMEM_FILES})
 
+target_include_directories(RMem PRIVATE ${ENGINE_THIRD_PARTY_SOURCE_DIR}/rmem/inc)
+
 set(MESHOPTIMIZER_FILES
      ${ENGINE_THIRD_PARTY_SOURCE_DIR}/meshoptimizer/src/vertexfilter.cpp
      ${ENGINE_THIRD_PARTY_SOURCE_DIR}/meshoptimizer/src/allocator.cpp
@@ -271,6 +273,12 @@ add_library(Ozz STATIC ${OZZ_FILES})
 target_include_directories(Ozz PUBLIC ${OZZ_INCLUDES})
 
 add_subdirectory(${ENGINE_THIRD_PARTY_SOURCE_DIR}/DirectX-Headers)
+add_subdirectory(${ENGINE_THIRD_PARTY_SOURCE_DIR}/mimalloc)
+
+set(THIRD_PARTY_INCLUDES
+    ${ENGINE_THIRD_PARTY_SOURCE_DIR}/mimalloc/include
+)
+
 
 set(THIRD_PARTY_DEPS
 
@@ -287,5 +295,14 @@ set(THIRD_PARTY_DEPS
     Ozz
     cpu_features
     DirectX-Headers
-    stb
+    DirectX-Guids
+    utils
+    # stb
+    mimalloc-static
 )
+
+foreach(LIB ${THIRD_PARTY_DEPS})
+    set_target_properties(${LIB} PROPERTIES FOLDER "ThirdParty")
+endforeach()
+
+
