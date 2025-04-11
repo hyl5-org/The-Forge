@@ -10,7 +10,7 @@
 //#include <Core/IMath.h>
 #define MEM_MAX(a, b)             ((a) > (b) ? (a) : (b))
 
-#define ALIGN_TO(size, alignment) (((size) + (alignment) - 1) & ~((alignment) - 1))
+#define ALIGN_TO(size, alignment) (((size) + (alignment)-1) & ~((alignment)-1))
 
 // Taken from EASTL EA_PLATFORM_MIN_MALLOC_ALIGNMENT
 #ifndef PLATFORM_MIN_MALLOC_ALIGNMENT
@@ -106,7 +106,7 @@ void exitMemAlloc(void)
     // Return all allocated memory to the OS. Analyze memory usage, dump memory leaks, ...
 }
 //
-//void* tf_malloc(size_t size)
+// void* tf_malloc(size_t size)
 //{
 //#ifdef _MSC_VER
 //    void* ptr = _aligned_malloc(size, MIN_ALLOC_ALIGNMENT);
@@ -117,7 +117,7 @@ void exitMemAlloc(void)
 //    return ptr;
 //}
 //
-//void* tf_calloc(size_t count, size_t size)
+// void* tf_calloc(size_t count, size_t size)
 //{
 //#ifdef _MSC_VER
 //    size_t sz = count * size;
@@ -130,7 +130,7 @@ void exitMemAlloc(void)
 //    return ptr;
 //}
 //
-//void* tf_memalign(size_t alignment, size_t size)
+// void* tf_memalign(size_t alignment, size_t size)
 //{
 //#ifdef _MSC_VER
 //    void* ptr = _aligned_malloc(size, alignment);
@@ -146,7 +146,7 @@ void exitMemAlloc(void)
 //    return ptr;
 //}
 //
-//void* tf_calloc_memalign(size_t count, size_t alignment, size_t size)
+// void* tf_calloc_memalign(size_t count, size_t alignment, size_t size)
 //{
 //    size_t alignedArrayElementSize = ALIGN_TO(size, alignment);
 //    size_t totalBytes = count * alignedArrayElementSize;
@@ -157,7 +157,7 @@ void exitMemAlloc(void)
 //    return ptr;
 //}
 //
-//void* tf_realloc(void* ptr, size_t size)
+// void* tf_realloc(void* ptr, size_t size)
 //{
 //#ifdef _MSC_VER
 //    void* reallocPtr = _aligned_realloc(ptr, size, MIN_ALLOC_ALIGNMENT);
@@ -168,7 +168,7 @@ void exitMemAlloc(void)
 //    return reallocPtr;
 //}
 //
-//void tf_free(void* ptr)
+// void tf_free(void* ptr)
 //{
 //#ifdef _MSC_VER
 //    _aligned_free(ptr);
