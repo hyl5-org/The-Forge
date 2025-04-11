@@ -29,7 +29,7 @@
 #ifndef _THREAD_H_
 #define _THREAD_H_
 
-//namespace BD {
+// namespace BD {
 //    template<bool IsSharedMutex>
 //    class Mutex{
 //        public:
@@ -62,7 +62,7 @@
 //        private:
 //            MutexType Mutex;
 //    };
-//    
+//
 //    template<>
 //    class ScopeLock{
 //        public:
@@ -70,7 +70,6 @@
 //        private:
 //    };
 //}
-
 
 #if defined(_WINDOWS) || defined(XBOX)
 typedef unsigned long ThreadID;
