@@ -29,8 +29,9 @@ jobs:
           - windows-latest
         compiler:
           # you can specify the version after `-` like "llvm-15.0.2".
-          - llvm-18
-          - gcc-13
+          - llvm-20
+          - gcc-14
+          - msvc
         build_type:
           - Release
           - Debug
@@ -66,23 +67,23 @@ jobs:
         compiler: ${{ matrix.compiler }}
         vcvarsall: ${{ contains(matrix.os, 'windows' )}}
 
-        cmake: true
+        #cmake: true
         ninja: true
-        vcpkg: false
-        ccache: true
-        clangtidy: ${{ env.CLANG_TIDY_VERSION }}
+        # vcpkg: false
+        # ccache: true
+        # clangtidy: ${{ env.CLANG_TIDY_VERSION }}
 
 
-        cppcheck: true
+        # cppcheck: true
 
-        gcovr: true
-        opencppcoverage: true
+        # gcovr: true
+        # opencppcoverage: true
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -G "${{matrix.generator}}"
+        -G ${{matrix.generator}}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
