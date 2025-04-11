@@ -26,8 +26,6 @@
 
 #include <errno.h>
 
-
-
 #include <Core/ILog.h>
 #include <Core/IThread.h>
 #include <Core/ITime.h>
