@@ -36,20 +36,16 @@ jobs:
           - llvm-20
           - gcc-14
           - msvc
-        c_compiler: [gcc, clang, cl]
         include:
           - os: windows-latest
-            c_compiler: cl
-            cpp_compiler: cl
+            compiler: msvc
             generator: "Visual Studio 17 2022"
           - os: windows-latest
-            c_compiler: gcc
-            cpp_compiler: g++
+            compiler: gcc-14
             generator: "Ninja"
           - os: windows-latest
-            c_compiler: clang
-            cpp_compiler: clang++
-            generator: "Ninja Multi-Config"
+            compiler: llvm-20
+            generator: "Ninja"
     steps:
     - uses: actions/checkout@v4
     # - name: Install Vulkan SDK
@@ -86,8 +82,6 @@ jobs:
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -G ${{matrix.generator}}
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -S ${{ github.workspace }}
 
