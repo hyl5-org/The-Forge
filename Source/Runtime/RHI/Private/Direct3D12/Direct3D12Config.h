@@ -28,9 +28,8 @@
 #error "Direct3D12Config should be included from RendererConfig only"
 #endif
 
-#ifdef ENABLE_DX12
 #define DIRECT3D12
-#endif
+
 #ifdef XBOX
 #include "../../../Xbox/Common_3/Graphics/Direct3D12/Direct3D12X.h"
 #else

@@ -22,11 +22,10 @@
  * under the License.
  */
 
+#include <Core/IFileSystem.h>
+
 #include <errno.h>
 
-#include <ThirdParty/bstrlib_tf/bstrlib.h>
-
-#include <Core/IFileSystem.h>
 #include <Core/ILog.h>
 #include <Core/IThread.h>
 #include <Core/ITime.h>
@@ -38,6 +37,8 @@
 
 #include <ThirdParty/zstd/lib/zstd.h>
 #include <ThirdParty/lz4/lib/lz4.h>
+#include <ThirdParty/bstrlib_tf/bstrlib.h>
+
 /************************************************************************/
 // MARK: - Minor filename manipulation
 /************************************************************************/

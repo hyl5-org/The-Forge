@@ -26,7 +26,7 @@
 #ifdef DIRECT3D12
 
 //#include "../ThirdParty/OpenSource/D3D12MemoryAllocator/Direct3D12MemoryAllocator.h"
-#include <ThirdParty/D3D12MemoryAllocator/include/D3D12MemAlloc.h>
+//#include <ThirdParty/D3D12MemoryAllocator/include/D3D12MemAlloc.h>
 #include <RHI/IGraphics.h>
 
 #include <Core/IMath.h>
