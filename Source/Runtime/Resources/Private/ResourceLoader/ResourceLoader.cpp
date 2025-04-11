@@ -3,7 +3,8 @@
 #if !defined(TINYIMAGEFORMAT_APIS_H_) && !defined(TINYIMAGEFORMAT_IMAGEFORMAT_H)
 #define TINYIMAGEFORMAT_APIS_H_ 1
 
-#include "tinyimageformat_base.h"
+#include <ThirdParty/tinyimageformat/tinyimageformat_base.h>
+#include <cstdint>
 
 #ifndef TINYIMAGEFORMAT_VKFORMAT
 #define TINYIMAGEFORMAT_VKFORMAT

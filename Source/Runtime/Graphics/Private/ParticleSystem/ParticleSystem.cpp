@@ -24,16 +24,16 @@
 
 #include <ThirdParty/stb/stb_ds.h>
 
-#include "../../../Common_3/Application/Interfaces/IProfiler.h"
+//#include "../../../Common_3/Application/Interfaces/IProfiler.h"
 #include <RHI/IGraphics.h>
-#include "../../../Common_3/Resources/ResourceLoader/Interfaces/IResourceLoader.h"
+#include <Resources/IResourceLoader.h>
 #include <Core/ILog.h>
 #include <Core/ITime.h>
-#include "../Interfaces/IParticleSystem.h"
+#include <Graphics/IParticleSystem.h>
 
-#define NO_FSL_DEFINITIONS
-#include "Shaders/particle_shared.h.fsl"
-#undef NO_FSL_DEFINITIONS
+//#define NO_FSL_DEFINITIONS
+//#include "Shaders/particle_shared.h.fsl"
+//#undef NO_FSL_DEFINITIONS
 
 #include <Core/IMemory.h>
 
