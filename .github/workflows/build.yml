@@ -41,9 +41,6 @@ jobs:
             compiler: msvc
             generator: "Visual Studio 17 2022"
           - os: windows-latest
-            compiler: gcc-14
-            generator: "Ninja"
-          - os: windows-latest
             compiler: llvm-20
             generator: "Ninja"
     steps:
