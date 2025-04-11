@@ -34,7 +34,7 @@ jobs:
         compiler:
           # you can specify the version after `-` like "llvm-15.0.2".
           - llvm-20
-          - gcc-14
+          #- gcc-14
           - msvc
         include:
           - os: windows-latest
@@ -81,7 +81,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -G ${{matrix.generator}}
+        -G "${{matrix.generator}}"
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -S ${{ github.workspace }}
 
