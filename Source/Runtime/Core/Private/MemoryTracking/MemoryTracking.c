@@ -109,71 +109,71 @@ void exitMemAlloc(void)
 void* tf_malloc_(size_t size)
 {
 #ifdef _MSC_VER
-   void* ptr = _aligned_malloc(size, MIN_ALLOC_ALIGNMENT);
+    void* ptr = _aligned_malloc(size, MIN_ALLOC_ALIGNMENT);
 #else
-   void* ptr = malloc(size);
+    void* ptr = malloc(size);
 #endif
 
-   return ptr;
+    return ptr;
 }
 
 void* tf_calloc_(size_t count, size_t size)
 {
 #ifdef _MSC_VER
-   size_t sz = count * size;
-   void*  ptr = tf_malloc(sz);
-   memset(ptr, 0, sz); //-V575
+    size_t sz = count * size;
+    void*  ptr = tf_malloc(sz);
+    memset(ptr, 0, sz); //-V575
 #else
-   void* ptr = calloc(count, size);
+    void* ptr = calloc(count, size);
 #endif
 
-   return ptr;
+    return ptr;
 }
 
 void* tf_memalign_(size_t alignment, size_t size)
 {
 #ifdef _MSC_VER
-   void* ptr = _aligned_malloc(size, alignment);
+    void* ptr = _aligned_malloc(size, alignment);
 #else
-   void* ptr;
-   alignment = alignment > sizeof(void*) ? alignment : sizeof(void*);
-   if (posix_memalign(&ptr, alignment, size))
-   {
-       ptr = NULL;
-   }
+    void* ptr;
+    alignment = alignment > sizeof(void*) ? alignment : sizeof(void*);
+    if (posix_memalign(&ptr, alignment, size))
+    {
+        ptr = NULL;
+    }
 #endif
 
-   return ptr;
+    return ptr;
 }
 
 void* tf_calloc_memalign_(size_t count, size_t alignment, size_t size)
 {
-   size_t alignedArrayElementSize = ALIGN_TO(size, alignment);
-   size_t totalBytes = count * alignedArrayElementSize;
+    size_t alignedArrayElementSize = ALIGN_TO(size, alignment);
+    size_t totalBytes = count * alignedArrayElementSize;
 
-   void* ptr = tf_memalign(alignment, totalBytes);
+    void* ptr = tf_memalign(alignment, totalBytes);
 
-   memset(ptr, 0, totalBytes); //-V575
-   return ptr;
+    memset(ptr, 0, totalBytes); //-V575
+    return ptr;
 }
 
 void* tf_realloc_(void* ptr, size_t size)
 {
 #ifdef _MSC_VER
-   void* reallocPtr = _aligned_realloc(ptr, size, MIN_ALLOC_ALIGNMENT);
+    void* reallocPtr = _aligned_realloc(ptr, size, MIN_ALLOC_ALIGNMENT);
 #else
-   void* reallocPtr = realloc(ptr, size);
+    void* reallocPtr = realloc(ptr, size);
 #endif
 
-   return reallocPtr;
+    return reallocPtr;
 }
 
 void tf_free_(void* ptr)
 {
 #ifdef _MSC_VER
-   _aligned_free(ptr);
+    _aligned_free(ptr);
 #else
-   free(ptr);
+    free(ptr);
 #endif
 }
 
