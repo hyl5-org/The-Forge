@@ -40,7 +40,7 @@
 #define D3D12MA_IMPLEMENTATION
 #include <ThirdParty/stb/stb_ds.h>
 #include <ThirdParty/bstrlib_tf/bstrlib.h>
-//#include <ThirdParty/D3D12MemoryAllocator/include/D3D12MemAlloc.h>
+#include <ThirdParty/D3D12MemoryAllocator/include/D3D12MemAlloc.h>
 #include "Direct3D12MemoryAllocator.h"
 
 #include <RHI/IGraphics.h>

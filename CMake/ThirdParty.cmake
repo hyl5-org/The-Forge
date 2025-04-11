@@ -28,45 +28,6 @@ set_property(TARGET DirectXShaderCompiler PROPERTY IMPORTED_LOCATION
     ${ENGINE_THIRD_PARTY_SOURCE_DIR}/DirectXShaderCompiler/lib/x64/dxcompiler.lib
 )
 
-# if(ANTUMBRA_BUILD_VK)
-#     # prefer to use system installed vulkan sdk
-#     find_package(Vulkan)
-
-#     if(Vulkan_FOUND)
-#         message("found vulkan sdk")
-
-#         target_include_directories(${PROJECT_NAME} PUBLIC ${Vulkan_INCLUDE_DIRS})
-#         target_link_libraries(${PROJECT_NAME} PUBLIC ${Vulkan_LIBRARIES})
-#         add_definitions(-DNONE_VALUE_MACRO)
-#     else()
-#         # target_include_directories(${PROJECT_NAME} PUBLIC
-#         #     Vulkan-Headers/include)
-
-#         # if(WIN32)
-#         #     find_library(Vulkan_LIBRARY NAMES vulkan-1 PATHS ${VK_LIB_PATH}/windows)
-#         # elseif(LINUX)
-#         #     find_library(Vulkan_LIBRARY NAMES vulkan PATHS ${VK_LIB_PATH}/linux)
-#         # endif()
-
-#         # if(Vulkan_LIBRARY)
-#         #     message("using bundled vulkan in ${VK_LIB_PATH}")
-#         #     target_link_libraries(${PROJECT_NAME} PUBLIC ${Vulkan_LIBRARY})
-#         # else()
-#         #     message("failed to find vulkan library")
-#         # endif()
-#     endif()
-# endif()
-
-# add_library(Vulkan-Headers INTERFACE)
-# target_include_directories(Vulkan-Headers INTERFACE
-#     ${ENGINE_THIRD_PARTY_SOURCE_DIR}/Vulkan-Headers
-# )
-
-add_library(VulkanMemoryAllocator INTERFACE)
-target_include_directories(VulkanMemoryAllocator INTERFACE
-    ${ENGINE_THIRD_PARTY_SOURCE_DIR}/VulkanMemoryAllocator
-)
-
 add_library(D3D12MemoryAllocator INTERFACE)
 target_include_directories(D3D12MemoryAllocator INTERFACE
     ${ENGINE_THIRD_PARTY_SOURCE_DIR}/D3D12MemoryAllocator
@@ -203,37 +164,13 @@ set(GAINPUT_WINDOWS_FILES
     ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/hidapi/windows/hid.c
 )
 
-set(GAINPUT_LINUX_FILES
-    ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/hidapi/linux/hid.c
-)
-
-set(GAINPUT_MACOS_FILES
-     ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/gainput/GainputMac.mm
-     ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/gainput/pad/GainputInputDevicePadMac.cpp
-     ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/gainput/mouse/GainputInputDeviceMouseMac.mm
-     ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/gainput/mouse/GainputInputDeviceMouseMacRaw.mm
-     ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/gainput/keyboard/GainputInputDeviceKeyboardMac.cpp
-    ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/hidapi/mac/hid.c
-)
 set(GAINPUT_IOS_FILES
      ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/gainput/GainputIos.mm
 )
 source_group(Core FILES ${GAINPUT_STATIC_FILES})
-source_group(MacOS FILES ${GAINPUT_MACOS_FILES})
-if(${APPLE_PLATFORM} MATCHES ON) 
-    set(GAINPUT_STATIC_FILES
-        ${GAINPUT_STATIC_FILES}
-        ${GAINPUT_MACOS_FILES}
-    )
-endif()
+
 add_library(GaInput STATIC ${GAINPUT_STATIC_FILES})
 target_include_directories(GaInput PUBLIC ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/include)
-if (${APPLE_PLATFORM} MATCHES ON)
-    #set_source_files_properties(${GAINPUT_STATIC_FILES} PROPERTIES COMPILE_FLAGS "-x objective-c++")
-    set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++17 -stdlib=libc++ -x objective-c++")
-    set_property(TARGET GaInput PROPERTY C_STANDARD 17)
-    target_compile_options(GaInput PRIVATE "-fno-objc-arc")
-endif()
 
 # set(CPU_FEATURES_FILES
 #     ${ENGINE_THIRD_PARTY_SOURCE_DIR}/cpu_features/src/impl_x86_macos.c
