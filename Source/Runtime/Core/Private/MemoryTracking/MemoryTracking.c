@@ -105,84 +105,84 @@ void exitMemAlloc(void)
 {
     // Return all allocated memory to the OS. Analyze memory usage, dump memory leaks, ...
 }
-//
-// void* tf_malloc(size_t size)
-//{
-//#ifdef _MSC_VER
-//    void* ptr = _aligned_malloc(size, MIN_ALLOC_ALIGNMENT);
-//#else
-//    void* ptr = malloc(size);
-//#endif
-//
-//    return ptr;
-//}
-//
-// void* tf_calloc(size_t count, size_t size)
-//{
-//#ifdef _MSC_VER
-//    size_t sz = count * size;
-//    void*  ptr = tf_malloc(sz);
-//    memset(ptr, 0, sz); //-V575
-//#else
-//    void* ptr = calloc(count, size);
-//#endif
-//
-//    return ptr;
-//}
-//
-// void* tf_memalign(size_t alignment, size_t size)
-//{
-//#ifdef _MSC_VER
-//    void* ptr = _aligned_malloc(size, alignment);
-//#else
-//    void* ptr;
-//    alignment = alignment > sizeof(void*) ? alignment : sizeof(void*);
-//    if (posix_memalign(&ptr, alignment, size))
-//    {
-//        ptr = NULL;
-//    }
-//#endif
-//
-//    return ptr;
-//}
-//
-// void* tf_calloc_memalign(size_t count, size_t alignment, size_t size)
-//{
-//    size_t alignedArrayElementSize = ALIGN_TO(size, alignment);
-//    size_t totalBytes = count * alignedArrayElementSize;
-//
-//    void* ptr = tf_memalign(alignment, totalBytes);
-//
-//    memset(ptr, 0, totalBytes); //-V575
-//    return ptr;
-//}
-//
-// void* tf_realloc(void* ptr, size_t size)
-//{
-//#ifdef _MSC_VER
-//    void* reallocPtr = _aligned_realloc(ptr, size, MIN_ALLOC_ALIGNMENT);
-//#else
-//    void* reallocPtr = realloc(ptr, size);
-//#endif
-//
-//    return reallocPtr;
-//}
-//
-// void tf_free(void* ptr)
-//{
-//#ifdef _MSC_VER
-//    _aligned_free(ptr);
-//#else
-//    free(ptr);
-//#endif
-//}
+
+void* tf_malloc_(size_t size)
+{
+#ifdef _MSC_VER
+   void* ptr = _aligned_malloc(size, MIN_ALLOC_ALIGNMENT);
+#else
+   void* ptr = malloc(size);
+#endif
+
+   return ptr;
+}
+
+void* tf_calloc_(size_t count, size_t size)
+{
+#ifdef _MSC_VER
+   size_t sz = count * size;
+   void*  ptr = tf_malloc(sz);
+   memset(ptr, 0, sz); //-V575
+#else
+   void* ptr = calloc(count, size);
+#endif
+
+   return ptr;
+}
+
+void* tf_memalign_(size_t alignment, size_t size)
+{
+#ifdef _MSC_VER
+   void* ptr = _aligned_malloc(size, alignment);
+#else
+   void* ptr;
+   alignment = alignment > sizeof(void*) ? alignment : sizeof(void*);
+   if (posix_memalign(&ptr, alignment, size))
+   {
+       ptr = NULL;
+   }
+#endif
+
+   return ptr;
+}
+
+void* tf_calloc_memalign_(size_t count, size_t alignment, size_t size)
+{
+   size_t alignedArrayElementSize = ALIGN_TO(size, alignment);
+   size_t totalBytes = count * alignedArrayElementSize;
+
+   void* ptr = tf_memalign(alignment, totalBytes);
+
+   memset(ptr, 0, totalBytes); //-V575
+   return ptr;
+}
+
+void* tf_realloc_(void* ptr, size_t size)
+{
+#ifdef _MSC_VER
+   void* reallocPtr = _aligned_realloc(ptr, size, MIN_ALLOC_ALIGNMENT);
+#else
+   void* reallocPtr = realloc(ptr, size);
+#endif
+
+   return reallocPtr;
+}
+
+void tf_free_(void* ptr)
+{
+#ifdef _MSC_VER
+   _aligned_free(ptr);
+#else
+   free(ptr);
+#endif
+}
 
 void* tf_malloc_internal(size_t size, const char* f, int l, const char* sf)
 {
     UNREF_PARAM(f);
     UNREF_PARAM(l);
     UNREF_PARAM(sf);
-    return tf_malloc(size);
+    return tf_malloc_(size);
 }
 
 void* tf_memalign_internal(size_t align, size_t size, const char* f, int l, const char* sf)
@@ -190,7 +190,7 @@ void* tf_memalign_internal(size_t align, size_t size, const char* f, int l, cons
     UNREF_PARAM(f);
     UNREF_PARAM(l);
     UNREF_PARAM(sf);
-    return tf_memalign(align, size);
+    return tf_memalign_(align, size);
 }
 
 void* tf_calloc_internal(size_t count, size_t size, const char* f, int l, const char* sf)
@@ -198,7 +198,7 @@ void* tf_calloc_internal(size_t count, size_t size, const char* f, int l, const 
     UNREF_PARAM(f);
     UNREF_PARAM(l);
     UNREF_PARAM(sf);
-    return tf_calloc(count, size);
+    return tf_calloc_(count, size);
 }
 
 void* tf_calloc_memalign_internal(size_t count, size_t align, size_t size, const char* f, int l, const char* sf)
@@ -206,7 +206,7 @@ void* tf_calloc_memalign_internal(size_t count, size_t align, size_t size, const
     UNREF_PARAM(f);
     UNREF_PARAM(l);
     UNREF_PARAM(sf);
-    return tf_calloc_memalign(count, align, size);
+    return tf_calloc_memalign_(count, align, size);
 }
 
 void* tf_realloc_internal(void* ptr, size_t size, const char* f, int l, const char* sf)
@@ -214,7 +214,7 @@ void* tf_realloc_internal(void* ptr, size_t size, const char* f, int l, const ch
     UNREF_PARAM(f);
     UNREF_PARAM(l);
     UNREF_PARAM(sf);
-    return tf_realloc(ptr, size);
+    return tf_realloc_(ptr, size);
 }
 
 void tf_free_internal(void* ptr, const char* f, int l, const char* sf)
@@ -222,7 +222,7 @@ void tf_free_internal(void* ptr, const char* f, int l, const char* sf)
     UNREF_PARAM(f);
     UNREF_PARAM(l);
     UNREF_PARAM(sf);
-    tf_free(ptr);
+    tf_free_(ptr);
 }
 
 #endif // defined(ENABLE_MEMORY_TRACKING)
