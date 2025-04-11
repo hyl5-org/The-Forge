@@ -24,12 +24,12 @@
 
 #pragma once
 
-#include "ThirdParty/OpenSource/tinydds/tinydds.h"
+#include <ThirdParty/tinydds/tinydds.h>
 #include <ThirdParty/tinyimageformat/tinyimageformat_apis.h>
 #include <ThirdParty/tinyimageformat/tinyimageformat_base.h>
-#include "ThirdParty/OpenSource/tinyimageformat/tinyimageformat_bits.h"
-#include "ThirdParty/OpenSource/tinyimageformat/tinyimageformat_query.h"
-#include "ThirdParty/OpenSource/tinyktx/tinyktx.h"
+#include <ThirdParty/tinyimageformat/tinyimageformat_bits.h>
+#include <ThirdParty/tinyimageformat/tinyimageformat_query.h>
+#include <ThirdParty/tinyktx/tinyktx.h>
 
 #include <RHI/IGraphics.h>
 #include <Platform/IOperatingSystem.h>

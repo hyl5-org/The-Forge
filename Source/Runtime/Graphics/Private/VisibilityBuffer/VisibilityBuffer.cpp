@@ -22,14 +22,14 @@
  * under the License.
  */
 
-#include "../../../Common_3/Application/Interfaces/ICameraController.h"
-#include "../../../Common_3/Application/Interfaces/IProfiler.h"
+//#include "../../../Common_3/Application/Interfaces/ICameraController.h"
+//#include "../../../Common_3/Application/Interfaces/IProfiler.h"
 #include <RHI/IGraphics.h>
 #include <Core/ILog.h>
 #include <Core/ITime.h>
-#include "../Interfaces/IVisibilityBuffer.h"
+#include <Graphics/IVisibilityBuffer.h>
 
-#include "../../../Common_3/Utilities/RingBuffer.h"
+#include <Core/IAlgorithm.h>
 
 #include "../VisibilityBuffer/Shaders/FSL/vb_structs.h.fsl"
 

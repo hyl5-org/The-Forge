@@ -25,7 +25,7 @@
 #include <Core/IConfig.h>
 #include <RHI/IGraphics.h>
 
-#include "../../Resources/ResourceLoader/Interfaces/IResourceLoader.h"
+#include <Resources/IResourceLoader.h>
 #include <Core/ILog.h>
 #include "RingBuffer.h"
 

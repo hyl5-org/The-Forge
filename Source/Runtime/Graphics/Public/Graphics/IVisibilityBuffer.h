@@ -30,6 +30,11 @@
 
 #include <Core/IMath.h>
 
+#define VISIBILITY_BUFFER_MAX_GEOMETRY_SETS 3
+// Number of bits required to represent all geometry set values
+#define VISIBILITY_BUFFER_GEOMETRY_SET_BITS 2
+#define VISIBILITY_BUFFER_MAX_NUM_BUFFERS   2
+
 /************************************************************************/
 // Visibility Buffer Interface
 /************************************************************************/
