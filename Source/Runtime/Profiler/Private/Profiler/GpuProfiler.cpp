@@ -24,9 +24,9 @@
 
 #include "GpuProfiler.h"
 
-#include <Application/IProfiler.h>
+#include <Profiler/IProfiler.h>
 
-#include "../../Graphics/GraphicsConfig.h"
+#include <RHI/IGraphics.h>
 
 #ifndef ENABLE_GPU_PROFILER
 ProfileToken addGpuProfiler(Renderer* pRenderer, Queue* pQueue, const char* pName) { return PROFILE_INVALID_TOKEN; }
@@ -47,7 +47,7 @@ void         removeGpuProfiler(ProfileToken nProfileToken) {}
 #else
 
 #include <RHI/IGraphics.h>
-#include "../../Resources/ResourceLoader/Interfaces/IResourceLoader.h"
+#include <Resources/IResourceLoader.h>
 #include <Core/ILog.h>
 #include <Core/ITime.h>
 

@@ -296,14 +296,14 @@ COMPILE_ASSERT(sizeof(ssize_t) == sizeof(int64_t));
 //////////////////////////////////////////////
 //// General options
 //////////////////////////////////////////////
-#define ENABLE_FORGE_SCRIPTING
-#define ENABLE_FORGE_UI
-#define ENABLE_FORGE_FONTS
-#define ENABLE_FORGE_INPUT
-#define ENABLE_FORGE_ANIMATION_DEBUG
+//#define ENABLE_FORGE_SCRIPTING
+//#define ENABLE_FORGE_UI
+//#define ENABLE_FORGE_FONTS
+//#define ENABLE_FORGE_INPUT
+//#define ENABLE_FORGE_ANIMATION_DEBUG
 #define ENABLE_ZIP_FILESYSTEM
 #define ENABLE_SCREENSHOT
-#define ENABLE_PROFILER
+//#define ENABLE_PROFILER
 #define ENABLE_MESHOPTIMIZER
 #ifdef TARGET_IOS
 // needed for ios haptics. Because we have to link CoreHaptics libs

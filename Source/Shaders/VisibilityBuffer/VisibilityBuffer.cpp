@@ -22,16 +22,16 @@
  * under the License.
  */
 
-#include <Profiler/IProfiler.h>
+#include "../../../Common_3/Application/Interfaces/ICameraController.h"
+#include "../../../Common_3/Application/Interfaces/IProfiler.h"
 #include <RHI/IGraphics.h>
 #include <Core/ILog.h>
 #include <Core/ITime.h>
-#include <Graphics/IVisibilityBuffer2.h>
-#include <Resources/IResourceLoader.h>
-#include <RHI/RingBuffer.h>
+#include "../Interfaces/IVisibilityBuffer.h"
 
-#define NO_FSL_DEFINITIONS
-#include "VisibilityBuffer2Struct.h"
+#include "../../../Common_3/Utilities/RingBuffer.h"
+
+#include "../VisibilityBuffer/Shaders/FSL/vb_structs.h.fsl"
 
 #include <Core/IMemory.h>
 
@@ -45,13 +45,15 @@ typedef struct VisibilityBufferSettings
     // Define different geometry sets (opaque and alpha tested geometry)
     uint32_t mNumGeomSets;
 
-    uint32_t mFilterBatchCount;
     uint32_t mNumFrames;
     uint32_t mNumBuffers;
-    uint32_t mFilterBatchSize;
-    uint32_t mNumFilterBatchChunks;
+    // The max amount of triangles that will be processed in parallel by the triangle filter shader
+    uint32_t mComputeThreads;
+    uint32_t mMaxFilterBatches;
 
     uint32_t mUniformBufferAlignment;
+
+    uint32_t mMaxBatches;
 
     bool     mEnablePreSkinPass;
     uint32_t mPreSkinBatchSize;
@@ -69,15 +71,6 @@ typedef struct PreSkinBatchChunk
     uint32_t mCurrentBatchCount;
 } PreSkinBatchChunk;
 
-/************************************************************************/
-// Triangle filtering data
-/************************************************************************/
-typedef struct FilterBatchChunk
-{
-    uint32_t mCurrentBatchCount;
-} FilterBatchChunk;
-
-GPURingBuffer gFilterBatchDataBuffer = {};
 GPURingBuffer gPreSkinBatchDataBuffer = {};
 
 static void DispatchPreSkinVertexes(Cmd* pCmd, PreSkinBatchChunk* pBatchChunk, DescriptorSet* pDescriptorSetPreSkinVertexes,
@@ -102,7 +95,6 @@ static void DispatchPreSkinVertexes(Cmd* pCmd, PreSkinBatchChunk* pBatchChunk, D
 PreSkinVertexesStats cmdVisibilityBufferPreSkinVertexesPass(VisibilityBuffer* pVisibilityBuffer, Cmd* pCmd, PreSkinVertexesPassDesc* pDesc)
 {
     UNREF_PARAM(pVisibilityBuffer);
-
     ASSERT(gVBSettings.mEnablePreSkinPass);
     ASSERT(gVBSettings.mPreSkinBatchSize > 0);
     ASSERT(gVBSettings.mPreSkinBatchCount > 0);
@@ -117,8 +109,6 @@ PreSkinVertexesStats cmdVisibilityBufferPreSkinVertexesPass(VisibilityBuffer* pV
 
     PreSkinBatchChunk batchChunk = {};
     batchChunk.mCurrentBatchCount = 0;
-
-    PreSkinBatchData skinBatchData = {};
 
     const uint32_t      maxTotalPreSkinBatches = gVBSettings.mPreSkinBatchCount * gVBSettings.mNumPreSkinBatchChunks;
     const uint64_t      size = maxTotalPreSkinBatches * sizeof(PreSkinBatchData);
@@ -138,18 +128,17 @@ PreSkinVertexesStats cmdVisibilityBufferPreSkinVertexesPass(VisibilityBuffer* pV
 
         for (uint32_t batch = 0; batch < batchCount; ++batch)
         {
-            const uint32_t firstVertex = batch * gVBSettings.mFilterBatchSize;
+            const uint32_t firstVertex = batch * gVBSettings.mComputeThreads;
             const uint32_t lastVertex = min(firstVertex + gVBSettings.mPreSkinBatchSize, pPreSkinContainer->mVertexCount);
             const uint32_t vertexesInBatch = lastVertex - firstVertex;
             stats.mTotalVertexes += vertexesInBatch;
 
-            skinBatchData.outputVertexOffset = pPreSkinContainer->mOutputVertexOffset + firstVertex;
-            skinBatchData.vertexCount = vertexesInBatch;
-            skinBatchData.vertexPositionOffset = pPreSkinContainer->mVertexPositionOffset + firstVertex;
-            skinBatchData.vertexJointsOffset = pPreSkinContainer->mJointOffset + firstVertex;
-            skinBatchData.jointMatrixOffset = pPreSkinContainer->mJointMatrixOffset;
-
-            memcpy(&batches[batchChunk.mCurrentBatchCount++], &skinBatchData, sizeof(skinBatchData));
+            batches[batchChunk.mCurrentBatchCount].outputVertexOffset = pPreSkinContainer->mOutputVertexOffset + firstVertex;
+            batches[batchChunk.mCurrentBatchCount].vertexCount = vertexesInBatch;
+            batches[batchChunk.mCurrentBatchCount].vertexPositionOffset = pPreSkinContainer->mVertexPositionOffset + firstVertex;
+            batches[batchChunk.mCurrentBatchCount].vertexJointsOffset = pPreSkinContainer->mJointOffset + firstVertex;
+            batches[batchChunk.mCurrentBatchCount].jointMatrixOffset = pPreSkinContainer->mJointMatrixOffset;
+            ++batchChunk.mCurrentBatchCount;
 
             // If batcher are full dispatch and start a new one
             if (batchChunk.mCurrentBatchCount >= gVBSettings.mPreSkinBatchCount)
@@ -185,23 +174,55 @@ PreSkinVertexesStats cmdVisibilityBufferPreSkinVertexesPass(VisibilityBuffer* pV
     return stats;
 }
 
-static void DispatchFilterTriangles(Cmd* pCmd, FilterBatchChunk* pBatchChunk, DescriptorSet* pDescriptorSetTriangleFiltering,
-                                    GPURingBufferOffset* ringBufferOffset, uint32_t batchDataOffsetBytes)
+/************************************************************************/
+// Visibility Buffer Filtering
+/************************************************************************/
+BufferBarrier* pFilterBufferBarrier;
+
+VBPreFilterStats updateVBMeshFilterGroups(VisibilityBuffer* pVisibilityBuffer, const UpdateVBMeshFilterGroupsDesc* pDesc)
 {
-    ASSERT(pBatchChunk->mCurrentBatchCount > 0);
-    ASSERT(ringBufferOffset);
+    ASSERT(pVisibilityBuffer);
+    ASSERT(pDesc);
 
-    DescriptorDataRange range = { (uint32_t)ringBufferOffset->mOffset + batchDataOffsetBytes,
-                                  gVBSettings.mFilterBatchCount * (uint32_t)sizeof(FilterBatchData) };
-    DescriptorData      params[1] = {};
-    params[0].pName = "batchData_rootcbv";
-    params[0].pRanges = &range;
-    params[0].ppBuffers = &ringBufferOffset->pBuffer;
-    cmdBindDescriptorSetWithRootCbvs(pCmd, 0, pDescriptorSetTriangleFiltering, 1, params);
-    cmdDispatch(pCmd, pBatchChunk->mCurrentBatchCount, 1, 1);
+    VBPreFilterStats vbPreFilterStats = {};
+    uint32_t         dispatchGroupCount = 0;
 
-    // Reset batch chunk to start adding triangles to it
-    pBatchChunk->mCurrentBatchCount = 0;
+    BufferUpdateDesc updateDesc = { pVisibilityBuffer->ppFilterDispatchGroupDataBuffer[pDesc->mFrameIndex], 0 };
+    beginUpdateResource(&updateDesc);
+    FilterDispatchGroupData* dispatchGroupData = (FilterDispatchGroupData*)updateDesc.pMappedData;
+
+    for (uint32_t i = 0; i < pDesc->mNumMeshInstance; ++i)
+    {
+        VBMeshInstance* pVBMeshInstance = &pDesc->pVBMeshInstances[i];
+
+        uint32_t numDispatchGroups = (pVBMeshInstance->mTriangleCount + gVBSettings.mComputeThreads - 1) / gVBSettings.mComputeThreads;
+
+        for (uint32_t groupIdx = 0; groupIdx < numDispatchGroups; ++groupIdx)
+        {
+            FilterDispatchGroupData& groupData = dispatchGroupData[dispatchGroupCount++];
+
+            const uint32_t firstTriangle = groupIdx * gVBSettings.mComputeThreads;
+            const uint32_t lastTriangle = min(firstTriangle + gVBSettings.mComputeThreads, pVBMeshInstance->mTriangleCount);
+            const uint32_t trianglesInGroup = lastTriangle - firstTriangle;
+
+            // Fill GPU filter batch data
+            ASSERT(trianglesInGroup <= gVBSettings.mComputeThreads && "Exceeds max face count!");
+            groupData.meshIndex = pVBMeshInstance->mMeshIndex;
+            groupData.instanceDataIndex = pVBMeshInstance->mInstanceIndex;
+            groupData.geometrySet_faceCount = ((trianglesInGroup << BATCH_FACE_COUNT_LOW_BIT) & BATCH_FACE_COUNT_MASK) |
+                                              ((pVBMeshInstance->mGeometrySet << BATCH_GEOMETRY_LOW_BIT) & BATCH_GEOMETRY_MASK);
+
+            // Offset relative to the start of the mesh
+            groupData.indexOffset = firstTriangle * 3;
+        }
+
+        ASSERT(pVBMeshInstance->mGeometrySet < TF_ARRAY_COUNT(vbPreFilterStats.mGeomsetMaxDrawCounts));
+        ++vbPreFilterStats.mGeomsetMaxDrawCounts[pVBMeshInstance->mGeometrySet];
+    }
+    endUpdateResource(&updateDesc);
+
+    vbPreFilterStats.mNumDispatchGroups = dispatchGroupCount;
+    return vbPreFilterStats;
 }
 
 // Executes the compute shader that performs triangle filtering on the GPU.
@@ -211,241 +232,55 @@ static void DispatchFilterTriangles(Cmd* pCmd, FilterBatchChunk* pBatchChunk, De
 // - pFilteredTriangles: list of triangle IDs that passed the culling tests
 // - pIndirectDrawArguments: the vertexCount member of this structure is calculated in order to
 // indicate the renderer the amount of vertices per batch to render.
-FilteringStats cmdVisibilityBufferTriangleFilteringPass(VisibilityBuffer* pVisibilityBuffer, Cmd* pCmd, TriangleFilteringPassDesc* pDesc)
+void cmdVBTriangleFilteringPass(VisibilityBuffer* pVisibilityBuffer, Cmd* pCmd, TriangleFilteringPassDesc* pDesc)
 {
     ASSERT(pVisibilityBuffer);
     ASSERT(pDesc->mFrameIndex < gVBSettings.mNumFrames);
     ASSERT(pDesc->mBuffersIndex < gVBSettings.mNumBuffers);
-    ASSERT(pDesc->pViewportObjectSpace);
-
-    FilterPassStats stats = {};
-
-    BufferBarrier barrier[3] = {};
-    uint32_t      bufferIndex = 0;
+    ASSERT(pDesc->mVBPreFilterStats.mNumDispatchGroups < gVBSettings.mMaxFilterBatches);
 
     /************************************************************************/
-    // Clear Bins
+    // Clear previous indirect arguments
     /************************************************************************/
-    cmdBeginGpuTimestampQuery(pCmd, pDesc->mGpuProfileToken, "Clear Bin Buffer");
+    cmdBeginGpuTimestampQuery(pCmd, pDesc->mGpuProfileToken, "Clear Buffers");
     cmdBindPipeline(pCmd, pDesc->pPipelineClearBuffers);
     cmdBindDescriptorSet(pCmd, pDesc->mBuffersIndex, pDesc->pDescriptorSetClearBuffers);
     cmdDispatch(pCmd, 1, 1, 1);
+    cmdEndGpuTimestampQuery(pCmd, pDesc->mGpuProfileToken);
+
+    /************************************************************************/
+    // Synchronization
+    /************************************************************************/
+    uint32_t bufferIndex = 0;
+    cmdBeginGpuTimestampQuery(pCmd, pDesc->mGpuProfileToken, "Clear Buffers Synchronization");
     bufferIndex = 0;
-    barrier[bufferIndex++] = { pVisibilityBuffer->ppBinBuffer[pDesc->mBuffersIndex], RESOURCE_STATE_UNORDERED_ACCESS,
-                               RESOURCE_STATE_UNORDERED_ACCESS };
-    cmdResourceBarrier(pCmd, bufferIndex, barrier, 0, nullptr, 0, nullptr);
+    pFilterBufferBarrier[bufferIndex++] = { pVisibilityBuffer->ppFilterDispatchGroupDataBuffer[pDesc->mFrameIndex],
+                                            RESOURCE_STATE_UNORDERED_ACCESS, RESOURCE_STATE_UNORDERED_ACCESS };
+
+    pFilterBufferBarrier[bufferIndex++] = { pVisibilityBuffer->ppIndirectDrawArgBuffer[pDesc->mBuffersIndex],
+                                            RESOURCE_STATE_UNORDERED_ACCESS, RESOURCE_STATE_UNORDERED_ACCESS };
+    cmdResourceBarrier(pCmd, bufferIndex, pFilterBufferBarrier, 0, nullptr, 0, nullptr);
+
     cmdEndGpuTimestampQuery(pCmd, pDesc->mGpuProfileToken);
 
     /************************************************************************/
     // Run triangle filtering shader
     /************************************************************************/
     cmdBeginGpuTimestampQuery(pCmd, pDesc->mGpuProfileToken, "Filter Triangles");
-    cmdBindPipeline(pCmd, pDesc->pPipelineTriangleFiltering);
-    cmdBindDescriptorSet(pCmd, 0, pDesc->pDescriptorSetTriangleFiltering);
-    cmdBindDescriptorSet(pCmd, pDesc->mFrameIndex, pDesc->pDescriptorSetTriangleFilteringPerFrame);
-
-    const uint32_t      maxTotalFilterBatches = gVBSettings.mFilterBatchCount * gVBSettings.mNumFilterBatchChunks;
-    const uint64_t      size = maxTotalFilterBatches * sizeof(FilterBatchData);
-    GPURingBufferOffset offset = getGPURingBufferOffset(&gFilterBatchDataBuffer, (uint32_t)size, (uint32_t)size);
-    BufferUpdateDesc    updateDesc = { offset.pBuffer, offset.mOffset };
-    beginUpdateResource(&updateDesc);
-
-    FilterBatchData* batches = (FilterBatchData*)updateDesc.pMappedData;
-    FilterBatchData* origin = batches;
-
-    uint32_t accumNumTriangles = 0;
-    uint32_t accumNumTrianglesAtStartOfBatch = 0;
-    uint32_t batchStart = 0;
-
-    FilterBatchChunk batchChunk = {};
-    FilterBatchData  filterBatchData = {};
-
-    for (uint32_t i = 0; i < pDesc->mNumContainers; ++i)
+    if (pDesc->mVBPreFilterStats.mNumDispatchGroups > 0)
     {
-        FilterContainer* pFilterContainer = &pDesc->pFilterContainers[i];
-
-        for (uint32_t batch = 0; batch < pFilterContainer->mFilterBatchCount; ++batch)
-        {
-            ++stats.mTotalProcessedTriangleBatches;
-
-            const uint32_t firstTriangle = batch * gVBSettings.mFilterBatchSize;
-            const uint32_t lastTriangle = min(firstTriangle + gVBSettings.mFilterBatchSize, pFilterContainer->mTriangleCount);
-            const uint32_t trianglesInBatch = lastTriangle - firstTriangle;
-
-            ++stats.mTotalSubmittedTriangleBatches;
-
-            // Fill GPU filter batch data
-            filterBatchData.accumDrawIndex = stats.mTotalDrawCount;
-            filterBatchData.faceCount = trianglesInBatch;
-            filterBatchData.meshIndex = pFilterContainer->mMeshIndex;
-            filterBatchData.geometrySet = pFilterContainer->mGeometrySet;
-            filterBatchData.instanceDataIndex = pFilterContainer->mInstanceIndex;
-
-            // Offset relative to the start of the mesh
-            filterBatchData.indexOffset = firstTriangle * 3;
-            filterBatchData.outputIndexOffset = accumNumTrianglesAtStartOfBatch * 3;
-            filterBatchData.drawBatchStart = batchStart;
-
-            memcpy(&batches[batchChunk.mCurrentBatchCount++], &filterBatchData, sizeof(FilterBatchData));
-
-            accumNumTriangles += trianglesInBatch;
-
-            // Check to see if we filled the batch, two options for filled batch:
-            //    - We filled all FilterBatchData structs we can process in on one triangle filtering compute shader dispatch
-            //    - We filled enough triangles that if we put more into this dispatch we won't be able to store their PrimitiveID in the
-            //      Visibility Buffer because we don't have enough bits to represent them. PrimitiveID would be clamped and geometry would
-            //      flicker because we would access incorrect primitive data during the shading stage.
-            if (batchChunk.mCurrentBatchCount >= gVBSettings.mFilterBatchCount)
-            {
-                ++stats.mTotalDrawCount;
-
-                ASSERT(pFilterContainer->mGeometrySet < TF_ARRAY_COUNT(stats.mGeomsetDrawCounts));
-                ++stats.mGeomsetDrawCounts[pFilterContainer->mGeometrySet];
-
-                uint32_t batchCount = batchChunk.mCurrentBatchCount;
-
-                // run the triangle filtering and switch to the next small batch chunk
-                if (batchChunk.mCurrentBatchCount > 0)
-                {
-                    stats.mTotalShaderDispatches++;
-
-                    const uint32_t batchDataOffset = (uint32_t)(batches - origin);
-                    ASSERT(batchDataOffset + batchChunk.mCurrentBatchCount <= maxTotalFilterBatches);
-                    DispatchFilterTriangles(pCmd, &batchChunk, pDesc->pDescriptorSetTriangleFiltering, &offset,
-                                            batchDataOffset * sizeof(FilterBatchData));
-                }
-
-                // Make sure we advance to a proper aligned batch count so that the next dispatch call has the memory properly aligned.
-                // (this can happen if we reached gVBSettings.mMaxPrimitivesPerDrawIndirect before gVBSettings.mBatchCount)
-                const uint32_t alignedBatchCount =
-                    round_up(batchCount, gVBSettings.mUniformBufferAlignment >= sizeof(FilterBatchData)
-                                             ? gVBSettings.mUniformBufferAlignment / (uint32_t)sizeof(FilterBatchData)
-                                             : 1);
-                batches += alignedBatchCount;
-
-                batchStart = 0;
-                accumNumTrianglesAtStartOfBatch = accumNumTriangles;
-            }
-        }
-
-        // end of that mesh, set it up so we can add the next mesh to this culling batch
-        if (batchChunk.mCurrentBatchCount > 0)
-        {
-            ++stats.mTotalDrawCount;
-
-            ASSERT(pFilterContainer->mGeometrySet < TF_ARRAY_COUNT(stats.mGeomsetDrawCounts));
-            ++stats.mGeomsetDrawCounts[pFilterContainer->mGeometrySet];
-
-            batchStart = batchChunk.mCurrentBatchCount;
-            accumNumTrianglesAtStartOfBatch = accumNumTriangles;
-        }
+        cmdBindPipeline(pCmd, pDesc->pPipelineTriangleFiltering);
+        cmdBindDescriptorSet(pCmd, 0, pDesc->pDescriptorSetTriangleFiltering);
+        cmdBindDescriptorSet(pCmd, pDesc->mFrameIndex, pDesc->pDescriptorSetTriangleFilteringPerFrame);
+        cmdDispatch(pCmd, pDesc->mVBPreFilterStats.mNumDispatchGroups, 1, 1);
     }
-
-    if (batchChunk.mCurrentBatchCount > 0)
-    {
-        stats.mTotalShaderDispatches++;
-
-        const uint32_t batchDataOffset = (uint32_t)(batches - origin);
-        ASSERT(batchDataOffset + batchChunk.mCurrentBatchCount <= maxTotalFilterBatches);
-        DispatchFilterTriangles(pCmd, &batchChunk, pDesc->pDescriptorSetTriangleFiltering, &offset,
-                                batchDataOffset * sizeof(FilterBatchData));
-    }
-
-    endUpdateResource(&updateDesc);
-
     cmdEndGpuTimestampQuery(pCmd, pDesc->mGpuProfileToken);
-
-    /************************************************************************/
-    /************************************************************************/
-    return stats;
-}
-
-// UNUSED
-/************************************************************************/
-// Culling intrinsic data
-/************************************************************************/
-// const uint32_t pdep_lut[8] = { 0x0, 0x1, 0x4, 0x5, 0x10, 0x11, 0x14, 0x15 };
-
-// static inline int genClipMask(__m128 v)
-//{
-//	//this checks a vertex against the 6 planes, and stores if they are inside
-//	// or outside of the plane
-//
-//	//w contains the w component of the vector in all 4 slots
-//	const __m128 w0 = _mm_shuffle_ps(v, v, _MM_SHUFFLE(3, 3, 3, 3));
-//	const __m128 w1 = _mm_shuffle_ps(v, _mm_setzero_ps(), _MM_SHUFFLE(3, 3, 3, 3));
-//
-//	//subtract the vector from w, and store in a
-//	const __m128 a = _mm_sub_ps(w0, v);
-//	//add the vector to w, and store in b
-//	const __m128 b = _mm_add_ps(w1, v);
-//
-//	//compare if a and b are less than zero,
-//	// and store the result in fmaska, and fmaskk
-//	const __m128 fmaska = _mm_cmplt_ps(a, _mm_setzero_ps());
-//	const __m128 fmaskb = _mm_cmplt_ps(b, _mm_setzero_ps());
-//
-//	//convert those masks to integers, and spread the bits using pdep
-//	//const int maska = _pdep_u32(_mm_movemask_ps(fmaska), 0x55);
-//	//const int maskb = _pdep_u32(_mm_movemask_ps(fmaskb), 0xAA);
-//	const int maska = pdep_lut[(_mm_movemask_ps(fmaska) & 0x7)];
-//	const int maskb = pdep_lut[(_mm_movemask_ps(fmaskb) & 0x7)] << 1;
-//
-//	//or the masks together and and the together with all bits set to 1
-//	// NOTE only the bits 0x3f are actually used
-//	return (maska | maskb) & 0x3f;
-//}
-
-// static inline uint32_t genClipMask(float4 f)
-//{
-//  uint32_t result = 0;
-//
-//  //X
-//  if (f.x <= f.w)  result |=  0x1;
-//  if (f.x >= -f.w) result |=  0x2;
-//
-//  //Y
-//  if (f.y <= f.w)  result |=  0x4;
-//  if (f.y >= -f.w) result |=  0x8;
-//
-//  //Z
-//  if (f.z <= f.w)  result |= 0x10;
-//  if (f.z >= 0)   result |= 0x20;
-//  return result;
-//}
-
-void addVBFilterContainer(FilterContainerDescriptor* pDesc, FilterContainer* pContainer)
-{
-    ASSERT(pDesc);
-    ASSERT(pContainer);
-    ASSERT(pDesc->mIndexCount > 0);
-    ASSERT(gVBSettings.mFilterBatchSize > 0 && "Visibility Buffer not initialized yet!");
-    ASSERT(pDesc->mGeometrySet < gVBSettings.mNumGeomSets);
-
-    pContainer->mGeometrySet = pDesc->mGeometrySet;
-    pContainer->mMeshIndex = pDesc->mMeshIndex;
-    pContainer->mTriangleCount = pDesc->mIndexCount / 3;
-    pContainer->mFilterBatchCount = (pContainer->mTriangleCount + gVBSettings.mFilterBatchSize - 1) / gVBSettings.mFilterBatchSize;
-    pContainer->mInstanceIndex = pDesc->mInstanceIndex;
-}
-
-static BufferLoadDesc MainVertexBufferLoadDesc(PreSkinACVertexBuffersDesc* pDesc, uint32_t structStride)
-{
-    BufferLoadDesc vertexBufferDesc = {};
-    vertexBufferDesc.mDesc.mDescriptors = DESCRIPTOR_TYPE_VERTEX_BUFFER | (DESCRIPTOR_TYPE_BUFFER_RAW | DESCRIPTOR_TYPE_RW_BUFFER_RAW);
-    vertexBufferDesc.mDesc.mSize =
-        (pDesc->mMaxStaticVertexCount + pDesc->mMaxPreSkinnedVertexCountPerFrame * pDesc->mNumBuffers) * structStride;
-    vertexBufferDesc.mDesc.mElementCount = (uint32_t)(vertexBufferDesc.mDesc.mSize / sizeof(uint32_t));
-    vertexBufferDesc.mDesc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
-    vertexBufferDesc.mDesc.mStructStride = structStride;
-    return vertexBufferDesc;
 }
 
 static void addPreSkinACAliasedBuffer(Renderer* pRenderer, PreSkinACVertexBuffersDesc* pDesc, ResourceHeap* pHeap, uint64_t heapOffset,
                                       uint64_t vbSize, PreSkinACAliasedBuffer* pOut, uint32_t attrStride, const char* pPreSkinBufferName)
 {
     UNREF_PARAM(pRenderer);
-
     // Placement for the VertexBuffers
     pOut->mVBSize = vbSize;
     pOut->mVBPlacement.pHeap = pHeap;
@@ -488,7 +323,6 @@ static void addPreSkinACAliasedBuffer(Renderer* pRenderer, PreSkinACVertexBuffer
 static void removePreSkinACAliasedBuffer(Renderer* pRenderer, PreSkinACAliasedBuffer* pBuffers)
 {
     UNREF_PARAM(pRenderer);
-
     for (uint32_t i = 0; i < gVBSettings.mNumBuffers; ++i)
         removeResource(pBuffers->pPreSkinBuffers[i]);
 }
@@ -503,46 +337,60 @@ void initVBAsyncComputePreSkinVertexBuffers(Renderer* pRenderer, PreSkinACVertex
 
     PreSkinACVertexBuffers* pBuffers = (PreSkinACVertexBuffers*)tf_calloc(1, sizeof(PreSkinACVertexBuffers));
 
-    ResourceSizeAlign sizeAligns[3] = {};
+    ResourceSizeAlign sizeAlignedVertexPositionBuffer = {};
+    ResourceSizeAlign sizeAlignedVertexNormalBuffer = {};
 
     // Create Heap to store all the main Vertex Buffers for skinned attributes.
     // This memory includes extra memory for pre-skinned vertex output.
     {
-        // Make sure we allocate enoough memory to hold the VB for all atributes with correct alignments
-        const BufferLoadDesc VBDescs[] = {
-            MainVertexBufferLoadDesc(pDesc, sizeof(float3)),   // Position
-            MainVertexBufferLoadDesc(pDesc, sizeof(uint32_t)), // Normal
-        };
+        // Make sure we allocate enough memory to hold the VB for all atributes with correct alignments
+        BufferLoadDesc vertexPositionBufferDesc = {};
+        vertexPositionBufferDesc.mDesc.mDescriptors =
+            DESCRIPTOR_TYPE_VERTEX_BUFFER | (DESCRIPTOR_TYPE_BUFFER_RAW | DESCRIPTOR_TYPE_RW_BUFFER_RAW);
+        vertexPositionBufferDesc.mDesc.mSize =
+            (pDesc->mMaxStaticVertexCount + pDesc->mMaxPreSkinnedVertexCountPerFrame * pDesc->mNumBuffers) * sizeof(float3);
+        vertexPositionBufferDesc.mDesc.mElementCount = (uint32_t)(vertexPositionBufferDesc.mDesc.mSize / sizeof(uint32_t));
+        vertexPositionBufferDesc.mDesc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
+        vertexPositionBufferDesc.mDesc.mStructStride = sizeof(float3);
+        getResourceSizeAlign(&vertexPositionBufferDesc, &sizeAlignedVertexPositionBuffer);
 
-        getResourceSizeAlign(&VBDescs[0], &sizeAligns[0]);
-        getResourceSizeAlign(&VBDescs[1], &sizeAligns[1]);
+        BufferLoadDesc vertexNormalBufferDesc = {};
+        vertexNormalBufferDesc.mDesc.mDescriptors =
+            DESCRIPTOR_TYPE_VERTEX_BUFFER | (DESCRIPTOR_TYPE_BUFFER_RAW | DESCRIPTOR_TYPE_RW_BUFFER_RAW);
+        vertexNormalBufferDesc.mDesc.mSize =
+            (pDesc->mMaxStaticVertexCount + pDesc->mMaxPreSkinnedVertexCountPerFrame * pDesc->mNumBuffers) * sizeof(uint32_t);
+        vertexNormalBufferDesc.mDesc.mElementCount = (uint32_t)(vertexNormalBufferDesc.mDesc.mSize / sizeof(uint32_t));
+        vertexNormalBufferDesc.mDesc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
+        vertexNormalBufferDesc.mDesc.mStructStride = sizeof(uint32_t);
+        getResourceSizeAlign(&vertexNormalBufferDesc, &sizeAlignedVertexNormalBuffer);
 
         // TODO: There are issues when buffer size is greater than uint32_max, the value is truncated in D3D12 by one call to
         // ID3D12Device::GetCopyableFootprints.
         //       For now 4Gb of vertex buffer memory per attribute seems more than enough
-        ASSERT(sizeAligns[0].mSize <= UINT32_MAX);
-        ASSERT(sizeAligns[1].mSize <= UINT32_MAX);
+        ASSERT(sizeAlignedVertexPositionBuffer.mSize <= UINT32_MAX);
+        ASSERT(sizeAlignedVertexNormalBuffer.mSize <= UINT32_MAX);
 
-        const uint64_t totalRequiredSize = sizeAligns[0].mSize + sizeAligns[0].mAlignment + sizeAligns[1].mAlignment + sizeAligns[1].mSize;
+        const uint64_t totalRequiredSize = sizeAlignedVertexPositionBuffer.mSize + sizeAlignedVertexPositionBuffer.mAlignment +
+                                           sizeAlignedVertexNormalBuffer.mSize + sizeAlignedVertexNormalBuffer.mAlignment;
 
         ResourceHeapDesc desc = {};
         desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
         desc.mDescriptors = DESCRIPTOR_TYPE_BUFFER | (DESCRIPTOR_TYPE_BUFFER_RAW | DESCRIPTOR_TYPE_RW_BUFFER_RAW);
         desc.mFlags = RESOURCE_HEAP_FLAG_ALLOW_ONLY_BUFFERS;
 
-        desc.mAlignment = sizeAligns[0].mAlignment; // Align it to the alignment of the first vertex buffer
+        desc.mAlignment = sizeAlignedVertexPositionBuffer.mAlignment; // Align it to the alignment of the first vertex buffer
         desc.mSize = totalRequiredSize;
         desc.pName = "Skinned VertexBuffer Heap";
         addResourceHeap(pRenderer, &desc, &pBuffers->pHeap);
     }
 
     const uint64_t posOffset = 0; // Heap is already aligned to the alignment of this vertex buffer
-    const uint64_t normalOffset = round_up_64(posOffset + sizeAligns[0].mSize, sizeAligns[1].mAlignment);
+    const uint64_t normalOffset = round_up_64(posOffset + sizeAlignedVertexPositionBuffer.mSize, sizeAlignedVertexNormalBuffer.mAlignment);
 
-    addPreSkinACAliasedBuffer(pRenderer, pDesc, pBuffers->pHeap, posOffset, sizeAligns[0].mSize, &pBuffers->mPositions, sizeof(float3),
-                              "PreSkinBuffer Positions");
-    addPreSkinACAliasedBuffer(pRenderer, pDesc, pBuffers->pHeap, normalOffset, sizeAligns[1].mSize, &pBuffers->mNormals, sizeof(uint32_t),
-                              "PreSkinBuffer Normals");
+    addPreSkinACAliasedBuffer(pRenderer, pDesc, pBuffers->pHeap, posOffset, sizeAlignedVertexPositionBuffer.mSize, &pBuffers->mPositions,
+                              sizeof(float3), "PreSkinBuffer Positions");
+    addPreSkinACAliasedBuffer(pRenderer, pDesc, pBuffers->pHeap, normalOffset, sizeAlignedVertexNormalBuffer.mSize, &pBuffers->mNormals,
+                              sizeof(uint32_t), "PreSkinBuffer Normals");
 
     static PreSkinBufferOffsets offsets[VISIBILITY_BUFFER_MAX_NUM_BUFFERS] = {};
 
@@ -593,24 +441,23 @@ bool initVisibilityBuffer(Renderer* pRenderer, const VisibilityBufferDesc* pDesc
 {
     ASSERT(ppVisibilityBuffer);
     ASSERT(pDesc);
-    ASSERT(pDesc->mFilterBatchSize > 0);
     ASSERT(pDesc->mNumFrames > 0);
     ASSERT(pDesc->mNumBuffers > 0);
     ASSERT(pDesc->mNumGeometrySets > 0);
+    ASSERT(pDesc->pMaxIndexCountPerGeomSet);
     ASSERT(pDesc->mNumGeometrySets <= VISIBILITY_BUFFER_MAX_GEOMETRY_SETS &&
            "Please update the configuration macro named VISIBILITY_BUFFER_MAX_GEOMETRY_SETS to be of the proper value");
     ASSERT(pDesc->mNumViews > 0);
-    ASSERT(pDesc->mFilterBatchCount > 0);
+    ASSERT(pDesc->mComputeThreads > 0);
 
     VisibilityBuffer* pVisibilityBuffer = (VisibilityBuffer*)tf_malloc(sizeof(VisibilityBuffer));
     gVBSettings.mUniformBufferAlignment = pRenderer->pGpu->mSettings.mUniformBufferAlignment;
     gVBSettings.mNumGeomSets = pDesc->mNumGeometrySets;
     gVBSettings.mNumViews = pDesc->mNumViews;
-    gVBSettings.mFilterBatchCount = pDesc->mFilterBatchCount;
     gVBSettings.mNumFrames = pDesc->mNumFrames;
     gVBSettings.mNumBuffers = pDesc->mNumBuffers;
-    gVBSettings.mFilterBatchSize = pDesc->mFilterBatchSize;
-    gVBSettings.mNumFilterBatchChunks = max(1U, 512U / pDesc->mFilterBatchSize) * 16U; // number of batch chunks for triangle filtering
+    gVBSettings.mComputeThreads = pDesc->mComputeThreads;
+    pFilterBufferBarrier = (BufferBarrier*)tf_malloc(sizeof(BufferBarrier) * (pDesc->mNumViews + 1));
 
     if (pDesc->mEnablePreSkinPass)
     {
@@ -624,31 +471,89 @@ bool initVisibilityBuffer(Renderer* pRenderer, const VisibilityBufferDesc* pDesc
             max(1U, 512U / pDesc->mPreSkinBatchSize) * 16U; // number of batch chunks for vertex pre skinning
     }
 
-    // Create filteredIndexBuffers
-    pVisibilityBuffer->ppBinBuffer = (Buffer**)tf_malloc(sizeof(Buffer*) * pDesc->mNumBuffers);
+    SyncToken token = {};
 
+    // Create filter batch data buffers
+    pVisibilityBuffer->ppFilterDispatchGroupDataBuffer = (Buffer**)tf_malloc(sizeof(Buffer*) * pDesc->mNumFrames);
+    BufferLoadDesc filterBatchDesc = {};
+    filterBatchDesc.mDesc.mDescriptors = DESCRIPTOR_TYPE_BUFFER;
+    filterBatchDesc.mDesc.mMemoryUsage = RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
+    // Worst case 1 triangle in each mesh triangle batch.
+    // Optimal each batch is filled with "gVBSettings.mComputeThreads" triangles.
+    // Current based half of pDesc->mComputeThreads, expect at least half of all batches is filled.
+    uint32_t maxIndices = 0;
+    for (uint32_t geomSet = 0; geomSet < pDesc->mNumGeometrySets; ++geomSet)
+    {
+        maxIndices += pDesc->pMaxIndexCountPerGeomSet[geomSet];
+    }
+    gVBSettings.mMaxFilterBatches = (maxIndices / 3) / (pDesc->mComputeThreads >> 1);
+
+    filterBatchDesc.mDesc.mElementCount = gVBSettings.mMaxFilterBatches;
+    filterBatchDesc.mDesc.mStructStride = sizeof(FilterDispatchGroupData);
+    filterBatchDesc.mDesc.mSize = filterBatchDesc.mDesc.mElementCount * filterBatchDesc.mDesc.mStructStride;
+    filterBatchDesc.mDesc.mStartState = RESOURCE_STATE_UNORDERED_ACCESS;
+    filterBatchDesc.mDesc.pName = "FilterDispatchGroupDataBuffer";
+    filterBatchDesc.pData = NULL;
+
+    for (uint32_t i = 0; i < pDesc->mNumFrames; ++i)
+    {
+        filterBatchDesc.ppBuffer = &pVisibilityBuffer->ppFilterDispatchGroupDataBuffer[i];
+        addResource(&filterBatchDesc, &token);
+    }
+
+    // Create IndirectDataBuffers
+    pVisibilityBuffer->ppIndirectDataBuffer = (Buffer**)tf_malloc(sizeof(Buffer*) * pDesc->mNumFrames);
+    BufferLoadDesc indirectIbDesc = {};
+    indirectIbDesc.mDesc.mDescriptors = DESCRIPTOR_TYPE_BUFFER | DESCRIPTOR_TYPE_RW_BUFFER;
+    indirectIbDesc.mDesc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
+    indirectIbDesc.mDesc.mElementCount = maxIndices;
+    indirectIbDesc.mDesc.mStructStride = sizeof(uint32_t);
+    indirectIbDesc.mDesc.mSize = indirectIbDesc.mDesc.mElementCount * indirectIbDesc.mDesc.mStructStride;
+    indirectIbDesc.mDesc.mStartState = RESOURCE_STATE_UNORDERED_ACCESS;
+    indirectIbDesc.mDesc.pName = "IndirectDataBuffer";
+    indirectIbDesc.pData = NULL;
+    for (uint32_t i = 0; i < pDesc->mNumFrames; ++i)
+    {
+        indirectIbDesc.ppBuffer = &pVisibilityBuffer->ppIndirectDataBuffer[i];
+        addResource(&indirectIbDesc, NULL);
+    }
+
+    // Create filteredIndexBuffers
+    pVisibilityBuffer->ppFilteredIndexBuffer = (Buffer**)tf_malloc(sizeof(Buffer*) * pDesc->mNumBuffers * pDesc->mNumViews);
     BufferLoadDesc filterIbDesc = {};
-    filterIbDesc.mDesc.mDescriptors = DESCRIPTOR_TYPE_BUFFER | DESCRIPTOR_TYPE_RW_BUFFER;
+    filterIbDesc.mDesc.mDescriptors = DESCRIPTOR_TYPE_INDEX_BUFFER | DESCRIPTOR_TYPE_BUFFER_RAW | DESCRIPTOR_TYPE_RW_BUFFER_RAW;
     filterIbDesc.mDesc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
-    filterIbDesc.mDesc.mElementCount = pDesc->mIndexCount * 2;
+    filterIbDesc.mDesc.mElementCount = maxIndices;
     filterIbDesc.mDesc.mStructStride = sizeof(uint32_t);
     filterIbDesc.mDesc.mSize = filterIbDesc.mDesc.mElementCount * filterIbDesc.mDesc.mStructStride;
     filterIbDesc.mDesc.mStartState = RESOURCE_STATE_UNORDERED_ACCESS;
-    filterIbDesc.mDesc.pName = "Bin Buffer";
+    filterIbDesc.mDesc.pName = "FilteredIndexBuffer";
     filterIbDesc.pData = NULL;
 
-    for (uint32_t i = 0; i < pDesc->mNumBuffers; ++i)
+    for (uint32_t i = 0; i < pDesc->mNumBuffers * pDesc->mNumViews; ++i)
     {
-        filterIbDesc.ppBuffer = &pVisibilityBuffer->ppBinBuffer[i];
+        filterIbDesc.ppBuffer = &pVisibilityBuffer->ppFilteredIndexBuffer[i];
         addResource(&filterIbDesc, NULL);
     }
 
-    // Take into account alignment because otherwise the ring buffer will wrap around if it cannot align the memory at the correct address,
-    // using just pDesc->mNumFrames-1 instead of pDesc->mNumFrames as requested.
-    const uint32_t filterBatchRingBufferSizeTotal =
-        pDesc->mNumFrames *
-        (gVBSettings.mUniformBufferAlignment + gVBSettings.mNumFilterBatchChunks * pDesc->mFilterBatchCount * sizeof(FilterBatchData));
-    addUniformGPURingBuffer(pRenderer, filterBatchRingBufferSizeTotal, &gFilterBatchDataBuffer);
+    // Create ppIndirectDrawArgBuffer
+    pVisibilityBuffer->ppIndirectDrawArgBuffer = (Buffer**)tf_malloc(sizeof(Buffer*) * pDesc->mNumBuffers);
+
+    BufferLoadDesc indirectDrawArgsDesc = {};
+    indirectDrawArgsDesc.mDesc.mDescriptors = DESCRIPTOR_TYPE_BUFFER | DESCRIPTOR_TYPE_RW_BUFFER | DESCRIPTOR_TYPE_INDIRECT_BUFFER;
+    indirectDrawArgsDesc.mDesc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
+    indirectDrawArgsDesc.mDesc.mElementCount = pDesc->mNumGeometrySets * pDesc->mNumViews * (8);
+    indirectDrawArgsDesc.mDesc.mStructStride = sizeof(uint32_t);
+    indirectDrawArgsDesc.mDesc.mSize = indirectDrawArgsDesc.mDesc.mElementCount * indirectDrawArgsDesc.mDesc.mStructStride;
+    indirectDrawArgsDesc.mDesc.mStartState = RESOURCE_STATE_UNORDERED_ACCESS;
+    indirectDrawArgsDesc.mDesc.pName = "Indirect draw arg buffer";
+    indirectDrawArgsDesc.pData = nullptr;
+
+    for (uint32_t i = 0; i < pDesc->mNumBuffers; ++i)
+    {
+        indirectDrawArgsDesc.ppBuffer = &pVisibilityBuffer->ppIndirectDrawArgBuffer[i];
+        addResource(&indirectDrawArgsDesc, NULL);
+    }
 
     if (pDesc->mEnablePreSkinPass)
     {
@@ -658,6 +563,28 @@ bool initVisibilityBuffer(Renderer* pRenderer, const VisibilityBufferDesc* pDesc
         addUniformGPURingBuffer(pRenderer, skinBatchRingBufferSizeTotal, &gPreSkinBatchDataBuffer);
     }
 
+    // Create VB constant buffer
+    pVisibilityBuffer->pVBConstants = (VBConstants*)tf_malloc(sizeof(VBConstants) * pDesc->mNumGeometrySets);
+    uint32_t indexOffset = 0;
+    for (uint32_t geomSet = 0; geomSet < pDesc->mNumGeometrySets; ++geomSet)
+    {
+        pVisibilityBuffer->pVBConstants[geomSet].indexOffset = indexOffset;
+        indexOffset += pDesc->pMaxIndexCountPerGeomSet[geomSet];
+    }
+
+    BufferLoadDesc constantDesc = {};
+    constantDesc.pData = pVisibilityBuffer->pVBConstants;
+    constantDesc.ppBuffer = &pVisibilityBuffer->pVBConstantBuffer;
+    constantDesc.mDesc.mDescriptors = DESCRIPTOR_TYPE_BUFFER | DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    constantDesc.mDesc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
+    constantDesc.mDesc.mElementCount = pDesc->mNumGeometrySets;
+    constantDesc.mDesc.mStructStride = sizeof(VBConstants);
+    constantDesc.mDesc.mSize = constantDesc.mDesc.mElementCount * constantDesc.mDesc.mStructStride;
+    constantDesc.mDesc.pName = "VBConstantBuffer";
+    addResource(&constantDesc, &token);
+
+    waitForToken(&token);
+
     *ppVisibilityBuffer = pVisibilityBuffer;
     return true;
 }
@@ -665,21 +592,41 @@ bool initVisibilityBuffer(Renderer* pRenderer, const VisibilityBufferDesc* pDesc
 void exitVisibilityBuffer(VisibilityBuffer* pVisibilityBuffer)
 {
     ASSERT(pVisibilityBuffer);
+    removeResource(pVisibilityBuffer->pVBConstantBuffer);
+    tf_free(pVisibilityBuffer->pVBConstants);
+    pVisibilityBuffer->pVBConstants = NULL;
 
     for (uint32_t i = 0; i < gVBSettings.mNumBuffers; ++i)
     {
-        removeResource(pVisibilityBuffer->ppBinBuffer[i]);
+        removeResource(pVisibilityBuffer->ppIndirectDrawArgBuffer[i]);
+        for (uint32_t v = 0; v < gVBSettings.mNumViews; ++v)
+        {
+            removeResource(pVisibilityBuffer->ppFilteredIndexBuffer[i * gVBSettings.mNumViews + v]);
+        }
     }
 
-    removeGPURingBuffer(&gFilterBatchDataBuffer);
+    for (uint32_t i = 0; i < gVBSettings.mNumFrames; ++i)
+    {
+        removeResource(pVisibilityBuffer->ppFilterDispatchGroupDataBuffer[i]);
+        removeResource(pVisibilityBuffer->ppIndirectDataBuffer[i]);
+    }
 
     if (gVBSettings.mEnablePreSkinPass)
     {
         removeGPURingBuffer(&gPreSkinBatchDataBuffer);
     }
 
-    tf_free(pVisibilityBuffer->ppBinBuffer);
-    pVisibilityBuffer->ppBinBuffer = NULL;
+    tf_free(pVisibilityBuffer->ppFilterDispatchGroupDataBuffer);
+    pVisibilityBuffer->ppFilterDispatchGroupDataBuffer = NULL;
+    tf_free(pVisibilityBuffer->ppFilteredIndexBuffer);
+    pVisibilityBuffer->ppFilteredIndexBuffer = NULL;
+    tf_free(pVisibilityBuffer->ppIndirectDataBuffer);
+    pVisibilityBuffer->ppIndirectDataBuffer = NULL;
+    tf_free(pVisibilityBuffer->ppIndirectDrawArgBuffer);
+    pVisibilityBuffer->ppIndirectDrawArgBuffer = NULL;
+
+    tf_free(pFilterBufferBarrier);
+    pFilterBufferBarrier = NULL;
 
     tf_free(pVisibilityBuffer);
     pVisibilityBuffer = NULL;
