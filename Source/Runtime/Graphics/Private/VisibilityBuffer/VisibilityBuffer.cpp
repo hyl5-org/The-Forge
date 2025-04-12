@@ -40,7 +40,7 @@
 ///************************************************************************/
 //// Settings
 ///************************************************************************/
-//typedef struct VisibilityBufferSettings
+// typedef struct VisibilityBufferSettings
 //{
 //    // This defines the amount of viewports that are going to be culled in parallel.
 //    uint32_t mNumViews;
@@ -63,19 +63,19 @@
 //    uint32_t mNumPreSkinBatchChunks;
 //} VisibilityBufferSettings;
 //
-//VisibilityBufferSettings gVBSettings;
+// VisibilityBufferSettings gVBSettings;
 //
 ///************************************************************************/
 //// Pre skin vertexes data
 ///************************************************************************/
-//typedef struct PreSkinBatchChunk
+// typedef struct PreSkinBatchChunk
 //{
 //    uint32_t mCurrentBatchCount;
 //} PreSkinBatchChunk;
 //
-//GPURingBuffer gPreSkinBatchDataBuffer = {};
+// GPURingBuffer gPreSkinBatchDataBuffer = {};
 //
-//static void DispatchPreSkinVertexes(Cmd* pCmd, PreSkinBatchChunk* pBatchChunk, DescriptorSet* pDescriptorSetPreSkinVertexes,
+// static void DispatchPreSkinVertexes(Cmd* pCmd, PreSkinBatchChunk* pBatchChunk, DescriptorSet* pDescriptorSetPreSkinVertexes,
 //                                    GPURingBufferOffset* ringBufferOffset, uint32_t batchDataOffsetBytes)
 //{
 //    ASSERT(pBatchChunk->mCurrentBatchCount > 0);
@@ -94,7 +94,8 @@
 //    pBatchChunk->mCurrentBatchCount = 0;
 //}
 //
-//PreSkinVertexesStats cmdVisibilityBufferPreSkinVertexesPass(VisibilityBuffer* pVisibilityBuffer, Cmd* pCmd, PreSkinVertexesPassDesc* pDesc)
+// PreSkinVertexesStats cmdVisibilityBufferPreSkinVertexesPass(VisibilityBuffer* pVisibilityBuffer, Cmd* pCmd, PreSkinVertexesPassDesc*
+// pDesc)
 //{
 //    UNREF_PARAM(pVisibilityBuffer);
 //    ASSERT(gVBSettings.mEnablePreSkinPass);
@@ -179,9 +180,9 @@
 ///************************************************************************/
 //// Visibility Buffer Filtering
 ///************************************************************************/
-//BufferBarrier* pFilterBufferBarrier;
+// BufferBarrier* pFilterBufferBarrier;
 //
-//VBPreFilterStats updateVBMeshFilterGroups(VisibilityBuffer* pVisibilityBuffer, const UpdateVBMeshFilterGroupsDesc* pDesc)
+// VBPreFilterStats updateVBMeshFilterGroups(VisibilityBuffer* pVisibilityBuffer, const UpdateVBMeshFilterGroupsDesc* pDesc)
 //{
 //    ASSERT(pVisibilityBuffer);
 //    ASSERT(pDesc);
@@ -234,7 +235,7 @@
 //// - pFilteredTriangles: list of triangle IDs that passed the culling tests
 //// - pIndirectDrawArguments: the vertexCount member of this structure is calculated in order to
 //// indicate the renderer the amount of vertices per batch to render.
-//void cmdVBTriangleFilteringPass(VisibilityBuffer* pVisibilityBuffer, Cmd* pCmd, TriangleFilteringPassDesc* pDesc)
+// void cmdVBTriangleFilteringPass(VisibilityBuffer* pVisibilityBuffer, Cmd* pCmd, TriangleFilteringPassDesc* pDesc)
 //{
 //    ASSERT(pVisibilityBuffer);
 //    ASSERT(pDesc->mFrameIndex < gVBSettings.mNumFrames);
@@ -279,7 +280,7 @@
 //    cmdEndGpuTimestampQuery(pCmd, pDesc->mGpuProfileToken);
 //}
 //
-//static void addPreSkinACAliasedBuffer(Renderer* pRenderer, PreSkinACVertexBuffersDesc* pDesc, ResourceHeap* pHeap, uint64_t heapOffset,
+// static void addPreSkinACAliasedBuffer(Renderer* pRenderer, PreSkinACVertexBuffersDesc* pDesc, ResourceHeap* pHeap, uint64_t heapOffset,
 //                                      uint64_t vbSize, PreSkinACAliasedBuffer* pOut, uint32_t attrStride, const char* pPreSkinBufferName)
 //{
 //    UNREF_PARAM(pRenderer);
@@ -322,14 +323,14 @@
 //    }
 //}
 //
-//static void removePreSkinACAliasedBuffer(Renderer* pRenderer, PreSkinACAliasedBuffer* pBuffers)
+// static void removePreSkinACAliasedBuffer(Renderer* pRenderer, PreSkinACAliasedBuffer* pBuffers)
 //{
 //    UNREF_PARAM(pRenderer);
 //    for (uint32_t i = 0; i < gVBSettings.mNumBuffers; ++i)
 //        removeResource(pBuffers->pPreSkinBuffers[i]);
 //}
 //
-//void initVBAsyncComputePreSkinVertexBuffers(Renderer* pRenderer, PreSkinACVertexBuffersDesc* pDesc, PreSkinACVertexBuffers** pOut)
+// void initVBAsyncComputePreSkinVertexBuffers(Renderer* pRenderer, PreSkinACVertexBuffersDesc* pDesc, PreSkinACVertexBuffers** pOut)
 //{
 //    ASSERT(pDesc);
 //    ASSERT(pOut);
@@ -387,7 +388,8 @@
 //    }
 //
 //    const uint64_t posOffset = 0; // Heap is already aligned to the alignment of this vertex buffer
-//    const uint64_t normalOffset = round_up_64(posOffset + sizeAlignedVertexPositionBuffer.mSize, sizeAlignedVertexNormalBuffer.mAlignment);
+//    const uint64_t normalOffset = round_up_64(posOffset + sizeAlignedVertexPositionBuffer.mSize,
+//    sizeAlignedVertexNormalBuffer.mAlignment);
 //
 //    addPreSkinACAliasedBuffer(pRenderer, pDesc, pBuffers->pHeap, posOffset, sizeAlignedVertexPositionBuffer.mSize, &pBuffers->mPositions,
 //                              sizeof(float3), "PreSkinBuffer Positions");
@@ -400,8 +402,8 @@
 //    {
 //        const uint64_t vertexOffset = (uint64_t)pDesc->mMaxStaticVertexCount + (uint64_t)pDesc->mMaxPreSkinnedVertexCountPerFrame * i;
 //        ASSERT(vertexOffset <= UINT32_MAX &&
-//               "If we support vertex buffers of more than UINT32_MAX bytes we need to either pass this variable to the shader as uint64 or "
-//               "place the Pre-Skin buffers at the beggining so that the offset is within limits.");
+//               "If we support vertex buffers of more than UINT32_MAX bytes we need to either pass this variable to the shader as uint64 or
+//               " "place the Pre-Skin buffers at the beggining so that the offset is within limits.");
 //
 //        offsets[i].vertexOffset = (uint32_t)vertexOffset;
 //
@@ -420,7 +422,7 @@
 //    *pOut = pBuffers;
 //}
 //
-//void exitVBAsyncComputePreSkinVertexBuffers(Renderer* pRenderer, PreSkinACVertexBuffers* pBuffers)
+// void exitVBAsyncComputePreSkinVertexBuffers(Renderer* pRenderer, PreSkinACVertexBuffers* pBuffers)
 //{
 //    ASSERT(pRenderer);
 //    ASSERT(pBuffers);
@@ -439,7 +441,7 @@
 ////************************************************************************/
 ////
 ////************************************************************************/
-//bool initVisibilityBuffer(Renderer* pRenderer, const VisibilityBufferDesc* pDesc, VisibilityBuffer** ppVisibilityBuffer)
+// bool initVisibilityBuffer(Renderer* pRenderer, const VisibilityBufferDesc* pDesc, VisibilityBuffer** ppVisibilityBuffer)
 //{
 //    ASSERT(ppVisibilityBuffer);
 //    ASSERT(pDesc);
@@ -591,7 +593,7 @@
 //    return true;
 //}
 //
-//void exitVisibilityBuffer(VisibilityBuffer* pVisibilityBuffer)
+// void exitVisibilityBuffer(VisibilityBuffer* pVisibilityBuffer)
 //{
 //    ASSERT(pVisibilityBuffer);
 //    removeResource(pVisibilityBuffer->pVBConstantBuffer);
