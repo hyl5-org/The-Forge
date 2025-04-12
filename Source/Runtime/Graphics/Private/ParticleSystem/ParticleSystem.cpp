@@ -31,9 +31,9 @@
 #include <Core/ITime.h>
 #include <Graphics/IParticleSystem.h>
 
-//#define NO_FSL_DEFINITIONS
-//#include "Shaders/particle_shared.h.fsl"
-//#undef NO_FSL_DEFINITIONS
+#define NO_FSL_DEFINITIONS
+#include "ParticleStruct.h"
+#undef NO_FSL_DEFINITIONS
 
 #include <Core/IMemory.h>
 

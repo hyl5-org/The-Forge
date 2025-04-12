@@ -26,7 +26,7 @@
 
 #include <inttypes.h>
 
-#include "../../Graphics/GraphicsConfig.h"
+#include <RHI/IGraphics.h>
 
 #include "GpuProfiler.h"
 
@@ -34,14 +34,14 @@
 #include <RHI/IGraphics.h>
 
 // INTERFACES
-#include <Application/IFont.h>
-#include <Application/IProfiler.h>
-#include <Application/IUI.h>
-#include "../../Game/Interfaces/IScripting.h"
+//#include <Application/IFont.h>
+//#include <Application/IProfiler.h>
+//#include <Application/IUI.h>
+//#include "../../Game/Interfaces/IScripting.h"
 #include <Platform/IOperatingSystem.h>
 #include <Core/IFileSystem.h>
 
-#include "../../Utilities/Math/Algorithms.h"
+#include <Core/IMath.h>
 
 #include <Core/IMemory.h>
 

@@ -25,7 +25,6 @@
 #pragma once
 
 #include "../Private/GraphicsConfig.h"
-
 #ifdef ENABLE_NSIGHT_AFTERMATH
 #include "../ThirdParty/PrivateNvidia/NsightAftermath/include/AftermathTracker.h"
 #endif
