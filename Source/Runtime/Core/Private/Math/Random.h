@@ -28,7 +28,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "../../Utilities/ThirdParty/OpenSource/murmurhash3/MurmurHash3_32.h"
+#include <ThirdParty/murmurhash3/MurmurHash3_32.h>
 
 #define TF_RAND_MAX     0x7FFFFFFF
 #define TF_INITIAL_SEED 0x9747b28c

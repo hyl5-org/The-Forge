@@ -28,7 +28,7 @@
 #include <ctime>
 #include <ntverp.h>
 
-#include "../CPUConfig.h"
+#include <Core/IConfig.h>
 
 #if !defined(XBOX)
 #include <shlwapi.h>
@@ -147,7 +147,7 @@ void getOsVersion(ULONG& majorVersion, ULONG& minorVersion, ULONG& buildNumber)
     void(WINAPI * pfnRtlGetNtVersionNumbers)(__out_opt ULONG * pNtMajorVersion, __out_opt ULONG * pNtMinorVersion,
                                              __out_opt ULONG * pNtBuildNumber);
 
-    (FARPROC&)pfnRtlGetNtVersionNumbers = GetProcAddress(GetModuleHandle(L"ntdll.dll"), "RtlGetNtVersionNumbers");
+    (FARPROC&)pfnRtlGetNtVersionNumbers = GetProcAddress(GetModuleHandle("ntdll.dll"), "RtlGetNtVersionNumbers");
 
     if (pfnRtlGetNtVersionNumbers)
     {
@@ -271,7 +271,7 @@ void setupPlatformUI(const IApp::Settings* pSettings)
     CheckboxWidget checkbox;
     checkbox.pData = &pApp->mSettings.mVSyncEnabled;
     UIWidget* pCheckbox = uiCreateComponentWidget(pToggleVSyncComponent, "Toggle VSync\t\t\t\t\t", &checkbox, WIDGET_TYPE_CHECKBOX);
-    REGISTER_LUA_WIDGET(pCheckbox);
+    (pCheckbox);
 
     // MICROPROFILER UI
     toggleProfilerMenuUI(true);
@@ -324,7 +324,7 @@ void setupPlatformUI(const IApp::Settings* pSettings)
         ResetDesc resetDescriptor{ RESET_TYPE_API_SWITCH };
         requestReset(&resetDescriptor);
     };
-    REGISTER_LUA_WIDGET(pSelectApUIWidget);
+    (pSelectApUIWidget);
 
     static const char* gpuNames[] = { gPlatformParameters.ppAvailableGpuNames[0], gPlatformParameters.ppAvailableGpuNames[1],
                                       gPlatformParameters.ppAvailableGpuNames[2], gPlatformParameters.ppAvailableGpuNames[3] };
@@ -342,7 +342,7 @@ void setupPlatformUI(const IApp::Settings* pSettings)
         ResetDesc resetDescriptor{ RESET_TYPE_GRAPHIC_CARD_SWITCH };
         requestReset(&resetDescriptor);
     };
-    REGISTER_LUA_WIDGET(pSelectGraphicCardWidget);
+    (pSelectGraphicCardWidget);
 
 #if defined(ENABLE_FORGE_SCRIPTING) && defined(AUTOMATED_TESTING)
     // Tests below are executed last, after tests registered in IApp::Init have executed

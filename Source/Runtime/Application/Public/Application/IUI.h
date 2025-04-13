@@ -671,4 +671,5 @@ FORGE_API void uiPopulateDrawData(UserInterfaceDrawData* pUIDrawData);
 /// Removes a UserInterfaceDrawData*.  It should not be reused after this point.
 FORGE_API void removeUIDrawData(UserInterfaceDrawData* pUIDrawData);
 
+
 #endif // IUI_H

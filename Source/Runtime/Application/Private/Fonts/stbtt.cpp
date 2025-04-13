@@ -36,7 +36,7 @@
 #ifndef STB_RECT_PACK_IMPLEMENTATION
 #define STB_RECT_PACK_IMPLEMENTATION
 #define STBRP_ASSERT(x) ASSERT(x)
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_rectpack.h"
+#include <ThirdParty/stb/stb_rect_pack.h>
 #endif
 
 #include <Core/IMemory.h>
@@ -60,7 +60,7 @@ static void stbtt_dealloc_func(void* ptr, void* user_data)
 #define STBTT_malloc(x, u) stbtt_alloc_func(x, u)
 #define STBTT_free(x, u)   stbtt_dealloc_func(x, u)
 
-#include "../../Utilities/ThirdParty/OpenSource/Nothings/stb_truetype.h"
+#include <ThirdParty/stb/stb_truetype.h>
 #endif
 
 #endif // UI OR FONTS

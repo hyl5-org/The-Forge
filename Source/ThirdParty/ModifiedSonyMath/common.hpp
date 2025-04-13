@@ -212,7 +212,7 @@ inline void decompose(const Matrix4& mat, Vector3* translationOut, Quat* rotatio
 } // namespace Vectormath
 
 //========================================= #TheForgeMathExtensionsBegin ================================================
-//#include "../../../../Application/Config.h"
+//#include <Core/IConfig.h>
 
 #include <math.h>
 #include <stdint.h>

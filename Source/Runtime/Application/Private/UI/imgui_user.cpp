@@ -24,8 +24,8 @@
 
 #include "imgui_user.h"
 
-#include "../ThirdParty/OpenSource/imgui/imgui_internal.h"
-
+#include <ThirdParty/imgui_tf/imgui_internal.h>
+#include <Core/IMath.h>
 #ifndef M_PI
 #define M_PI 3.14159f
 #endif

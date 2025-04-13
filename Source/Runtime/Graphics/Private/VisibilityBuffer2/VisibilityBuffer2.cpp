@@ -21,19 +21,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+#include <Graphics/IVisibilityBuffer2.h>
 
-#include <Profiler/IProfiler.h>
 #include <RHI/IGraphics.h>
 #include <Core/ILog.h>
 #include <Core/ITime.h>
-#include <Graphics/IVisibilityBuffer2.h>
+#include <Core/IMemory.h>
 #include <Resources/IResourceLoader.h>
 #include <RHI/RingBuffer.h>
+#include <Profiler/IProfiler.h>
 
 #define NO_FSL_DEFINITIONS
 #include "VisibilityBuffer2Struct.h"
 
-#include <Core/IMemory.h>
 
 /************************************************************************/
 // Settings

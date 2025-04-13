@@ -22,16 +22,16 @@
  * under the License.
  */
 
-#include "Interfaces/IProfiler.h"
-#include "Interfaces/IScreenshot.h"
+#include <Profiler/IProfiler.h>
+//#include "Interfaces/IScreenshot.h"
 
 #if defined(ENABLE_SCREENSHOT)
 #include <ThirdParty/tinyimageformat/tinyimageformat_decode.h>
-#include "../Resources/ResourceLoader/ThirdParty/OpenSource/tinyimageformat/tinyimageformat_query.h"
-
+#include <ThirdParty/tinyimageformat/tinyimageformat_query.h>
+#include <Resources/IResourceLoader.h>
 #include <Core/IFileSystem.h>
 #include <Core/ILog.h>
-#include "Interfaces/IUI.h"
+#include <Application/IUI.h>
 
 #include <Core/IMath.h>
 
@@ -46,8 +46,7 @@
 #define STBIW_REALLOC tf_realloc
 #define STBIW_FREE    tf_free
 #define STBIW_ASSERT  ASSERT
-#include "../Utilities/ThirdParty/OpenSource/Nothings/stb_image_write.h"
-
+#include <ThirdParty/stb/stb_image_write.h>
 static Cmd*               gCmd = 0;
 static CmdPool*           pCmdPool = 0;
 static Renderer*          pRendererRef = 0;

@@ -22,13 +22,13 @@
  * under the License.
  */
 
-#include "../Resources/ResourceLoader/Interfaces/IResourceLoader.h"
+#include <Resources/IResourceLoader.h>
 #include <Core/ILog.h>
 #include <Core/IThread.h>
-#include "Interfaces/IUI.h"
+#include <Application/IUI.h>
 
-#include "../Tools/Network/Network.h"
-#include "../Utilities/Threading/Atomics.h"
+//#include "../Tools/Network/Network.h"
+
 
 #ifdef ENABLE_FORGE_REMOTE_UI
 /****************************************************************************/

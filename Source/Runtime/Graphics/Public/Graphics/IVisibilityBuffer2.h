@@ -35,6 +35,12 @@
 #define VISIBILITY_BUFFER_GEOMETRY_SET_BITS 2
 #define VISIBILITY_BUFFER_MAX_NUM_BUFFERS   2
 
+#define NO_FSL_DEFINITIONS
+#include "../Private/VisibilityBuffer2/VisibilityBuffer2Struct.h"
+
+#define NO_FSL_DEFINITIONS
+#include "../Private/VisibilityBuffer2/VisibilityBufferShaderDefine.h"
+
 typedef struct FilterContainer
 {
     uint32_t mType : 1;
