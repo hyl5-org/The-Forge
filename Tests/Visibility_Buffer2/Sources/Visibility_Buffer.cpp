@@ -611,12 +611,12 @@ void SetupDebugTexturesWindow()
     pVBRTs[textureCount++] = pRenderTargetShadow->pTexture;
     pVBRTs[textureCount++] = pDepthBuffer->pTexture;
 
-    if (pDebugTexturesWindow)
-    {
-        ((DebugTexturesWidget*)pDebugTexturesWindow->mWidgets[0]->pWidget)->pTextures = pVBRTs;
-        ((DebugTexturesWidget*)pDebugTexturesWindow->mWidgets[0]->pWidget)->mTexturesCount = textureCount;
-        ((DebugTexturesWidget*)pDebugTexturesWindow->mWidgets[0]->pWidget)->mTextureDisplaySize = texSize;
-    }
+    //if (pDebugTexturesWindow)
+    //{
+    //    ((DebugTexturesWidget*)pDebugTexturesWindow->mWidgets[0]->pWidget)->pTextures = pVBRTs;
+    //    ((DebugTexturesWidget*)pDebugTexturesWindow->mWidgets[0]->pWidget)->mTexturesCount = textureCount;
+    //    ((DebugTexturesWidget*)pDebugTexturesWindow->mWidgets[0]->pWidget)->mTextureDisplaySize = texSize;
+    //}
 }
 
 class Visibility_Buffer: public IApp
