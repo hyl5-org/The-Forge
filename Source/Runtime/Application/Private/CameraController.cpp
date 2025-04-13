@@ -24,7 +24,7 @@
 
 #define _USE_MATH_DEFINES
 #include <Core/ILog.h>
-#include "Interfaces/ICameraController.h"
+#include <Application/ICameraController.h>
 
 // Include this file as last include in all cpp files allocating memory
 #include <Core/IMemory.h>

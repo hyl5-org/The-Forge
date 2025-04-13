@@ -35,6 +35,7 @@ include(RHI)
 include(Profiler)
 include(Resources)
 include(Graphics)
+include(Application)
 
 source_group(TREE ${CORE_INTERFACE_DIR} PREFIX "Header Files" FILES ${CORE_INTERFACE_FILES})
 source_group(TREE ${CORE_SOURCE_DIR} PREFIX "Source Files\\Core" FILES ${CORE_INCLUDE_FILES} ${CORE_SOURCE_FILES})
@@ -54,6 +55,9 @@ source_group(TREE ${RESOURCES_SOURCE_DIR} PREFIX "Source Files\\Resources" FILES
 source_group(TREE ${GRAPHICS_INTERFACE_DIR} PREFIX "Header Files" FILES ${GRAPHICS_INTERFACE_FILES})
 source_group(TREE ${GRAPHICS_SOURCE_DIR} PREFIX "Source Files\\Graphics" FILES ${GRAPHICS_INCLUDE_FILES} ${GRAPHICS_SOURCE_FILES})
 
+source_group(TREE ${APPLICATION_INTERFACE_DIR} PREFIX "Header Files" FILES ${APPLICATION_INTERFACE_FILES})
+source_group(TREE ${APPLICATION_SOURCE_DIR} PREFIX "Source Files\\Application" FILES ${APPLICATION_INCLUDE_FILES} ${APPLICATION_SOURCE_FILES})
+
 
 set(RUNTIME_INTERFACE_FILES
     ${CORE_INTERFACE_FILES}
@@ -62,6 +66,7 @@ set(RUNTIME_INTERFACE_FILES
     ${PROFILER_INTERFACE_FILES}
     ${RESOURCES_INTERFACE_FILES}
     ${GRAPHICS_INTERFACE_FILES}
+    ${APPLICATION_INTERFACE_FILES}
 )
 
 set(RUNTIME_SOURCE_FILES
@@ -77,6 +82,8 @@ set(RUNTIME_SOURCE_FILES
     ${RESOURCES_SOURCE_FILES}
     ${GRAPHICS_INCLUDE_FILES}
     ${GRAPHICS_SOURCE_FILES}
+    ${APPLICATION_INCLUDE_FILES}
+    ${APPLICATION_SOURCE_FILES}
 )
 
 if(${DYNAMIC_LIB} MATCHES OFF)
@@ -92,7 +99,7 @@ else()
     )
 endif()
 
-target_include_directories(${ENGINE_RUNTIME} PUBLIC
+set(RUNTIME_INCLUDE_DIR
     ${ENGINE_SOURCE_DIR}
     ${ENGINE_RUNTIME_SOURCE_DIR}/Platform/Public
     ${ENGINE_RUNTIME_SOURCE_DIR}/Core/Public
@@ -104,10 +111,14 @@ target_include_directories(${ENGINE_RUNTIME} PUBLIC
     ${ENGINE_RUNTIME_SOURCE_DIR}/Scripting/Public
 )
 
+target_include_directories(${ENGINE_RUNTIME} PUBLIC
+    ${RUNTIME_INCLUDE_DIR}
+)
+
 # https://cmake.org/cmake/help/latest/command/target_precompile_headers.html
 target_precompile_headers(${ENGINE_RUNTIME} INTERFACE
     #$<$<COMPILE_LANGUAGE:CXX>:${RUNTIME_INTERFACE_FILES}>
-    ${RUNTIME_INTERFACE_FILES}>
+    ${RUNTIME_INTERFACE_FILES}
 )
 
 target_link_libraries(${ENGINE_RUNTIME} PUBLIC ${RHI_LIBRARIES} ${THIRD_PARTY_DEPS})
