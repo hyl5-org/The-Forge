@@ -59,7 +59,6 @@
 #endif
 #include <Core/IMath.h>
 
-
 #ifdef ENABLE_FORGE_STACKTRACE_DUMP
 #include "WindowsStackTraceDump.h"
 #endif

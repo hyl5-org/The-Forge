@@ -3512,7 +3512,6 @@
 #include <Core/ILog.h>
 #include <Core/IThread.h>
 
-
 //#include "../../Utilities/Math/ShaderUtilities.h" // Packing functions
 
 #if defined(GLES)
@@ -3542,9 +3541,9 @@
 
 extern "C"
 {
-void fsGetParentPath(const char* path, char* output);
-void fsGetPathExtension(const char* path, char* output);
-bool fsMergeDirAndFileName(const char* dir, const char* path, char separator, size_t dstSize, char* dst);
+    void fsGetParentPath(const char* path, char* output);
+    void fsGetPathExtension(const char* path, char* output);
+    bool fsMergeDirAndFileName(const char* dir, const char* path, char separator, size_t dstSize, char* dst);
 }
 
 #define MIP_REDUCE(s, mip) (max(1u, (uint32_t)((s) >> (mip))))
@@ -4833,7 +4832,7 @@ static UploadFunctionResult loadTexture(Renderer* pRenderer, CopyEngine* pCopyEn
         const uint32_t    sliceAlignment = util_get_texture_subresource_alignment(pRenderer, fmt);
         const uint32_t    rowAlignment = util_get_texture_row_alignment(pRenderer);
         const uint64_t    requiredSize = util_get_surface_size(fmt, texture->mWidth, texture->mHeight, texture->mDepth, rowAlignment,
-                                                               sliceAlignment, 0, texture->mMipLevels, 0, texture->mArraySizeMinusOne + 1u);
+                                                            sliceAlignment, 0, texture->mMipLevels, 0, texture->mArraySizeMinusOne + 1u);
         MappedMemoryRange range = allocateStagingMemory(pCopyEngine, requiredSize, sliceAlignment, texture->mNodeIndex);
         memset(range.pData, 0, range.mSize);
 
@@ -7319,7 +7318,7 @@ void beginUpdateResource(TextureUpdateDesc* pTextureUpdate)
         uint32_t srcRowStride = 0;
         uint32_t rowCount = 0;
         bool     success = util_get_surface_info(MIP_REDUCE(texture->mWidth, mip), MIP_REDUCE(texture->mHeight, mip), fmt, &srcSliceStride,
-                                                 &srcRowStride, &rowCount);
+                                             &srcRowStride, &rowCount);
         ASSERT(success);
         uint32_t d = MIP_REDUCE(texture->mDepth, mip);
 
@@ -7454,12 +7453,12 @@ static bool load_shader_stage_byte_code(Renderer* pRenderer, const char* name, S
     // NOTE: On some platforms, we might not be allowed to write in the `RD_SHADER_BINARIES` directory.
     // If we want to load re-compiled binaries, then they must be cached elsewhere and queried here.
 
-    void*      pCachedByteCode = NULL;
-    uint32_t   cachedByteCodeSize = 0;
-    //const bool result = platformReloadClientGetShaderBinary(binaryShaderPath, &pCachedByteCode, &cachedByteCodeSize)
+    void*    pCachedByteCode = NULL;
+    uint32_t cachedByteCodeSize = 0;
+    // const bool result = platformReloadClientGetShaderBinary(binaryShaderPath, &pCachedByteCode, &cachedByteCodeSize)
     //                        ? fsOpenStreamFromMemory(pCachedByteCode, cachedByteCodeSize, FM_READ, false, &binaryFileStream)
     //                        : fsOpenStreamFromPath(RD_SHADER_BINARIES, binaryShaderPath, FM_READ, &binaryFileStream);
-    bool result = true;
+    bool     result = true;
     ASSERT(result);
     if (!result)
         return result;
