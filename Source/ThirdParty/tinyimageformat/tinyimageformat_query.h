@@ -14,6 +14,10 @@
 #include <stdbool.h>	// for bool
 #endif
 
+#include <cstdint>
+
+#include <Core/ILog.h>
+
 TIF_CONSTEXPR inline uint64_t TinyImageFormat_Code(TinyImageFormat const fmt) 
 {
 	switch(fmt) 

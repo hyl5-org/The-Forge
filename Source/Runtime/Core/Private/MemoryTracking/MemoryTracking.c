@@ -1,4 +1,4 @@
-#include <Core/IMemory.h>
+
 #include <Core/IConfig.h>
 
 #include "wchar.h"
@@ -47,6 +47,8 @@
 
 // Just include the cpp here so we don't have to add it to the all projects
 #include <ThirdParty/MemoryManager/mmgr.h>
+
+#include <Core/IMemory.h>
 
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop

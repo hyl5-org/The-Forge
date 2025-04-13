@@ -2,10 +2,10 @@ set(ENGINE_THIRD_PARTY_SOURCE_DIR ${ENGINE_SOURCE_DIR}/ThirdParty)
 
 add_library(WinPixEventRuntime SHARED IMPORTED)
 set_property(TARGET WinPixEventRuntime PROPERTY IMPORTED_LOCATION
-    ${ENGINE_THIRD_PARTY_SOURCE_DIR}/winpixeventruntime/bin/WinPixEventRuntime.dll
+    ${ENGINE_THIRD_PARTY_SOURCE_DIR}/winpixeventruntime/bin/x64/WinPixEventRuntime.dll
 )
 set_property(TARGET WinPixEventRuntime PROPERTY IMPORTED_IMPLIB
-    ${ENGINE_THIRD_PARTY_SOURCE_DIR}/winpixeventruntime/bin/WinPixEventRuntime.lib
+    ${ENGINE_THIRD_PARTY_SOURCE_DIR}/winpixeventruntime/bin/x64/WinPixEventRuntime.lib
 )
 
 add_library(AGS SHARED IMPORTED)

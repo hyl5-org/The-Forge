@@ -152,6 +152,8 @@ protected:
     virtual void ReleaseThis()
     {
         delete (this);
+        this->~IUnknownImpl();
+        tf_free(this);
         // delete this;
     }
 

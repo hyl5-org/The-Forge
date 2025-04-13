@@ -129,7 +129,7 @@ target_link_directories(${ENGINE_RUNTIME} PUBLIC ${RHI_LIBRARY_PATHS})
 target_compile_definitions(${ENGINE_RUNTIME} PUBLIC ${RHI_DEFINES})
 
 # unity build
-set_target_properties(${ENGINE_RUNTIME} PROPERTIES UNITY_BUILD ON)
+# set_target_properties(${ENGINE_RUNTIME} PROPERTIES UNITY_BUILD ON)
 
 target_compile_features(${ENGINE_RUNTIME} PRIVATE cxx_std_20)
 

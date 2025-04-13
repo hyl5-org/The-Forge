@@ -39,10 +39,10 @@
 #include <ThirdParty/rmem/inc/rmem.h>
 #include <ThirdParty/stb/stb_ds.h>
 
-// #include <Application/IApp.h>
+#include <Application/IApp.h>
 // #include <Application/IFont.h>
 // #include <Application/IProfiler.h>
-// #include <Application/IUI.h>
+#include <Application/IUI.h>
 // #include <Scripting/IScripting.h>
 // #include <RHI/IGraphics.h>
 #include <Core/IFileSystem.h>
@@ -58,12 +58,12 @@
 #include "../../Tools/ReloadServer/ReloadClient.h"
 #endif
 #include <Core/IMath.h>
-#include <Core/IMemory.h>
+
 
 #ifdef ENABLE_FORGE_STACKTRACE_DUMP
 #include "WindowsStackTraceDump.h"
 #endif
-
+#include <Core/IMemory.h>
 #define elementsOf(a) (sizeof(a) / sizeof((a)[0]))
 
 // App Data

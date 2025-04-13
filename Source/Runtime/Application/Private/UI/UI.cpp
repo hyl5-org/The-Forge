@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
+#include <ThirdParty/tinyimageformat/tinyimageformat_base.h>
 #include <ThirdParty/tinyimageformat/tinyimageformat_query.h>
 #include <ThirdParty/imgui_tf/imgui_internal.h>
 #include <ThirdParty/imgui_tf/imgui.h>
