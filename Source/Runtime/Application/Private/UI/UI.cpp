@@ -51,8 +51,8 @@
 static const uint32_t MAX_FRAMES = 3;
 
 #define FORGE_UI_USE_32BIT_INDEXES
- #define FORGE_UI_MAX_VERTEXES (64 * 1024)
- #define FORGE_UI_MAX_INDEXES  (128 * 1024)
+#define FORGE_UI_MAX_VERTEXES (64 * 1024)
+#define FORGE_UI_MAX_INDEXES  (128 * 1024)
 
 struct GUIDriverUpdate
 {
@@ -272,7 +272,7 @@ static void SetDefaultStyle()
 {
     ImGuiStyle& style = ImGui::GetStyle();
     style.WindowRounding = 0.4f;
-    
+
     style.Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
     style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
     style.Colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.06f, 0.06f, 1.0f);

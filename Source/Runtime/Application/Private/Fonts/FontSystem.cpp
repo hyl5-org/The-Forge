@@ -44,7 +44,7 @@
 //
 //#ifdef ENABLE_FORGE_FONTS
 //
-//struct Fontstash
+// struct Fontstash
 //{
 //    // FONS
 //    FONScontext* pContext;
@@ -87,7 +87,7 @@
 //#endif
 //};
 //
-//struct FontstashDrawData
+// struct FontstashDrawData
 //{
 //    CameraMatrix mProjView;
 //    mat4         mWorldMat;
@@ -95,10 +95,10 @@
 //    bool         mText3D;
 //};
 //
-//static Fontstash gFontstash = {};
+// static Fontstash gFontstash = {};
 //
 //// --  FONS renderer implementation --
-//static int fonsImplementationGenerateTexture(void* userPtr, int width, int height)
+// static int fonsImplementationGenerateTexture(void* userPtr, int width, int height)
 //{
 //    UNREF_PARAM(userPtr);
 //    gFontstash.mWidth = width;
@@ -107,7 +107,7 @@
 //    return 1;
 //}
 //
-//static void fonsImplementationModifyTexture(void* userPtr, int* rect, const unsigned char* data)
+// static void fonsImplementationModifyTexture(void* userPtr, int* rect, const unsigned char* data)
 //{
 //    UNREF_PARAM(userPtr);
 //    UNREF_PARAM(rect);
@@ -115,7 +115,7 @@
 //    gFontstash.mUpdateTexture = true;
 //}
 //
-//static void fonsImplementationRenderText(void* userPtr, const float* verts, const float* tcoords, const unsigned int* colors, int nverts)
+// static void fonsImplementationRenderText(void* userPtr, const float* verts, const float* tcoords, const unsigned int* colors, int nverts)
 //{
 //    if (!gFontstash.pAtlasTexture)
 //    {
@@ -213,10 +213,10 @@
 //    }
 //}
 //
-//void fonsImplementationRemoveTexture(void*) {}
+// void fonsImplementationRemoveTexture(void*) {}
 //#endif
 //
-//bool platformInitFontSystem()
+// bool platformInitFontSystem()
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //    float          dpiScale[2] = {};
@@ -248,7 +248,7 @@
 //#endif
 //}
 //
-//void platformExitFontSystem()
+// void platformExitFontSystem()
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //    // unload font buffers
@@ -266,7 +266,7 @@
 //#endif
 //}
 //
-//bool initFontSystem(FontSystemDesc* pDesc)
+// bool initFontSystem(FontSystemDesc* pDesc)
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //    ASSERT(!gFontstash.mRenderInitialized);
@@ -316,7 +316,7 @@
 //    return true;
 //}
 //
-//void exitFontSystem()
+// void exitFontSystem()
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //    ASSERT(gFontstash.mRenderInitialized);
@@ -331,7 +331,7 @@
 //#endif
 //}
 //
-//void loadFontSystem(const FontSystemLoadDesc* pDesc)
+// void loadFontSystem(const FontSystemLoadDesc* pDesc)
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //    if (pDesc->mLoadType & (RELOAD_TYPE_SHADER | RELOAD_TYPE_RENDERTARGET))
@@ -437,7 +437,7 @@
 //#endif
 //}
 //
-//void unloadFontSystem(ReloadType unloadType)
+// void unloadFontSystem(ReloadType unloadType)
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //    if (unloadType & (RELOAD_TYPE_SHADER | RELOAD_TYPE_RENDERTARGET))
@@ -465,7 +465,7 @@
 //#endif
 //}
 //
-//void cmdDrawTextWithFont(Cmd* pCmd, float2 screenCoordsInPx, const FontDrawDesc* pDesc)
+// void cmdDrawTextWithFont(Cmd* pCmd, float2 screenCoordsInPx, const FontDrawDesc* pDesc)
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //    ASSERT(gFontstash.mRenderInitialized && "Font Rendering not initialized! Make sure to call initFontRendering!");
@@ -505,7 +505,7 @@
 //#endif
 //}
 //
-//void cmdDrawWorldSpaceTextWithFont(Cmd* pCmd, const mat4* pMatWorld, const CameraMatrix* pMatProjView, const FontDrawDesc* pDesc)
+// void cmdDrawWorldSpaceTextWithFont(Cmd* pCmd, const mat4* pMatWorld, const CameraMatrix* pMatProjView, const FontDrawDesc* pDesc)
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //    // ASSERT(pFontStash);
@@ -546,7 +546,7 @@
 //#endif
 //}
 //
-//void cmdDrawDebugFontAtlas(Cmd* pCmd, float2 screenCoordInPx)
+// void cmdDrawDebugFontAtlas(Cmd* pCmd, float2 screenCoordInPx)
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //    ASSERT(gFontstash.mRenderInitialized && "Font Rendering not initialized! Make sure to call initFontRendering!");
@@ -561,7 +561,7 @@
 //#endif
 //}
 //
-//void fntDefineFonts(const FontDesc* pDescs, uint32_t count, uint32_t* pOutIDs)
+// void fntDefineFonts(const FontDesc* pDescs, uint32_t count, uint32_t* pOutIDs)
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //    ASSERT(pDescs);
@@ -604,7 +604,7 @@
 //#endif
 //}
 //
-//int2 fntGetFontAtlasSize()
+// int2 fntGetFontAtlasSize()
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //    ASSERT(gFontstash.mRenderInitialized && "Font Rendering not initialized! Make sure to call initFontRendering!");
@@ -616,7 +616,7 @@
 //#endif
 //}
 //
-//void fntResetFontAtlas(int2 newAtlasSize)
+// void fntResetFontAtlas(int2 newAtlasSize)
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //    ASSERT(gFontstash.mRenderInitialized && "Font Rendering not initialized! Make sure to call initFontRendering!");
@@ -636,7 +636,7 @@
 //#endif
 //}
 //
-//void fntExpandAtlas(int2 additionalSize)
+// void fntExpandAtlas(int2 additionalSize)
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //    ASSERT(gFontstash.mRenderInitialized && "Font Rendering not initialized! Make sure to call initFontRendering!");
@@ -646,7 +646,7 @@
 //#endif
 //}
 //
-//void* fntGetRawFontData(uint32_t fontID)
+// void* fntGetRawFontData(uint32_t fontID)
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //    if (fontID < arrlen(gFontstash.mFontBuffers))
@@ -658,7 +658,7 @@
 //#endif
 //}
 //
-//uint32_t fntGetRawFontDataSize(uint32_t fontID)
+// uint32_t fntGetRawFontDataSize(uint32_t fontID)
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //    if (fontID < arrlen(gFontstash.mFontBufferSizes))
@@ -670,7 +670,7 @@
 //#endif
 //}
 //
-//float2 fntMeasureFontText(const char* pText, const FontDrawDesc* pDrawDesc)
+// float2 fntMeasureFontText(const char* pText, const FontDrawDesc* pDrawDesc)
 //{
 //#ifdef ENABLE_FORGE_FONTS
 //
