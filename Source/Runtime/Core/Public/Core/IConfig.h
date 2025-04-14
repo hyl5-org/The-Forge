@@ -299,7 +299,7 @@ COMPILE_ASSERT(sizeof(ssize_t) == sizeof(int64_t));
 //#define ENABLE_FORGE_SCRIPTING
 #define ENABLE_FORGE_UI
 #define ENABLE_FORGE_FONTS
-//#define ENABLE_FORGE_INPUT
+#define ENABLE_FORGE_INPUT
 //#define ENABLE_FORGE_ANIMATION_DEBUG
 #define ENABLE_ZIP_FILESYSTEM
 #define ENABLE_SCREENSHOT
@@ -347,7 +347,7 @@ COMPILE_ASSERT(sizeof(ssize_t) == sizeof(int64_t));
 #define ENABLE_LOGGING
 #define DEFAULT_LOG_LEVEL eALL
 #if !defined(NDEBUG)
-#define ENABLE_MEMORY_TRACKING
+//#define ENABLE_MEMORY_TRACKING
 #endif
 // #define ENABLE_FORGE_STACKTRACE_DUMP
 

@@ -129,7 +129,8 @@ target_link_directories(${ENGINE_RUNTIME} PUBLIC ${RHI_LIBRARY_PATHS})
 target_compile_definitions(${ENGINE_RUNTIME} PUBLIC ${RHI_DEFINES})
 
 # unity build
-# set_target_properties(${ENGINE_RUNTIME} PROPERTIES UNITY_BUILD ON)
+#TODO(hyl5): fix tf_malloc/tf_new
+#s et_target_properties(${ENGINE_RUNTIME} PROPERTIES UNITY_BUILD ON)
 
 target_compile_features(${ENGINE_RUNTIME} PRIVATE cxx_std_20)
 
@@ -146,7 +147,7 @@ endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_compile_options(${ENGINE_RUNTIME} PRIVATE -fno-rtti -fno-exceptions)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    SET(CMAKE_CXX_FLAGS "/GR- /EHsc-")
+    SET(CMAKE_CXX_FLAGS "/GR- /EHsc- /MP")
     #target_compile_options(${ENGINE_RUNTIME} PRIVATE /GR- /EHs-c-)
     # will produe warning, https://cmake.org/pipermail/cmake/2010-December/041639.html
 endif()

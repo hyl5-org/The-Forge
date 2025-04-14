@@ -1,7 +1,7 @@
 
-#include <gainput/gainput.h>
+#include "../../include/gainput/gainput.h"
 
-#include <gainput/GainputLog.h>
+#include "../../include/gainput/GainputLog.h"
 
 namespace gainput
 {

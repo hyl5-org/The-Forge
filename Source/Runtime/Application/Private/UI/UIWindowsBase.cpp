@@ -41,10 +41,10 @@
 
 #include <Application/IApp.h>
 // #include <Application/IFont.h>
-// #include <Application/IProfiler.h>
+#include <Profiler/IProfiler.h>
 #include <Application/IUI.h>
 // #include <Scripting/IScripting.h>
-// #include <RHI/IGraphics.h>
+#include <RHI/IGraphics.h>
 #include <Core/IFileSystem.h>
 #include <Core/ILog.h>
 #include <Core/IThread.h>

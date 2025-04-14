@@ -1,23 +1,27 @@
 
-#include <gainput/gainput.h>
-#include <gainput/GainputDebugRenderer.h>
+#include "../../../include/gainput/gainput.h"
+#include "../../../include/gainput/GainputDebugRenderer.h"
 
 #include "GainputInputDeviceKeyboardImpl.h"
 #include "GainputKeyboardKeyNames.h"
-#include <gainput/GainputInputDeltaState.h>
-#include <gainput/GainputHelpers.h>
-#include <gainput/GainputLog.h>
+#include "../../../include/gainput/GainputInputDeltaState.h"
+#include "../../../include/gainput/GainputHelpers.h"
+#include "../../../include/gainput/GainputLog.h"
 
 #if defined(GAINPUT_PLATFORM_LINUX)
-	#include "GainputInputDeviceKeyboardLinux.h"
-	#include "GainputInputDeviceKeyboardEvdev.h"
+	#include "../linux/GainputInputDeviceKeyboardLinux.h"
+	#include "../linux/GainputInputDeviceKeyboardEvdev.h"
 #elif defined(GAINPUT_PLATFORM_WIN)
-	#include "GainputInputDeviceKeyboardWin.h"
-	#include "GainputInputDeviceKeyboardWinRaw.h"
+	#include "../windows/GainputInputDeviceKeyboardWin.h"
+	#include "../windows/GainputInputDeviceKeyboardWinRaw.h"
 #elif defined(GAINPUT_PLATFORM_ANDROID)
-	#include "GainputInputDeviceKeyboardAndroid.h"
+	#include "../android/GainputInputDeviceKeyboardAndroid.h"
 #elif defined(GAINPUT_PLATFORM_MAC)
-	#include "GainputInputDeviceKeyboardMac.h"
+	#include "../apple/GainputInputDeviceKeyboardMac.h"
+#elif defined(GAINPUT_PLATFORM_IOS)
+	#include "../apple/GainputInputDeviceKeyboardIOS.h"
+#elif defined(GAINPUT_PLATFORM_GGP)
+	#include "../../../../../../../../Stadia/Common_3/OS/Input/GainputInputDeviceKeyboardGGP.h"
 #endif
 
 #include "GainputInputDeviceKeyboardNull.h"
@@ -31,6 +35,7 @@ InputDeviceKeyboard::InputDeviceKeyboard(InputManager& manager, DeviceId device,
 	impl_(0),
 	keyNames_(manager_.GetAllocator())
 {
+    UNREF_PARAM(variant);
 	state_ = manager.GetAllocator().New<InputState>(manager.GetAllocator(), KeyCount_);
 	GAINPUT_ASSERT(state_);
 	previousState_ = manager.GetAllocator().New<InputState>(manager.GetAllocator(), KeyCount_);
@@ -58,6 +63,8 @@ InputDeviceKeyboard::InputDeviceKeyboard(InputManager& manager, DeviceId device,
 	impl_ = manager.GetAllocator().New<InputDeviceKeyboardImplAndroid>(manager, *this, *state_, *previousState_);
 #elif defined(GAINPUT_PLATFORM_MAC)
 	impl_ = manager.GetAllocator().New<InputDeviceKeyboardImplMac>(manager, *this, *state_, *previousState_);
+#elif defined(GAINPUT_PLATFORM_IOS)
+	impl_ = manager.GetAllocator().New<InputDeviceKeyboardImplIOS>(manager, *this, *state_, *previousState_);
 #endif
 
 	if (!impl_)
@@ -181,11 +188,16 @@ InputDeviceKeyboard::SetTextInputEnabled(bool enabled)
 	impl_->SetTextInputEnabled(enabled);
 }
 
-char
-InputDeviceKeyboard::GetNextCharacter()
+wchar_t*
+InputDeviceKeyboard::GetTextInput(uint32_t* count)
 {
-	return impl_->GetNextCharacter();
+	return impl_->GetTextInput(count);
 }
 
+void
+InputDeviceKeyboard::ClearButtons()
+{
+	impl_->ClearButtons();
+}
 }
 

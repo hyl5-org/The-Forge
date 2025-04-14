@@ -160,20 +160,25 @@ add_library(MeshOptimizer STATIC ${MESHOPTIMIZER_FILES})
 # ${ENGINE_THIRD_PARTY_SOURCE_DIR}/TinyEXR/tinyexr.h
 # )
 # add_library(TinyEXR STATIC ${THIRDPARTY_OSS_TINYEXR_FILES})
-file(GLOB_RECURSE GAINPUT_STATIC_FILES ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/*.cpp ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/*.h ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/include/*.h)
+# file(GLOB_RECURSE GAINPUT_STATIC_FILES ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/*.cpp ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/*.h ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/include/*.h)
 
-set(GAINPUT_WINDOWS_FILES
-    ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/hidapi/windows/hid.c
-)
+# set(GAINPUT_WINDOWS_FILES
+# ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/hidapi/windows/hid.c
+# )
 
-set(GAINPUT_IOS_FILES
-     ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/gainput/GainputIos.mm
-)
-source_group(Core FILES ${GAINPUT_STATIC_FILES})
+# set(GAINPUT_IOS_FILES
+# ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/gainput/GainputIos.mm
+# )
+# source_group(Core FILES ${GAINPUT_STATIC_FILES})
 
-add_library(GaInput STATIC ${GAINPUT_STATIC_FILES})
-target_include_directories(GaInput PUBLIC ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/include)
-
+# add_library(GaInput STATIC ${GAINPUT_STATIC_FILES})
+# target_include_directories(GaInput PUBLIC ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/include)
+# target_include_directories(GaInput PRIVATE ${ENGINE_SOURCE_DIR}/Runtime/Core/Public)
+add_subdirectory(${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput)
+target_include_directories(gainputstatic PRIVATE
+    ${ENGINE_SOURCE_DIR}/Runtime/Core/Public
+    ${ENGINE_SOURCE_DIR}/Runtime/Platform/Public
+    ${ENGINE_SOURCE_DIR})
 # set(CPU_FEATURES_FILES
 #     ${ENGINE_THIRD_PARTY_SOURCE_DIR}/cpu_features/src/impl_x86_macos.c
 #     ${ENGINE_THIRD_PARTY_SOURCE_DIR}/cpu_features/src/impl_aarch64_iOS.c
@@ -291,7 +296,7 @@ set(THIRD_PARTY_DEPS
     MeshOptimizer
 
     # TinyEXR
-    GaInput
+    gainputstatic
     Ozz
     cpu_features
     DirectX-Headers
@@ -303,6 +308,7 @@ set(THIRD_PARTY_DEPS
 
 foreach(LIB ${THIRD_PARTY_DEPS})
     set_target_properties(${LIB} PROPERTIES FOLDER "ThirdParty")
+    target_compile_options(${LIB} PRIVATE /MP)
 endforeach()
 
 

@@ -18,6 +18,8 @@ else()
 	endif()
 endif()
 
+set(ANDROID OFF)
+
 if(ANDROID)
 	include(extern/cmake/AndroidNdkModules.cmake)
 	android_ndk_import_module_native_app_glue()
