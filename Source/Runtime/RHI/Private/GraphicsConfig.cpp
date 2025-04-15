@@ -1433,14 +1433,14 @@ bool parseDriverVersion(const char* driverStr, DriverVersion* pDriverVersionOut)
 }
 
 // --- Parsing Helpers --- //
-//char* stringToLower(char* str)
+// char* stringToLower(char* str)
 //{
 //    for (char* p = str; *p != '\0'; ++p)
 //        *p = (char)tolower(*p);
 //    return str;
 //}
 
-//bool stringToInteger(char* str, uint32_t* pOutResult, uint32_t base)
+// bool stringToInteger(char* str, uint32_t* pOutResult, uint32_t base)
 //{
 //    char* endConversionPtr = NULL;
 //    // return end of string or index of the first space encountered
@@ -1453,7 +1453,7 @@ bool parseDriverVersion(const char* driverStr, DriverVersion* pDriverVersionOut)
 //    return validConversion;
 //}
 //
-//bool stringToLargeInteger(char* str, uint64_t* pOutResult, uint32_t base)
+// bool stringToLargeInteger(char* str, uint64_t* pOutResult, uint32_t base)
 //{
 //    char* endConversionPtr = NULL;
 //    // return end of string or index of the first space encountered
@@ -1468,7 +1468,7 @@ bool parseDriverVersion(const char* driverStr, DriverVersion* pDriverVersionOut)
 
 bool contains(char* str, const char* substr) { return strstr(str, substr) != nullptr; }
 
-//bool bufferedGetLine(char* lineStrOut, char** bufferCursorInOut, const char* bufferEnd)
+// bool bufferedGetLine(char* lineStrOut, char** bufferCursorInOut, const char* bufferEnd)
 //{
 //    if (*bufferCursorInOut < bufferEnd)
 //    {
