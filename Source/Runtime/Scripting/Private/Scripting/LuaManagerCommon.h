@@ -26,7 +26,7 @@
 
 #include <Core/IConfig.h>
 
-#include <ThirdParty/bstrlib_tf/bstrlib.h>
+#include <ThirdParty/bstrlib/bstrlib.h>
 
 #include <Core/ILog.h>
 

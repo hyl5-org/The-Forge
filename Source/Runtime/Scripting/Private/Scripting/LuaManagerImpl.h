@@ -33,7 +33,7 @@ extern "C"
 #include "../ThirdParty/OpenSource/lua-5.3.5/src/lualib.h"
 }
 
-#include <ThirdParty/bstrlib_tf/bstrlib.h>
+#include <ThirdParty/bstrlib/bstrlib.h>
 
 #include <Core/IFileSystem.h>
 #include <Core/ILog.h>

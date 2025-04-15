@@ -2756,7 +2756,7 @@ static T* stbds_shmode_func_wrapper(T*, size_t elemsize, size_t elemalign, int m
 #include <Core/ILog.h>
 
 #include <Core/IThread.h>
-#include <ThirdParty/bstrlib_tf/bstrlib.h>
+#include <ThirdParty/bstrlib/bstrlib.h>
 
 #ifdef STBDS_STATISTICS
 #define STBDS_STATS(x) x

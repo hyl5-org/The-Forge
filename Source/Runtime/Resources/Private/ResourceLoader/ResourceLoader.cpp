@@ -3494,7 +3494,7 @@
  */
 #include <Resources/IResourceLoader.h>
 #include <ThirdParty/stb/stb_ds.h>
-#include <ThirdParty/bstrlib_tf/bstrlib.h>
+#include <ThirdParty/bstrlib/bstrlib.h>
 #include <ThirdParty/tinyimageformat/tinyimageformat_apis.h>
 #include <ThirdParty/tinyimageformat/tinyimageformat_base.h>
 #include <ThirdParty/tinyimageformat/tinyimageformat_bits.h>

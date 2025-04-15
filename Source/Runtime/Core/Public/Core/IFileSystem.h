@@ -34,7 +34,7 @@
 #define FS_MAX_PATH 512
 #endif
 
-struct bstring;
+//struct bstring;
 
 #ifdef __cplusplus
 extern "C"

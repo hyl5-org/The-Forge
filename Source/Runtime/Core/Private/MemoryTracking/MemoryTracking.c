@@ -123,7 +123,7 @@ void* tf_calloc_(size_t count, size_t size)
 {
 #ifdef _MSC_VER
     size_t sz = count * size;
-    void*  ptr = tf_malloc(sz);
+    void*  ptr = tf_malloc_(sz);
     memset(ptr, 0, sz); //-V575
 #else
     void* ptr = calloc(count, size);
@@ -153,7 +153,7 @@ void* tf_calloc_memalign_(size_t count, size_t alignment, size_t size)
     size_t alignedArrayElementSize = ALIGN_TO(size, alignment);
     size_t totalBytes = count * alignedArrayElementSize;
 
-    void* ptr = tf_memalign(alignment, totalBytes);
+    void* ptr = tf_memalign_(alignment, totalBytes);
 
     memset(ptr, 0, totalBytes); //-V575
     return ptr;

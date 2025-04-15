@@ -23,8 +23,8 @@
  */
 #include <ThirdParty/tinyimageformat/tinyimageformat_base.h>
 #include <ThirdParty/tinyimageformat/tinyimageformat_query.h>
-#include <ThirdParty/imgui_tf/imgui_internal.h>
-#include <ThirdParty/imgui_tf/imgui.h>
+#include <ThirdParty/imgui/imgui_internal.h>
+#include <ThirdParty/imgui/imgui.h>
 #include <Application/IFont.h>
 #include <Platform/IInput.h>
 #include <Application/IUI.h>

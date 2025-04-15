@@ -35,7 +35,7 @@
 #pragma comment(lib, "shlwapi.lib")
 #endif
 
-#include <ThirdParty/bstrlib_tf/bstrlib.h>
+#include <ThirdParty/bstrlib/bstrlib.h>
 #include <ThirdParty/rmem/inc/rmem.h>
 #include <ThirdParty/stb/stb_ds.h>
 

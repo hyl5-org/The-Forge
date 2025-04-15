@@ -35,9 +35,9 @@
 // This macro enables custom ZSTD allocator features
 #define ZSTD_STATIC_LINKING_ONLY
 
-#include <ThirdParty/zstd/lib/zstd.h>
+#include <ThirdParty/zstd/zstd.h>
 #include <ThirdParty/lz4/lib/lz4.h>
-#include <ThirdParty/bstrlib_tf/bstrlib.h>
+#include <ThirdParty/bstrlib/bstrlib.h>
 
 /************************************************************************/
 // MARK: - Minor filename manipulation
