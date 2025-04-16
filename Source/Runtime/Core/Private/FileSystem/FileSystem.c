@@ -796,37 +796,37 @@ bool fsOpenStreamFromPath(ResourceDirectory resourceDir, const char* fileName, F
     return fsIoOpenStreamFromPath(io, resourceDir, fileName, mode, pOut);
 }
 
-size_t fsReadBstringFromStream(FileStream* stream, bstring* pStr, size_t symbolsCount)
-{
-    ASSERT(bisvalid(pStr));
+// size_t fsReadBstringFromStream(FileStream* stream, struct bstring* pStr, size_t symbolsCount)
+// {
+//     ASSERT(bisvalid(pStr));
 
-    // Read until the end of the file
-    if (symbolsCount == SIZE_MAX)
-    {
-        bassignliteral(pStr, "");
-        int readBytes = 0;
-        // read one page at a time
-        do
-        {
-            balloc(pStr, pStr->slen + 512);
-            readBytes = (int)fsReadFromStream(stream, pStr->data + pStr->slen, 512);
-            ASSERT(INT_MAX - pStr->slen > readBytes && "Integer overflow");
-            pStr->slen += readBytes;
-        } while (readBytes == 512);
-        balloc(pStr, pStr->slen + 1);
-        pStr->data[pStr->slen] = '\0';
-        return (size_t)pStr->slen;
-    }
+//     // Read until the end of the file
+//     if (symbolsCount == SIZE_MAX)
+//     {
+//         bassignliteral(pStr, "");
+//         int readBytes = 0;
+//         // read one page at a time
+//         do
+//         {
+//             balloc(pStr, pStr->slen + 512);
+//             readBytes = (int)fsReadFromStream(stream, pStr->data + pStr->slen, 512);
+//             ASSERT(INT_MAX - pStr->slen > readBytes && "Integer overflow");
+//             pStr->slen += readBytes;
+//         } while (readBytes == 512);
+//         balloc(pStr, pStr->slen + 1);
+//         pStr->data[pStr->slen] = '\0';
+//         return (size_t)pStr->slen;
+//     }
 
-    ASSERT(symbolsCount < (size_t)INT_MAX);
+//     ASSERT(symbolsCount < (size_t)INT_MAX);
 
-    bassignliteral(pStr, "");
-    balloc(pStr, (int)symbolsCount + 1);
-    size_t readBytes = fsReadFromStream(stream, pStr->data, symbolsCount);
-    pStr->data[readBytes] = '\0';
-    pStr->slen = (int)readBytes;
-    return readBytes;
-}
+//     bassignliteral(pStr, "");
+//     balloc(pStr, (int)symbolsCount + 1);
+//     size_t readBytes = fsReadFromStream(stream, pStr->data, symbolsCount);
+//     pStr->data[readBytes] = '\0';
+//     pStr->slen = (int)readBytes;
+//     return readBytes;
+// }
 
 bool fsFindStream(FileStream* pStream, const void* pFind, size_t findSize, ssize_t maxSeek, ssize_t* pPosition)
 {
