@@ -300,7 +300,10 @@ set(THIRD_PARTY_DEPS
 
 foreach(LIB ${THIRD_PARTY_DEPS})
     set_target_properties(${LIB} PROPERTIES FOLDER "ThirdParty")
-    target_compile_options(${LIB} PRIVATE /MP)
+    
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        target_compile_options(${LIB} PRIVATE /MP)
+    endif()
     target_include_directories(${LIB} PRIVATE
         ${ENGINE_SOURCE_DIR}/Runtime/Core/Public
         ${ENGINE_SOURCE_DIR}/Runtime/Platform/Public
