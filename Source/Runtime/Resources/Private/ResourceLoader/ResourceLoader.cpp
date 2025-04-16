@@ -3919,7 +3919,7 @@ bool isUma() { return gUma; }
 #endif
 
 // Can only issue certain resource state barriers on particular queue type
-static inline FORGE_CONSTEXPR bool StrictQueueTypeBarriers()
+static inline bool StrictQueueTypeBarriers()
 {
 #if defined(STRICT_QUEUE_TYPE_BARRIERS)
     if (RENDERER_API_D3D12 == gPlatformParameters.mSelectedRendererApi)
@@ -3949,7 +3949,7 @@ static inline bool IssueTextureCopyBarriers()
 }
 
 // Need to issue barriers when doing buffer copy operations
-static inline FORGE_CONSTEXPR bool IssueBufferCopyBarriers() //-V524
+static inline bool IssueBufferCopyBarriers() //-V524
 {
 #if defined(DIRECT3D12)
     if (RENDERER_API_D3D12 == gPlatformParameters.mSelectedRendererApi)
