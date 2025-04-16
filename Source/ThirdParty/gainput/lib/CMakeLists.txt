@@ -15,6 +15,13 @@ if(APPLE)
 	file(GLOB_RECURSE mmsources source/*.mm)
 endif()
 
+if(WIN32)
+  set(GAINPUT_WINDOWS_FILES
+    source/hidapi/windows/hid.c
+  )
+  set(sources ${sources} ${GAINPUT_WINDOWS_FILES})
+endif()
+
 ## build STATIC *or* SHARED
 if (GAINPUT_BUILD_SHARED)
   message(STATUS "..Building shared libraries (-DGAINPUT_BUILD_SHARED=OFF to disable)")

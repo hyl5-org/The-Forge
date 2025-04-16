@@ -36,7 +36,7 @@
 #define ZSTD_STATIC_LINKING_ONLY
 
 #include <ThirdParty/zstd/zstd.h>
-#include <ThirdParty/lz4/lib/lz4.h>
+#include <ThirdParty/lz4/lz4.h>
 #include <ThirdParty/bstrlib/bstrlib.h>
 
 /************************************************************************/

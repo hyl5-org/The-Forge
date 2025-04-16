@@ -161,28 +161,11 @@ add_library(BString STATIC ${BSTRING_FILES})
 file(GLOB_RECURSE ZSTD_FILES ${ENGINE_THIRD_PARTY_SOURCE_DIR}/zstd/*.c)
 add_library(zstd STATIC ${ZSTD_FILES})
 
+file(GLOB_RECURSE LZ4_FILES ${ENGINE_THIRD_PARTY_SOURCE_DIR}/lz4/*.c)
+add_library(lz4 STATIC ${LZ4_FILES})
+
 file(GLOB_RECURSE IMGUI_FILES ${ENGINE_THIRD_PARTY_SOURCE_DIR}/imgui/*.cpp)
 add_library(imgui STATIC ${IMGUI_FILES})
-
-    # set(THIRDPARTY_OSS_TINYEXR_FILES
-    # ${ENGINE_THIRD_PARTY_SOURCE_DIR}/TinyEXR/tinyexr.cpp
-    # ${ENGINE_THIRD_PARTY_SOURCE_DIR}/TinyEXR/tinyexr.h
-    # )
-    # add_library(TinyEXR STATIC ${THIRDPARTY_OSS_TINYEXR_FILES})
-    # file(GLOB_RECURSE GAINPUT_STATIC_FILES ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/*.cpp ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/*.h ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/include/*.h)
-
-    # set(GAINPUT_WINDOWS_FILES
-    # ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/hidapi/windows/hid.c
-    # )
-
-    # set(GAINPUT_IOS_FILES
-    # ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/source/gainput/GainputIos.mm
-    # )
-    # source_group(Core FILES ${GAINPUT_STATIC_FILES})
-
-    # add_library(GaInput STATIC ${GAINPUT_STATIC_FILES})
-    # target_include_directories(GaInput PUBLIC ${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput/lib/include)
-    # target_include_directories(GaInput PRIVATE ${ENGINE_SOURCE_DIR}/Runtime/Core/Public)
 add_subdirectory(${ENGINE_THIRD_PARTY_SOURCE_DIR}/gainput)
 
     # set(CPU_FEATURES_FILES
@@ -301,6 +284,7 @@ set(THIRD_PARTY_DEPS
     MeshOptimizer
     BString
     zstd
+    lz4
 
     # TinyEXR
     gainputstatic
@@ -310,7 +294,6 @@ set(THIRD_PARTY_DEPS
     DirectX-Guids
     utils
     imgui
-
     # stb
     mimalloc-static
 )
@@ -324,5 +307,3 @@ foreach(LIB ${THIRD_PARTY_DEPS})
         ${ENGINE_SOURCE_DIR}
     )
 endforeach()
-
-

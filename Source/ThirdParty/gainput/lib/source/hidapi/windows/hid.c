@@ -76,7 +76,7 @@ extern "C" {
 
 #include "../hidapi.h"
 
-#include "../../../../../../../../Utilities/Interfaces/IMemory.h"
+#include <Core/IMemory.h>
 
 #undef MIN
 #define MIN(x,y) ((x) < (y)? (x): (y))

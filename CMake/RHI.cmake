@@ -14,6 +14,7 @@ file(GLOB RHI_SOURCE_FILES ${RHI_SOURCE_DIR}/*.cpp ${RHI_SOURCE_DIR}/*.c)
 if(${DX12} MATCHES ON)
     set(RHI_LIBRARIES ${RHI_LIBRARIES}
         D3D12MemoryAllocator
+        DirectXShaderCompiler
     )
 
     set(RHI_LIBRARIES ${RHI_LIBRARIES}
