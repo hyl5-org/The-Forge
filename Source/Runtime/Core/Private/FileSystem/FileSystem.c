@@ -796,7 +796,7 @@ bool fsOpenStreamFromPath(ResourceDirectory resourceDir, const char* fileName, F
     return fsIoOpenStreamFromPath(io, resourceDir, fileName, mode, pOut);
 }
 
-size_t fsReadBstringFromStream(FileStream* stream, struct bstring* pStr, size_t symbolsCount)
+size_t fsReadBstringFromStream(FileStream* stream, bstring* pStr, size_t symbolsCount)
 {
     ASSERT(bisvalid(pStr));
 
