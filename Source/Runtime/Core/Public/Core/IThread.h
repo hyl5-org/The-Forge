@@ -200,11 +200,10 @@ struct MutexLock
     MutexLock(Mutex& rhs): mMutex(rhs) { acquireMutex(&rhs); }
     ~MutexLock() { releaseMutex(&mMutex); }
 
-private:
     /// Prevent copy construction.
-    MutexLock(const MutexLock& rhs) = default;
+    MutexLock(const MutexLock& rhs) = delete;
     /// Prevent assignment.
-    MutexLock& operator=(const MutexLock& rhs) = default;
+    MutexLock& operator=(const MutexLock& rhs) = delete;
 
     Mutex& mMutex;
 };
