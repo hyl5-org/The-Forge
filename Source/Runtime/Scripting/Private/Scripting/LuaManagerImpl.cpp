@@ -25,7 +25,7 @@
 #include "LuaManagerImpl.h"
 
 #include <ThirdParty/stb/stb_ds.h>
-#include <ThirdParty/bstrlib_tf/bstrlib.h>
+#include <ThirdParty/bstrlib/bstrlib.h>
 
 #include <Application/ICameraController.h>
 #include <Core/IFileSystem.h>

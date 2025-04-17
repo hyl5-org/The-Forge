@@ -85,7 +85,7 @@ typedef uint64_t uint64;
 
 #if defined(FORGE_DEBUG) && (defined(_WINDOWS) || (defined(__linux__) && !defined(__ANDROID__)) || defined(__APPLE__))
 #define WINDOW_DETAILS 1
-#include <ThirdParty/bstrlib_tf/bstrlib.h>
+#include <ThirdParty/bstrlib/bstrlib.h>
 #else
 #define WINDOW_DETAILS 0
 #endif

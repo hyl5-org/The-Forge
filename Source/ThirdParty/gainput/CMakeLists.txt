@@ -4,9 +4,9 @@ set(GAINPUT_MINOR_VERSION 0)
 set(GAINPUT_PATCH_VERSION 0)
 set(GAINPUT_VERSION ${GAINPUT_MAJOR_VERSION}.${GAINPUT_MINOR_VERSION}.${GAINPUT_PATCH_VERSION})
 
-option(GAINPUT_SAMPLES "Build Samples for Gainput" ON)
-option(GAINPUT_TESTS "Build Tests for Gainput" ON)
-option(GAINPUT_BUILD_SHARED "BUILD_SHARED" ON)
+option(GAINPUT_SAMPLES "Build Samples for Gainput" OFF)
+option(GAINPUT_TESTS "Build Tests for Gainput" OFF)
+option(GAINPUT_BUILD_SHARED "BUILD_SHARED" OFF)
 option(GAINPUT_BUILD_STATIC "BUILD_STATIC" ON)
 
 if(!WIN32)
@@ -18,6 +18,8 @@ else()
 	endif()
 endif()
 
+set(ANDROID OFF)
+
 if(ANDROID)
 	include(extern/cmake/AndroidNdkModules.cmake)
 	android_ndk_import_module_native_app_glue()
@@ -25,11 +27,11 @@ endif()
 
 add_subdirectory(lib)
 
-if(GAINPUT_SAMPLES)
-	add_subdirectory(samples)
-endif()
+# if(GAINPUT_SAMPLES)
+# 	add_subdirectory(samples)
+# endif()
 
-if(GAINPUT_TESTS)
-	add_subdirectory(test)
-endif()
+# if(GAINPUT_TESTS)
+# 	add_subdirectory(test)
+# endif()
 

@@ -36,7 +36,7 @@
 //#endif
 //
 //#include <ThirdParty/stb/stb_ds.h>
-//#include <ThirdParty/bstrlib_tf/bstrlib.h>
+//#include <ThirdParty/bstrlib/bstrlib.h>
 //#include <ThirdParty/rmem/inc/rmem.h>
 //
 ////#include <Application/IApp.h>

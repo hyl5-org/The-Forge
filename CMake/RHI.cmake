@@ -14,11 +14,16 @@ file(GLOB RHI_SOURCE_FILES ${RHI_SOURCE_DIR}/*.cpp ${RHI_SOURCE_DIR}/*.c)
 if(${DX12} MATCHES ON)
     set(RHI_LIBRARIES ${RHI_LIBRARIES}
         D3D12MemoryAllocator
+        DirectXShaderCompiler
     )
 
     set(RHI_LIBRARIES ${RHI_LIBRARIES}
         "d3d12.lib"
     )
+
+    add_compile_definitions(D3D12_AGILITY_SDK=1)
+    add_compile_definitions(D3D12_AGILITY_SDK_VERSION=615)
+    
     set(RHI_INCLUDE_FILES ${RHI_INCLUDE_FILES} ${DX12_INCLUDE_FILES})
     set(RHI_SOURCE_FILES ${RHI_SOURCE_FILES} ${DX12_SOURCE_FILES})
 endif()

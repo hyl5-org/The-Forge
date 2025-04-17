@@ -36,10 +36,10 @@
 #define VISIBILITY_BUFFER_MAX_NUM_BUFFERS   2
 
 #define NO_FSL_DEFINITIONS
-#include "../Private/VisibilityBuffer2/VisibilityBuffer2Struct.h"
+#include "../Private/GeometryPipeline/VisibilityBuffer2/VisibilityBuffer2Struct.h"
 
 #define NO_FSL_DEFINITIONS
-#include "../Private/VisibilityBuffer2/VisibilityBufferShaderDefine.h"
+#include "../Private/GeometryPipeline/VisibilityBuffer2/VisibilityBufferShaderDefine.h"
 
 typedef struct FilterContainer
 {

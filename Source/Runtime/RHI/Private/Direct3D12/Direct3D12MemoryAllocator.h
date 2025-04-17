@@ -149,11 +149,7 @@ public:
     virtual ULONG STDMETHODCALLTYPE   Release();
 
 protected:
-    virtual void ReleaseThis()
-    {
-        delete (this);
-        // delete this;
-    }
+    virtual void ReleaseThis() { delete this; }
 
 private:
     D3D12MA_ATOMIC_UINT32 m_RefCount{ 1 };

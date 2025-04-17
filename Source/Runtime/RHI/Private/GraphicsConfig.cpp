@@ -25,7 +25,7 @@
 #include "GraphicsConfig.h"
 
 #include <ThirdParty/stb/stb_ds.h>
-#include <ThirdParty/bstrlib_tf/bstrlib.h>
+#include <ThirdParty/bstrlib/bstrlib.h>
 
 #include <Core/IFileSystem.h>
 #include <RHI/IGraphics.h>
@@ -1433,67 +1433,67 @@ bool parseDriverVersion(const char* driverStr, DriverVersion* pDriverVersionOut)
 }
 
 // --- Parsing Helpers --- //
-char* stringToLower(char* str)
-{
-    for (char* p = str; *p != '\0'; ++p)
-        *p = (char)tolower(*p);
-    return str;
-}
+// char* stringToLower(char* str)
+//{
+//    for (char* p = str; *p != '\0'; ++p)
+//        *p = (char)tolower(*p);
+//    return str;
+//}
 
-bool stringToInteger(char* str, uint32_t* pOutResult, uint32_t base)
-{
-    char* endConversionPtr = NULL;
-    // return end of string or index of the first space encountered
-    char* endStr = str + strcspn(str, " ");
-    *pOutResult = (uint32_t)strtoll(str, &endConversionPtr, base);
-    // check emptiness
-    bool validConversion = str != endStr;
-    // check if successfully parsed the full string
-    validConversion &= endStr == endConversionPtr;
-    return validConversion;
-}
-
-bool stringToLargeInteger(char* str, uint64_t* pOutResult, uint32_t base)
-{
-    char* endConversionPtr = NULL;
-    // return end of string or index of the first space encountered
-    char* endStr = str + strcspn(str, " ");
-    *pOutResult = strtoll(str, &endConversionPtr, base);
-    // check emptiness
-    bool validConversion = str != endStr;
-    // check if successfully parsed the full string
-    validConversion &= endStr == endConversionPtr;
-    return validConversion;
-}
+// bool stringToInteger(char* str, uint32_t* pOutResult, uint32_t base)
+//{
+//    char* endConversionPtr = NULL;
+//    // return end of string or index of the first space encountered
+//    char* endStr = str + strcspn(str, " ");
+//    *pOutResult = (uint32_t)strtoll(str, &endConversionPtr, base);
+//    // check emptiness
+//    bool validConversion = str != endStr;
+//    // check if successfully parsed the full string
+//    validConversion &= endStr == endConversionPtr;
+//    return validConversion;
+//}
+//
+// bool stringToLargeInteger(char* str, uint64_t* pOutResult, uint32_t base)
+//{
+//    char* endConversionPtr = NULL;
+//    // return end of string or index of the first space encountered
+//    char* endStr = str + strcspn(str, " ");
+//    *pOutResult = strtoll(str, &endConversionPtr, base);
+//    // check emptiness
+//    bool validConversion = str != endStr;
+//    // check if successfully parsed the full string
+//    validConversion &= endStr == endConversionPtr;
+//    return validConversion;
+//}
 
 bool contains(char* str, const char* substr) { return strstr(str, substr) != nullptr; }
 
-bool bufferedGetLine(char* lineStrOut, char** bufferCursorInOut, const char* bufferEnd)
-{
-    if (*bufferCursorInOut < bufferEnd)
-    {
-        size_t lineIndex = 0;
-        // copy current line, memcpy seems to make it slower
-        while (*(*bufferCursorInOut) != '\n' && *(*bufferCursorInOut) != '\r' && *bufferCursorInOut != bufferEnd)
-        {
-            lineStrOut[lineIndex] = *(*bufferCursorInOut);
-            lineIndex++;
-            (*bufferCursorInOut)++;
-        }
-        lineStrOut[lineIndex] = '\0';
-        // skip /r/n
-        if (*(*bufferCursorInOut) == '\r' && *bufferCursorInOut != bufferEnd && *((*bufferCursorInOut) + 1) == '\n')
-        {
-            (*bufferCursorInOut)++;
-        }
-        (*bufferCursorInOut)++;
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
+// bool bufferedGetLine(char* lineStrOut, char** bufferCursorInOut, const char* bufferEnd)
+//{
+//    if (*bufferCursorInOut < bufferEnd)
+//    {
+//        size_t lineIndex = 0;
+//        // copy current line, memcpy seems to make it slower
+//        while (*(*bufferCursorInOut) != '\n' && *(*bufferCursorInOut) != '\r' && *bufferCursorInOut != bufferEnd)
+//        {
+//            lineStrOut[lineIndex] = *(*bufferCursorInOut);
+//            lineIndex++;
+//            (*bufferCursorInOut)++;
+//        }
+//        lineStrOut[lineIndex] = '\0';
+//        // skip /r/n
+//        if (*(*bufferCursorInOut) == '\r' && *bufferCursorInOut != bufferEnd && *((*bufferCursorInOut) + 1) == '\n')
+//        {
+//            (*bufferCursorInOut)++;
+//        }
+//        (*bufferCursorInOut)++;
+//        return true;
+//    }
+//    else
+//    {
+//        return false;
+//    }
+//}
 
 void tokenizeLine(const char* pLine, const char* pLineEnd, uint32_t numTokens, char** pTokens)
 {

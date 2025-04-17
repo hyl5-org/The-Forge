@@ -32,7 +32,7 @@
 //#include <Scripting/IScripting.h>
 #include <Platform/IOperatingSystem.h>
 #include <Core/ITime.h>
-#include <ThirdParty/bstrlib_tf/bstrlib.h>
+#include <ThirdParty/bstrlib/bstrlib.h>
 
 static WindowDesc* pWindowRef = NULL;
 

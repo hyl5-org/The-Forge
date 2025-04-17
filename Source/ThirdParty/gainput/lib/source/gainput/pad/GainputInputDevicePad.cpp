@@ -1,22 +1,38 @@
 
-#include <gainput/gainput.h>
-#include <gainput/GainputDebugRenderer.h>
+#include "../../../include/gainput/gainput.h"
+#include "../../../include/gainput/GainputDebugRenderer.h"
 
 #include "GainputInputDevicePadImpl.h"
-#include <gainput/GainputInputDeltaState.h>
-#include <gainput/GainputHelpers.h>
-#include <gainput/GainputLog.h>
+#include "../../../include/gainput/GainputInputDeltaState.h"
+#include "../../../include/gainput/GainputHelpers.h"
+#include "../../../include/gainput/GainputLog.h"
 
 #if defined(GAINPUT_PLATFORM_LINUX)
-	#include "GainputInputDevicePadLinux.h"
+	#include "../linux/GainputInputDevicePadLinux.h"
+	#include "GainputInputDevicePadHID.h"
 #elif defined(GAINPUT_PLATFORM_WIN)
-	#include "GainputInputDevicePadWin.h"
+	#include "../windows/GainputInputDevicePadWin.h"
+	#include "GainputInputDevicePadHID.h"
 #elif defined(GAINPUT_PLATFORM_IOS) || defined(GAINPUT_PLATFORM_TVOS)
-	#include "GainputInputDevicePadIos.h"
+#include "../apple/GainputInputDevicePadAppleGCKit.h"
 #elif defined(GAINPUT_PLATFORM_MAC)
-	#include "GainputInputDevicePadMac.h"
+	#include "../apple/GainputInputDevicePadAppleGCKit.h"
+	#include "../apple/GainputInputDevicePadMac.h"
+	#include "GainputInputDevicePadHID.h"
 #elif defined(GAINPUT_PLATFORM_ANDROID)
-	#include "GainputInputDevicePadAndroid.h"
+	#include "../android/GainputInputDevicePadAndroid.h" 
+#elif defined(GAINPUT_PLATFORM_QUEST)
+	#include "../quest/GainputInputDevicePadQuest.h" 
+#elif defined (GAINPUT_PLATFORM_XBOX_ONE)
+	#include "../../../../../../../../../Xbox/Common_3/Application/Input/GainputInputDevicePadXboxOne.h"
+#elif defined(GAINPUT_PLATFORM_NX64)
+#include "../../../../../../../../../Switch/Common_3/Application/Input/GainputInputDevicePadNX.h"
+#elif defined(GAINPUT_PLATFORM_GGP)
+	#include "../../../../../../../../Stadia/Common_3/OS/Input/GainputInputDevicePadGGP.h"
+#elif defined(GAINPUT_PLATFORM_ORBIS)
+#include "../../../../../../../../../PS4/Common_3/Application/Input/GainputInputDevicePadOrbis.h"
+#elif defined(GAINPUT_PLATFORM_PROSPERO)
+#include "../../../../../../../../../Prospero/Common_3/Application/Input/GainputInputDevicePadProspero.h"
 #endif
 
 #include "GainputInputDevicePadNull.h"
@@ -119,8 +135,8 @@ const unsigned PadAxisCount = PadButtonAxisCount_;
 
 
 InputDevicePad::InputDevicePad(InputManager& manager, DeviceId device, unsigned index, DeviceVariant /*variant*/) :
-	InputDevice(manager, device, index == InputDevice::AutoIndex ? manager.GetDeviceCountByType(DT_PAD) : 0),
-	impl_(0)
+	InputDevice(manager, device, index == InputDevice::AutoIndex ? manager.GetDeviceCountByType(DT_PAD) : index),
+	impl_(NULL)
 {
 	state_ = manager.GetAllocator().New<InputState>(manager.GetAllocator(), PadButtonCount + PadAxisCount);
 	GAINPUT_ASSERT(state_);
@@ -132,11 +148,31 @@ InputDevicePad::InputDevicePad(InputManager& manager, DeviceId device, unsigned 
 #elif defined(GAINPUT_PLATFORM_WIN)
 	impl_ = manager.GetAllocator().New<InputDevicePadImplWin>(manager, *this, index_, *state_, *previousState_);
 #elif defined(GAINPUT_PLATFORM_IOS) || defined(GAINPUT_PLATFORM_TVOS)
-	impl_ = manager.GetAllocator().New<InputDevicePadImplIos>(manager, *this, index_, *state_, *previousState_);
+	impl_ = manager.GetAllocator().New<InputDevicePadImplGCKit>(manager, *this, index_, *state_, *previousState_);
 #elif defined(GAINPUT_PLATFORM_MAC)
-	impl_ = manager.GetAllocator().New<InputDevicePadImplMac>(manager, *this, index_, *state_, *previousState_);
+	if(IOS14_RUNTIME)
+	{
+		impl_ = manager.GetAllocator().New<InputDevicePadImplGCKit>(manager, *this, index_, *state_, *previousState_);
+	}
+	else
+	{
+		//fallback to previous implementation
+		impl_ = manager.GetAllocator().New<InputDevicePadImplMac>(manager, *this, index_, *state_, *previousState_);
+	}
 #elif defined(GAINPUT_PLATFORM_ANDROID)
 	impl_ = manager.GetAllocator().New<InputDevicePadImplAndroid>(manager, *this, index_, *state_, *previousState_);
+#elif defined(GAINPUT_PLATFORM_QUEST)
+	impl_ = manager.GetAllocator().New<InputDevicePadImplQuest>(manager, *this, index_, *state_, *previousState_);
+#elif defined(GAINPUT_PLATFORM_XBOX_ONE)
+	impl_ = manager.GetAllocator().New<InputDevicePadImplXboxOne>(manager, *this, index_, *state_, *previousState_);
+#elif defined(GAINPUT_PLATFORM_NX64)
+	impl_ = manager.GetAllocator().New<InputDevicePadImplNx>(manager, *this, index_, *state_, *previousState_);
+#elif defined(GAINPUT_PLATFORM_GGP)
+	impl_ = manager.GetAllocator().New<InputDevicePadImplGGP>(manager, *this, index_, *state_, *previousState_);
+#elif defined(GAINPUT_PLATFORM_ORBIS)
+	impl_ = manager.GetAllocator().New<InputDevicePadImplOrbis>(manager, *this, index_, *state_, *previousState_);
+#elif defined(GAINPUT_PLATFORM_PROSPERO)
+	impl_ = manager.GetAllocator().New<InputDevicePadImplProspero>(manager, *this, index_, *state_, *previousState_);
 #endif
 
 	if (!impl_)
@@ -146,10 +182,53 @@ InputDevicePad::InputDevicePad(InputManager& manager, DeviceId device, unsigned 
 
 	GAINPUT_ASSERT(impl_);
 
+#if defined (GAINPUT_PLATFORM_XBOX_ONE)
+	SetDeadZone(PadButtonLeftStickX, 0.0f);
+	SetDeadZone(PadButtonLeftStickY, 0.0f);
+	SetDeadZone(PadButtonRightStickX, 0.0f);
+	SetDeadZone(PadButtonRightStickY, 0.0f);
+
+#else
 	SetDeadZone(PadButtonLeftStickX, 0.15f);
 	SetDeadZone(PadButtonLeftStickY, 0.15f);
 	SetDeadZone(PadButtonRightStickX, 0.15f);
 	SetDeadZone(PadButtonRightStickY, 0.15f);
+#endif
+}
+
+InputDevicePad::InputDevicePad(InputManager& manager, DeviceId device, unsigned hidDevId) :
+	InputDevice(manager, device, (uint32_t)-1),
+	impl_(NULL)
+{
+    UNREF_PARAM(hidDevId);
+	state_ = manager.GetAllocator().New<InputState>(manager.GetAllocator(), PadButtonCount + PadAxisCount);
+	GAINPUT_ASSERT(state_);
+	previousState_ = manager.GetAllocator().New<InputState>(manager.GetAllocator(), PadButtonCount + PadAxisCount);
+	GAINPUT_ASSERT(previousState_);
+
+#if defined(GAINPUT_PLATFORM_LINUX) ||  defined(GAINPUT_PLATFORM_WIN) ||  defined(GAINPUT_PLATFORM_MAC)
+	impl_ = manager.GetAllocator().New<InputDevicePadImplHID>(manager, *this, hidDevId);
+#endif
+
+	if (!impl_)
+	{
+		impl_ = manager.GetAllocator().New<InputDevicePadImplNull>(manager, *this, index_, *state_, *previousState_);
+	}
+
+	GAINPUT_ASSERT(impl_);
+
+#if defined (GAINPUT_PLATFORM_XBOX_ONE)
+	SetDeadZone(PadButtonLeftStickX, 0.0f);
+	SetDeadZone(PadButtonLeftStickY, 0.0f);
+	SetDeadZone(PadButtonRightStickX, 0.0f);
+	SetDeadZone(PadButtonRightStickY, 0.0f);
+
+#else
+	SetDeadZone(PadButtonLeftStickX, 0.15f);
+	SetDeadZone(PadButtonLeftStickY, 0.15f);
+	SetDeadZone(PadButtonRightStickX, 0.15f);
+	SetDeadZone(PadButtonRightStickY, 0.15f);
+#endif
 }
 
 InputDevicePad::~InputDevicePad()
@@ -157,6 +236,12 @@ InputDevicePad::~InputDevicePad()
 	manager_.GetAllocator().Delete(state_);
 	manager_.GetAllocator().Delete(previousState_);
 	manager_.GetAllocator().Delete(impl_);
+}
+
+void
+InputDevicePad::CheckConnection()
+{
+	impl_->CheckConnection();
 }
 
 void
@@ -232,8 +317,15 @@ InputDevicePad::GetButtonName(DeviceButtonId deviceButton, char* buffer, size_t 
 	GAINPUT_ASSERT(IsValidButtonId(deviceButton));
 	GAINPUT_ASSERT(buffer);
 	GAINPUT_ASSERT(bufferLength > 0);
-	strncpy(buffer, deviceButtonInfos[deviceButton].name, bufferLength);
-	buffer[bufferLength-1] = 0;
+    if (bufferLength > 0)
+    {
+        strncpy(buffer, deviceButtonInfos[deviceButton].name, bufferLength-1);
+        buffer[bufferLength-1] = 0;        
+    }
+    else
+    {        
+        GAINPUT_ASSERT(!"bufferLength <= 0");
+    }
 	const size_t nameLen = strlen(deviceButtonInfos[deviceButton].name);
 	return nameLen >= bufferLength ? bufferLength : nameLen+1;
 }
@@ -270,5 +362,28 @@ InputDevicePad::Vibrate(float leftMotor, float rightMotor)
 	return impl_->Vibrate(leftMotor, rightMotor);
 }
 
+const char*
+InputDevicePad::GetDeviceName()
+{
+	return impl_->GetDeviceName();
 }
-    
+
+void InputDevicePad::SetOnDeviceChangeCallBack(void(*onDeviceChange)(const char*, bool added, int controllerIndex))
+{
+	return impl_->SetOnDeviceChangeCallBack(onDeviceChange);
+}
+
+bool
+InputDevicePad::SetRumbleEffect(float left_motor, float right_motor, uint32_t duration_ms, bool targetOwningDevice)
+{
+	return impl_->SetRumbleEffect(left_motor, right_motor, duration_ms, targetOwningDevice);
+}
+
+
+void InputDevicePad::SetLEDColor(uint8_t r, uint8_t g, uint8_t b)
+{
+	impl_->SetLEDColor(r, g, b);
+}
+
+}
+

@@ -1,5 +1,5 @@
 
-#include <gainput/gainput.h>
+#include "../../include/gainput/gainput.h"
 
 
 namespace gainput

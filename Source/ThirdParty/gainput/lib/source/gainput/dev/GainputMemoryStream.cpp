@@ -1,4 +1,4 @@
-#include <gainput/gainput.h>
+#include "../../../include/gainput/gainput.h"
 
 #if defined(GAINPUT_DEV) || defined(GAINPUT_ENABLE_RECORDER)
 #include "GainputMemoryStream.h"

@@ -37,7 +37,7 @@
 // To add global Lua functions, independent of Unit Tests, add definition in UIApp::Init (Check LOGINFO there for example).
 
 #include <ThirdParty/stb/stb_ds.h>
-#include <ThirdParty/bstrlib_tf/bstrlib.h>
+#include <ThirdParty/bstrlib/bstrlib.h>
 
 #include <Core/IMath.h>
 

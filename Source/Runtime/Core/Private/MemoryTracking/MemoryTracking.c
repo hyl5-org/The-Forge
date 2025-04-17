@@ -1,4 +1,4 @@
-#include <Core/IMemory.h>
+
 #include <Core/IConfig.h>
 
 #include "wchar.h"
@@ -47,6 +47,8 @@
 
 // Just include the cpp here so we don't have to add it to the all projects
 #include <ThirdParty/MemoryManager/mmgr.h>
+
+#include <Core/IMemory.h>
 
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop
@@ -121,7 +123,7 @@ void* tf_calloc_(size_t count, size_t size)
 {
 #ifdef _MSC_VER
     size_t sz = count * size;
-    void*  ptr = tf_malloc(sz);
+    void*  ptr = tf_malloc_(sz);
     memset(ptr, 0, sz); //-V575
 #else
     void* ptr = calloc(count, size);
@@ -151,7 +153,7 @@ void* tf_calloc_memalign_(size_t count, size_t alignment, size_t size)
     size_t alignedArrayElementSize = ALIGN_TO(size, alignment);
     size_t totalBytes = count * alignedArrayElementSize;
 
-    void* ptr = tf_memalign(alignment, totalBytes);
+    void* ptr = tf_memalign_(alignment, totalBytes);
 
     memset(ptr, 0, totalBytes); //-V575
     return ptr;

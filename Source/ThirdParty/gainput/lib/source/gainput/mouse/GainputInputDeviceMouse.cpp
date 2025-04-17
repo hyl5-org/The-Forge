@@ -1,22 +1,27 @@
 
-#include <gainput/gainput.h>
-#include <gainput/GainputDebugRenderer.h>
+#include "../../../include/gainput/gainput.h"
+#include "../../../include/gainput/GainputDebugRenderer.h"
 
 #include "GainputInputDeviceMouseImpl.h"
 #include "GainputInputDeviceMouseNull.h"
 #include "GainputMouseInfo.h"
-#include <gainput/GainputInputDeltaState.h>
-#include <gainput/GainputHelpers.h>
-#include <gainput/GainputLog.h>
+#include "../../../include/gainput/GainputInputDeltaState.h"
+#include "../../../include/gainput/GainputHelpers.h"
+#include "../../../include/gainput/GainputLog.h"
 
 #if defined(GAINPUT_PLATFORM_LINUX)
-	#include "GainputInputDeviceMouseLinux.h"
-	#include "GainputInputDeviceMouseEvdev.h"
+	#include "../linux/GainputInputDeviceMouseLinux.h"
+	#include "../linux/GainputInputDeviceMouseEvdev.h"
+	#include "../linux/GainputInputDeviceMouseLinuxRaw.h"
 #elif defined(GAINPUT_PLATFORM_WIN)
-	#include "GainputInputDeviceMouseWin.h"
-	#include "GainputInputDeviceMouseWinRaw.h"
+	#include "../windows/GainputInputDeviceMouseWin.h"
+	#include "../windows/GainputInputDeviceMouseWinRaw.h"
 #elif defined(GAINPUT_PLATFORM_MAC)
-	#include "GainputInputDeviceMouseMac.h"
+	#include "../apple/GainputInputDeviceMouseMac.h"
+    #include "../apple/GainputInputDeviceMouseMacRaw.h"
+#elif defined(GAINPUT_PLATFORM_GGP)
+	#include "../../../../../../../../Stadia/Common_3/OS/Input/GainputInputDeviceMouseGGP.h"
+	#include "../../../../../../../../Stadia/Common_3/OS/Input/GainputInputDeviceMouseGGPRaw.h"
 #endif
 
 namespace gainput
@@ -27,6 +32,7 @@ InputDeviceMouse::InputDeviceMouse(InputManager& manager, DeviceId device, unsig
 	InputDevice(manager, device, index == InputDevice::AutoIndex ? manager.GetDeviceCountByType(DT_MOUSE) : index),
 	impl_(0)
 {
+    UNREF_PARAM(variant);
 	state_ = manager.GetAllocator().New<InputState>(manager.GetAllocator(), MouseButtonCount + MouseAxisCount);
 	GAINPUT_ASSERT(state_);
 	previousState_ = manager.GetAllocator().New<InputState>(manager.GetAllocator(), MouseButtonCount + MouseAxisCount);
@@ -39,7 +45,7 @@ InputDeviceMouse::InputDeviceMouse(InputManager& manager, DeviceId device, unsig
 	}
 	else if (variant == DV_RAW)
 	{
-		impl_ = manager.GetAllocator().New<InputDeviceMouseImplEvdev>(manager, *this, *state_, *previousState_);
+		impl_ = manager.GetAllocator().New<InputDeviceMouseImplLinuxRaw>(manager, *this, *state_, *previousState_);
 	}
 #elif defined(GAINPUT_PLATFORM_WIN)
 	if (variant == DV_STANDARD)
@@ -51,7 +57,23 @@ InputDeviceMouse::InputDeviceMouse(InputManager& manager, DeviceId device, unsig
 		impl_ = manager.GetAllocator().New<InputDeviceMouseImplWinRaw>(manager, *this, *state_, *previousState_);
 	}
 #elif defined(GAINPUT_PLATFORM_MAC)
-	impl_ = manager.GetAllocator().New<InputDeviceMouseImplMac>(manager, *this, *state_, *previousState_);
+    if (variant == DV_STANDARD)
+    {
+        impl_ = manager.GetAllocator().New<InputDeviceMouseImplMac>(manager, *this, *state_, *previousState_);
+    }
+    else if (variant == DV_RAW)
+    {
+        impl_ = manager.GetAllocator().New<InputDeviceMouseImplMacRaw>(manager, *this, *state_, *previousState_);
+    }
+#elif defined(GAINPUT_PLATFORM_GGP)
+	if (variant == DV_STANDARD)
+	{
+		impl_ = manager.GetAllocator().New<InputDeviceMouseImplGGP>(manager, *this, index_, *state_, *previousState_);
+	}
+	if (variant == DV_RAW)
+	{
+		impl_ = manager.GetAllocator().New<InputDeviceMouseImplGGPRaw>(manager, *this, index_, *state_, *previousState_);
+	}
 #endif
 
 	if (!impl_)
@@ -104,6 +126,11 @@ InputDeviceMouse::GetVariant() const
 	return impl_->GetVariant();
 }
 
+void InputDeviceMouse::WarpMouse(const float&x, const float& y) 
+{
+	impl_->WarpMouse(x,y);
+}
+
 size_t
 InputDeviceMouse::GetAnyButtonDown(DeviceButtonSpec* outButtons, size_t maxButtonCount) const
 {
@@ -117,9 +144,15 @@ InputDeviceMouse::GetButtonName(DeviceButtonId deviceButton, char* buffer, size_
 {
 	GAINPUT_ASSERT(IsValidButtonId(deviceButton));
 	GAINPUT_ASSERT(buffer);
-	GAINPUT_ASSERT(bufferLength > 0);
-	strncpy(buffer, deviceButtonInfos[deviceButton].name, bufferLength);
-	buffer[bufferLength-1] = 0;
+    if (bufferLength > 0)
+    {
+        strncpy(buffer, deviceButtonInfos[deviceButton].name, bufferLength-1);
+        buffer[bufferLength-1] = 0;
+    }
+    else
+    {
+        GAINPUT_ASSERT(!"bufferLength <= 0");
+    }
 	const size_t nameLen = strlen(deviceButtonInfos[deviceButton].name);
 	return nameLen >= bufferLength ? bufferLength : nameLen+1;
 }
@@ -145,5 +178,10 @@ InputDeviceMouse::GetButtonByName(const char* name) const
 	return InvalidDeviceButtonId;
 }
 
+InputState*
+InputDeviceMouse::GetNextInputState()
+{
+	return impl_->GetNextInputState();
+}
 }
 

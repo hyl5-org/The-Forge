@@ -1,5 +1,5 @@
 
-#include <gainput/gainput.h>
+#include "../../include/gainput/gainput.h"
 
 /**
 \mainpage Gainput Documentation
@@ -358,8 +358,15 @@ Strings are represented like this:
 
 */
 
+#include <Core/ILog.h>
+
 namespace gainput
 {
+
+void TF_FailedAssert(const char* file, int line, const char* statement)
+{
+	_FailedAssert(file, line, statement, NULL);
+}
 
 const char*
 GetLibName()
