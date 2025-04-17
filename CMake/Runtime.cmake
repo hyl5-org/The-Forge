@@ -145,10 +145,27 @@ endif()
 
 # Add compiler-specific flags
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(${ENGINE_RUNTIME} PRIVATE -fno-rtti -fno-exceptions)
+    target_compile_options(${ENGINE_RUNTIME} PRIVATE -fno-rtti -fno-exceptions
+
+        # -Wall -Wextra -Wshadow -pedantic
+        #-Werror 
+        # -fms-extensions
+        # -Wno-language-extension-token
+        # -Wno-switch
+        # -Wno-missing-field-initializers
+        # -Wno-unused-value
+        # -Wno-microsoft-enum-value
+        # -Wno-nested-anon-types
+        # -Wno-gnu-anonymous-struct
+        # -Wno-gnu-zero-variadic-macro-arguments
+        # -Wno-keyword-macro
+    )
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    SET(CMAKE_CXX_FLAGS "/GR- /EHsc- /MP")
-    #target_compile_options(${ENGINE_RUNTIME} PRIVATE /GR- /EHs-c-)
+    # SET(CMAKE_CXX_FLAGS "/GR- /EHsc- /MP /permissive /w14640 /W4 /WX /external:anglebrackets /external:W0")
+    SET(CMAKE_CXX_FLAGS "/EHsc-")
+    target_compile_options(${ENGINE_RUNTIME} PRIVATE /GR- /EHsc- /MP /permissive /w14640 /W3 /WX
+        /external:anglebrackets /external:W0
+        /wd4100)
     # will produe warning, https://cmake.org/pipermail/cmake/2010-December/041639.html
 endif()
 

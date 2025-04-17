@@ -23,8 +23,6 @@
  */
 #pragma once
 
-#include "../Private/Config.h"
-
 // Support external config file override
 #if defined(EXTERNAL_CONFIG_FILEPATH)
 #include EXTERNAL_CONFIG_FILEPATH

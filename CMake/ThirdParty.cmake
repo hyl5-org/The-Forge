@@ -309,4 +309,5 @@ foreach(LIB ${THIRD_PARTY_DEPS})
         ${ENGINE_SOURCE_DIR}/Runtime/Platform/Public
         ${ENGINE_SOURCE_DIR}
     )
+    target_compile_features(${LIB} PRIVATE cxx_std_20)
 endforeach()

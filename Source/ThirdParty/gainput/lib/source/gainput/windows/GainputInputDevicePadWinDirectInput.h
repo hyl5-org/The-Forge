@@ -13,6 +13,7 @@
 #include <Core/ITime.h>
 
 #include "../pad/GainputControllerDb.h"
+#include "../hid/GainputHIDWhitelist.h"
 
 const GUID FAR    USB_DEVICE = { 0xA5DCBF10L, 0x6530, 0x11D2, 0x90, 0x1F, 0x00, 0xC0, 0x4F, 0xB9, 0x51, 0xED };
 static HDEVNOTIFY hDeviceNotify;
@@ -1132,7 +1133,7 @@ public:
 	void FilterHIDHandledDevices()
 	{
 #if defined(_WINDOWS)
-		extern bool HIDIsSupported(uint16_t vendor, uint16_t product);
+		//extern bool HIDIsSupported(uint16_t vendor, uint16_t product);
 
 		int32_t it = gamePads.directInputCountConnected - 1;
 
